@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { motion, useScroll, AnimatePresence, useTransform } from 'motion/react';
 import { Instagram, Linkedin, Twitter, Facebook } from 'lucide-react';
-import LogoPrimary from '../../../assets/logo-primary.png';
-import LogoInverse from '../../../assets/logo-inverse.png';
+import LogoPrimary from '../../assets/logo-primary.png';
+import LogoInverse from '../../assets/logo-inverse.png';
 import { useHeaderTheme } from '../../context/header-theme';
 import { useRef } from 'react';
 
