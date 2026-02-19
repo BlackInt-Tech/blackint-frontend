@@ -125,7 +125,7 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
           >
-            <span>© 2026 BlackInt. All rights reserved.</span>
+            <span>© 2026 BlackInt. All Rights Reserved.</span>
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
           </motion.div>
