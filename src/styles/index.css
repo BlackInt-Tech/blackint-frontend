@@ -1,0 +1,16 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+@import './custom.css';
+@import 'slick-carousel/slick/slick.css';
+@import 'slick-carousel/slick/slick-theme.css';
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+#__next, #root {
+  max-width: 100%;
+  overflow-x: hidden;
+}

@@ -1,0 +1,73 @@
+/* Custom Cursor - Hide on Mobile */
+@media (max-width: 768px) {
+  [class*="cursor"] {
+    display: none !important;
+  }
+}
+
+/* Hide default cursor everywhere on desktop */
+@media (min-width: 769px) {
+  * {
+    cursor: none !important;
+  }
+  
+  a, button, [role="button"], input, textarea, select {
+    cursor: none !important;
+  }
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF4D00;
+}
+
+/* Selection Color */
+::selection {
+  background: #FF4D00;
+  color: #fff;
+}
+
+::-moz-selection {
+  background: #FF4D00;
+  color: #fff;
+}
+
+/* Mobile Responsive Text Sizes */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Prevent horizontal scroll */
+body {
+  overflow-x: hidden;
+}
+
+/* Cinematic transitions */
+* {
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Image hover effects */
+img {
+  will-change: transform;
+}
