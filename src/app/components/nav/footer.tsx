@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Instagram, Linkedin, Twitter, Facebook } from 'lucide-react';
 import { Container } from '../layout/container';
-import LogoPrimary from '../../../assets/logo-primary.png';
+import LogoPrimary from '../../assets/logo-primary.png';
 
 export function Footer() {
   return (
