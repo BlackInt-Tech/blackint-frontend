@@ -8,55 +8,47 @@ import { useEffect, useState } from "react";
 import { useScroll } from "motion/react";
 import { getPublishedProjects } from "../../services/projectService";
 import { getPublishedOfferings } from "../../services/offeringService";
-
-const insights = [
-  {
-    title: 'Where AI Meets Growth: Future-Ready Marketing for B2B Companies',
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
-  },
-  {
-    title: 'Modern B2B Brands',
-    image: 'https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
-  },
-  {
-    title: 'The Power of Storytelling in B2B Marketing',
-    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
-  },
-  {
-    title: 'Designing for Conversion: How to Create a High-Performing B2B Website',
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
-  }
-];
+import { getPublishedInsights } from "../../services/insightService";
+import { Project } from "../../types/project";
+import { Offering } from "../../types/offering";
+import { Insight } from "../../types/insight";
 
 export function Homepage() {
 
-const [featuredProjects, setFeaturedProjects] = useState<any[]>([]);
-const [services, setServices] = useState<any[]>([]);
-const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [offerings, setOfferings] = useState<Offering[]>([]);
+  const [insights, setInsights] = useState<Insight[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const projects = await getPublishedProjects();
-        const offerings = await getPublishedOfferings();
+  async function loadData() {
+    try {
+      setLoading(true);
 
-        setFeaturedProjects(projects);
-        setServices(offerings);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+      const [projectsData, offeringsData, insightsData] =
+        await Promise.all([
+          getPublishedProjects(),
+          getPublishedOfferings(),
+          getPublishedInsights(),
+        ]);
+
+      setProjects(projectsData || []);
+      setOfferings(offeringsData || []);
+      setInsights(insightsData || []);
+    } catch (error) {
+      console.error("Homepage Load Error:", error);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    loadData();
-  }, []);
-  
+  loadData();
+}, []);
+
   useEffect(() => {
-
     setTheme("primary");
 
     const unsubscribe = scrollY.on("change", (y) => {
@@ -74,12 +66,15 @@ const [loading, setLoading] = useState(true);
     <>
       <ScrollIndicator />
 
-      {/* Hero Section */}
+      {/* =========================================
+          HERO SECTION 
+      ========================================== */}
+
       <Section
         fullHeight
         className="relative flex items-center bg-black overflow-hidden px-6 sm:px-10 md:px-12 lg:px-0"
       >
-        {/* SVG CIRCLE */}
+
         <motion.svg
           viewBox="-120 -120 1200 1200"
           className="absolute 
@@ -109,19 +104,18 @@ const [loading, setLoading] = useState(true);
             }}
           />
         </motion.svg>
-        {/* Subtle ambient orange glow */}
-              <div className="absolute inset-0 opacity-10">
-                <motion.div
-                  className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full bg-[#FF4D00] blur-[120px]"
-                  animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.12, 0.08] }}
-                  transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </div>
 
-        {/* CONTENT */}
+        <div className="absolute inset-0 opacity-10">
+          <motion.div
+            className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full bg-[#FF4D00] blur-[120px]"
+            animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.12, 0.08] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+
         <Container className="relative z-10">
           <div className="max-w-5xl">
-            {/* Eyebrow */}
+
             <motion.div
               className="text-xs sm:text-sm uppercase tracking-[0.3em] mb-8 sm:mb-10 md:mb-12"
               initial={{ opacity: 0, y: 20 }}
@@ -131,7 +125,6 @@ const [loading, setLoading] = useState(true);
               WE ARE BLACK<span className="text-[#FF4D00]">INT</span>
             </motion.div>
 
-            {/* Headline */}
             <motion.h1
               className="text-3xl sm:text-5xl md:text-6xl lg:text-8xl leading-[1.1] mb-6 sm:mb-8"
               style={{ fontWeight: 700 }}
@@ -142,7 +135,6 @@ const [loading, setLoading] = useState(true);
               A digital agency<br />focused on web.
             </motion.h1>
 
-            {/* Description */}
             <motion.p
               className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-3xl mb-8 sm:mb-10"
               initial={{ opacity: 0, y: 30 }}
@@ -153,7 +145,6 @@ const [loading, setLoading] = useState(true);
               and producers building elevated websites in the heart of Silicon Valley.
             </motion.p>
 
-            {/* CTA */}
             <motion.a
               href="/contact"
               className="inline-flex items-center gap-3 border border-white/20 px-6 sm:px-8 py-3 sm:py-4 hover:border-[#FF4D00] transition-all duration-300"
@@ -166,62 +157,67 @@ const [loading, setLoading] = useState(true);
               </span>
               <span className="text-lg sm:text-xl">+</span>
             </motion.a>
+
           </div>
         </Container>
 
-        {/* Decorative dots — unchanged */}
-              <motion.div
-                className="absolute right-[15%] top-[30%] grid grid-cols-3 gap-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.4 }}
-              >
-                {[...Array(9)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="w-1.5 h-1.5 rounded-full bg-white/20"
-                    animate={{ opacity: [0.2, 0.5, 0.2] }}
-                    transition={{ duration: 2, delay: i * 0.1, repeat: Infinity }}
-                  />
-                ))}
-              </motion.div>
+        {/* Decorative dots */}
+        <motion.div
+          className="absolute right-[15%] top-[30%] grid grid-cols-3 gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4 }}
+        >
+          {[...Array(9)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="w-1.5 h-1.5 rounded-full bg-white/20"
+              animate={{ opacity: [0.2, 0.5, 0.2] }}
+              transition={{ duration: 2, delay: i * 0.1, repeat: Infinity }}
+            />
+          ))}
+        </motion.div>
 
-        {/* STAR CLUSTER — bottom left */}
-              <div className="absolute inset-0 pointer-events-none z-[2]">
-                <motion.div
-                  className="absolute left-12 bottom-32 grid grid-cols-4 gap-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.2 }}
-                >
-                  {[...Array(14)].map((_, i) => (
-                    <motion.span
-                      key={i}
-                      className="text-[#FF6E00] text-xs"
-                      animate={{
-                        opacity: [0.2, 1, 0.2],
-                        scale: [1, 1.3, 1],
-                      }}
-                      transition={{
-                        duration: 12,
-                        delay: i * 0.15,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      ⭑
-                      </motion.span>
-                  ))}
-                </motion.div>
-              </div>
+        {/* Star cluster */}
+        <div className="absolute inset-0 pointer-events-none z-[2]">
+          <motion.div
+            className="absolute left-12 bottom-32 grid grid-cols-4 gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+          >
+            {[...Array(14)].map((_, i) => (
+              <motion.span
+                key={i}
+                className="text-[#FF6E00] text-xs"
+                animate={{
+                  opacity: [0.2, 1, 0.2],
+                  scale: [1, 1.3, 1],
+                }}
+                transition={{
+                  duration: 12,
+                  delay: i * 0.15,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                ⭑
+              </motion.span>
+            ))}
+          </motion.div>
+        </div>
       </Section>
 
       {/* =========================================
           FEATURED WORK
       ========================================== */}
-      <Section className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32 px-6 sm:px-10 md:px-12 lg:px-0"
-        onViewportEnter={() => setTheme("inverse")}
-        onViewportLeave={() => setTheme("primary")}>
+      <Section
+        className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32 px-6 sm:px-10 md:px-12 lg:px-0"
+      >
+        <motion.div
+          onViewportEnter={() => setTheme("inverse")}
+          onViewportLeave={() => setTheme("primary")}
+        >
         <Container>
           <motion.div
             className="mb-20"
@@ -230,55 +226,62 @@ const [loading, setLoading] = useState(true);
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8 }}
           >
-          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 font-bold">
-            Featured Work
-          </h2>
+            <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 font-bold">
+              Featured Work
+            </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 md:gap-12">
-            {featuredProjects.map((project, index) => (
-              <motion.div
-                key={index}
-                className="group"
-                initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}              
-              >
-                <div className="relative aspect-[4/3] overflow-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 md:gap-12">
+              {loading && projects.length === 0 && (
+                <p className="text-black/40">loading...</p>
+              )}
+
+              {!loading && projects.length === 0 && (
+                <p className="text-black/40">No projects avilable</p>
+              )}
+
+              {projects.length > 0 &&
+                projects.map((project, index) => (
                   <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-full h-full"
+                    key={project.publicId || index}
+                    className="group"
+                    initial={{ opacity: 0, y: 60 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.2 }}
                   >
-                    <ImageWithFallback
-                      src={project.featuredImage}
-                      alt={project.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.6 }}
+                        className="w-full h-full"
+                      >
+                        <ImageWithFallback
+                          src={project.featuredImage}
+                          alt={project.title}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      </motion.div>
+                    </div>
+
+                    <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl mt-2 group-hover:text-[#FF4D00] transition-colors">
+                      {project.title}
+                    </h3>
+
+                    <p className="text-sm sm:text-base text-black/60 mt-2">
+                      {project.shortDescription}
+                    </p>
                   </motion.div>
-                </div>
-
-                {/* <div className="mt-6 text-xs uppercase tracking-widest text-black/80">
-                  {project.category}
-                </div> */}
-
-                <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl mt-2 group-hover:text-[#FF4D00] transition-colors">
-                  {project.title}
-                </h3>
-
-                <p className="text-sm sm:text-base text-black/60 mt-2">
-                  {project.shortDescription}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+                ))}
+            </div>
           </motion.div>
         </Container>
+        </motion.div>
       </Section>
 
-{/* Final CTA Section */}
+      {/* =========================================
+          FINAL CTA SECTION
+      ========================================== */}
       <Section className="relative py-20 sm:py-24 md:py-32 overflow-hidden px-6 sm:px-8 md:px-0">
-        {/* Animated orange background */}
         <motion.div
           className="absolute inset-0 bg-[#FF4D00]"
           initial={{ x: "-100%" }}
@@ -292,7 +295,6 @@ const [loading, setLoading] = useState(true);
 
         <Container>
           <div className="relative z-10 text-white">
-            {/* Eyebrow text — slides left to right */}
             <motion.div
               className="text-s uppercase tracking-[0.3em] mb-8 text-white/80"
               initial={{ x: -60, opacity: 0 }}
@@ -307,7 +309,6 @@ const [loading, setLoading] = useState(true);
               A DIGITAL AGENCY
             </motion.div>
 
-            {/* Description — left aligned */}
             <motion.h2
               className="text-2xl sm:text-3xl md:text-5xl mb-12 sm:mb-14 md:mb-16 leading-tight max-w-5xl text-left"
               style={{ fontWeight: 700 }}
@@ -316,14 +317,13 @@ const [loading, setLoading] = useState(true);
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.45 }}
             >
-              We are a web design and development company, building websites that drive
-              traffic, engagement, and conversion for industry-leading brands and
-              startups in Silicon Valley.
+              We are a web design and development company, building websites
+              that drive traffic, engagement, and conversion for industry-leading
+              brands and startups in Silicon Valley.
             </motion.h2>
           </div>
         </Container>
 
-        {/* Decorative gradient blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-white/5 blur-3xl"
@@ -342,18 +342,16 @@ const [loading, setLoading] = useState(true);
       </Section>
 
       {/* =========================================
-          SERVICES SECTION
+            SERVICES SECTION
       ========================================== */}
       <Section className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32 px-6 sm:px-10 md:px-12 lg:px-0">
         <Container>
           <div className="relative">
-            {/* Background text */}
             <div className="absolute left-0 top-1/2 -translate-y-1/2 text-[18vw] md:text-[20vw]
- font-bold text-black/[0.02] whitespace-nowrap pointer-events-none select-none">
+                font-bold text-black/[0.02] whitespace-nowrap pointer-events-none select-none">
               Services
             </div>
 
-            {/* Section header */}
             <motion.div
               className="mb-24 relative z-10"
               initial={{ opacity: 0, y: 40 }}
@@ -370,50 +368,59 @@ const [loading, setLoading] = useState(true);
               </p>
             </motion.div>
 
-          <div className="space-y-20">
-            {services.map((service, index) => (
-              <motion.div
-                key={index}
-                className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center"
-                initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-              >
-                <div className={service.reverse ? "md:order-2" : ""}>
-                  <div className="text-xs uppercase tracking-[0.3em] text-[#FF4D00] mb-4">
-                    {service.title}
-                  </div>
+            <div className="space-y-20">
+              {loading && offerings.length === 0 && (
+                <p className="text-black/40">loading...</p>
+              )}
 
-                  <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6 group-hover:text-[#FF4D00] transition-colors">
-                    {service.title}
-                  </h3>
+              {!loading && offerings.length === 0 && (
+                <p className="text-black/40">No services avilable</p>
+              )}
 
-                  <p className="text-base sm:text-lg text-black/60">
-                    {service.shortDescription}
-                  </p>
-                </div>
-
-                <div
-                  className={`relative aspect-[4/3] overflow-hidden ${
-                    service.reverse ? "md:order-1" : ""
-                  }`}
-                >
+              {offerings.length > 0 &&
+                offerings.map((service, index) => (
                   <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-full h-full"
+                    key={service.publicId || index}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center"
+                    initial={{ opacity: 0, y: 60 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
                   >
-                    <ImageWithFallback
-                      src={service.featuredImage}
-                      alt={service.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
+                    <div className={index % 2 !== 0 ? "md:order-2" : ""}>
+                      <div className="text-xs uppercase tracking-[0.3em] text-[#FF4D00] mb-4">
+                        {service.title}
+                      </div>
+
+                      <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6 transition-colors">
+                        {service.title}
+                      </h3>
+
+                      <p className="text-base sm:text-lg text-black/60">
+                        {service.shortDescription}
+                      </p>
+                    </div>
+
+                    <div
+                      className={`relative aspect-[4/3] overflow-hidden ${
+                        index % 2 !== 0 ? "md:order-1" : ""
+                      }`}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.6 }}
+                        className="w-full h-full"
+                      >
+                        <ImageWithFallback
+                          src={service.featuredImage}
+                          alt={service.title}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      </motion.div>
+                    </div>
                   </motion.div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          {/* CTA */}
+                ))}
+            </div>
+
             <motion.div
               className="mt-32 text-center relative z-10"
               initial={{ opacity: 0, y: 30 }}
@@ -436,7 +443,7 @@ const [loading, setLoading] = useState(true);
       </Section>
 
       {/* =========================================
-          INSIGHTS
+          INSIGHTS SECTION
       ========================================== */}
       <Section className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32 px-6 sm:px-10 md:px-12 lg:px-0">
         <Container>
@@ -447,64 +454,81 @@ const [loading, setLoading] = useState(true);
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-10 font-bold">
-            Latest Insights
-          </h2>
+            <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-10 font-bold">
+              Latest Insights
+            </h2>
             <p className="text-lg text-black/60 max-w-2xl">
               Our thoughts and perspectives on digital.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 md:gap-12">
-            {insights.map((insight, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                // className="group cursor-pointer"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-full h-full"
-                  >
-                    <ImageWithFallback
-                      src={insight.image}
-                      alt={insight.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  </motion.div>
-                </div>
-                <h3 className="text-lg sm:text-xl md:text-2xl mt-6 group-hover:text-[#FF4D00] transition-colors font-semibold">
-                  {insight.title}
-                </h3>
-              </motion.div>
-            ))}
+            {loading && insights.length === 0 && (
+              <p className="text-black/40">Loading...</p>
+            )}
+
+            {!loading && insights.length === 0 && (
+              <p className="text-black/40">No insight avilable </p>
+            )}
+
+            {insights.length > 0 &&
+              insights.map((insight, index) => (
+                <motion.div
+                  key={insight.publicId || index}
+                  initial={{ opacity: 0, y: 60 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: index * 0.2 }}
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.6 }}
+                      className="w-full h-full"
+                    >
+                      <ImageWithFallback
+                        src={insight.image || insight.image}
+                        alt={insight.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    </motion.div>
+                  </div>
+                  <h3 className="text-lg sm:text-xl md:text-2xl mt-6 transition-colors font-semibold">
+                    {insight.title}
+                  </h3>
+                </motion.div>
+              ))}
           </div>
+
           <motion.div
-            className="text-center"
+            className="text-center mt-20"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ once: true }}
             transition={{ delay: 0.4 }}
           >
             <a
               href="/insights"
               className="inline-flex items-center gap-3 border border-black/20 px-8 py-4 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300"
             >
-              <span className="text-sm uppercase tracking-widest">VIEW MORE INSIGHTS</span>
+              <span className="text-sm uppercase tracking-widest">
+                VIEW MORE INSIGHTS
+              </span>
               <span className="text-xl">+</span>
             </a>
           </motion.div>
         </Container>
       </Section>
 
-      {/* Footer CTA with Wave Text */}
-      <Section className="bg-black py-20 sm:py-24 md:py-32 px-6 sm:px-8 md:px-0"
-              onViewportEnter={() => setTheme("primary")}>
+      {/* =========================================
+          FOOTER CTA
+      ========================================== */}
+      <Section
+        className="bg-black py-20 sm:py-24 md:py-32 px-6 sm:px-8 md:px-0"
+      >
+        <motion.div
+        onViewportEnter={() => setTheme("primary")}
+        >
         <Container>
           <div className="text-center">
             <motion.div
@@ -513,8 +537,11 @@ const [loading, setLoading] = useState(true);
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl sm:text-6xl md:text-8xl inline-flex flex-wrap justify-center" style={{ fontWeight: 900 }}>
-                {"LET'S TALK".split('').map((char, index) => (
+              <h2
+                className="text-4xl sm:text-6xl md:text-8xl inline-flex flex-wrap justify-center"
+                style={{ fontWeight: 900 }}
+              >
+                {"LET'S TALK".split("").map((char, index) => (
                   <motion.span
                     key={index}
                     className="inline-block"
@@ -522,42 +549,40 @@ const [loading, setLoading] = useState(true);
                     whileInView={{ y: 0 }}
                     viewport={{ once: true }}
                     transition={{
-                      duration: 0.8,
+                      duration: 0.4,
                       delay: index * 0.05,
-                      ease: [0.22, 1, 0.36, 1]
+                      ease: [0.22, 1, 0.36, 1],
                     }}
                     whileHover={{
                       y: -20,
-                      color: '#FF4D00',
-                      transition: { duration: 0.3 }
+                      color: "#FF4D00",
+                      transition: { duration: 0.3 },
                     }}
-                    style={{ cursor: 'default' }}
                   >
-                    {char === ' ' ? '\u00A0' : char}
+                    {char === " " ? "\u00A0" : char}
                   </motion.span>
                 ))}
               </h2>
-              </motion.div>
-              {/* ✅ START A PROJECT Button (Below LET'S TALK) */}
-              <motion.a
-                href="/contact"
-                className="inline-flex items-center gap-3 border border-white/20 
-                          px-8 sm:px-10 py-4 sm:py-5 
-                          hover:border-[#FF4D00] hover:text-[#FF4D00] 
-                          transition-all duration-300"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              >
-                <span className="text-xs sm:text-sm uppercase tracking-widest">
-                  START A PROJECT
-                </span>
-                <span className="text-lg sm:text-xl">+</span>
-              </motion.a>
+            </motion.div>
+
+            <motion.a
+              href="/contact"
+              className="inline-flex items-center gap-3 border border-white/20 px-8 sm:px-10 py-4 sm:py-5 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300 text-white"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+            >
+              <span className="text-xs sm:text-sm uppercase tracking-widest">
+                START A PROJECT
+              </span>
+              <span className="text-lg sm:text-xl">+</span>
+            </motion.a>
           </div>
         </Container>
+        </motion.div>
       </Section>
+
     </>
   );
 }

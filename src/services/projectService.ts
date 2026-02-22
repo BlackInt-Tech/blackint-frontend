@@ -1,10 +1,12 @@
-export async function getPublishedProjects() {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects`);
+import { api } from "./api";
+import { Project } from "../types/project";
 
-  const data = await res.json();
-
-  return data.filter(
-    (project: any) =>
-      project.status === "PUBLISHED" && project.isFeatured === true
-  );
+export const getPublishedProjects = async (): Promise<Project[]> => {
+  const response = await api.get("/api/projects/published");
+  
+  if (!response.data?.data) {
+  throw new Error("Invalid API response structure");
 }
+
+return response.data.data;
+};
