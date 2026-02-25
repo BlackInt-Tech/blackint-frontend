@@ -4,45 +4,18 @@ import { Section } from '../components/layout/section';
 import { ScrollIndicator } from '../components/ui/scroll-indicator';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useHeaderTheme } from '../context/header-theme';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useScroll } from "motion/react";
-
-const services = [
-  {
-    number: '01',
-    title: 'Strategy & Planning',
-    description: 'We start with deep research and strategic thinking to build a foundation for success. Our approach combines user research, competitive analysis, and business goals.',
-    capabilities: ['User Research', 'Competitive Analysis', 'Information Architecture', 'Content Strategy'],
-  },
-  {
-    number: '02',
-    title: 'Design & Branding',
-    description: 'Beautiful design that tells your story and connects with your audience. We create cohesive brand systems and stunning visual experiences.',
-    capabilities: ['Brand Identity', 'UI/UX Design', 'Design Systems', 'Motion Design'],
-  },
-  {
-    number: '03',
-    title: 'Development',
-    description: 'Fast, scalable, and pixel-perfect web development that exceeds expectations. We build with modern technologies and best practices.',
-    capabilities: ['Web Development', 'E-commerce', 'CMS Integration', 'Performance Optimization'],
-  },
-  {
-    number: '04',
-    title: 'Growth & Marketing',
-    description: 'Drive traffic, engagement, and conversion with data-driven marketing strategies. We help brands grow and thrive in the digital space.',
-    capabilities: ['SEO Strategy', 'Content Marketing', 'Analytics', 'Conversion Optimization'],
-  },
-  {
-    number: '05',
-    title: 'Consulting',
-    description: 'Strategic guidance and consulting services to help brands navigate the digital landscape and achieve their goals.',
-    capabilities: ['Strategy Consulting', 'Digital Transformation', 'Product Strategy', 'Business Planning'],
-  },
-];
+import { getPublishedOfferings } from "../../services/offeringService";
+import { Offering } from "../../types/offering";
 
 export function Services() {
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
+
+  const [services, setServices] = useState<Offering[]>([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
   setTheme("inverse");
 
@@ -56,6 +29,23 @@ export function Services() {
 
   return () => unsubscribe();
 }, [scrollY, setTheme]);
+
+useEffect(() => {
+  async function loadServices() {
+    try {
+      setLoading(true);
+      const data = await getPublishedOfferings();
+      setServices(data || []);
+    } catch (error) {
+      console.error("Services Load Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  loadServices();
+}, []);
+
   return (
     <>
       <ScrollIndicator />
@@ -110,50 +100,104 @@ export function Services() {
               SERVICES WE OFFER
             </div>
           <div className="space-y-20 md:space-y-32">
-            {services.map((service, index) => (
-              <motion.div
-                key={service.number}
-                initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 border-t border-black/10 pt-12"
-              >
-                {/* Number */}
-                <div className="md:col-span-2">
-                  <div className="text-6xl md:text-8xl text-black/40" style={{ fontWeight: 900 }}>
-                    {service.number}
-                  </div>
-                </div>
-                
-                {/* Content */}
-                <div className="md:col-span-10 space-y-8">
-                  <div>
-                    <h2 className="text-4xl md:text-6xl mb-6" style={{ fontWeight: 700 }}>
-                      {service.title}
-                    </h2>
-                    <p className="text-xl text-black/60 leading-relaxed max-w-3xl">
-                      {service.description}
-                    </p>
+            {loading && services.length === 0 && (
+              <p className="text-black/40">Loading services...</p>
+            )}
+
+            {!loading && services.length === 0 && (
+              <p className="text-black/40">No services available.</p>
+            )}
+
+            {services.length > 0 &&
+              services.map((service, index) => (
+                <motion.div
+                  key={service.publicId || index}
+                  initial={{ opacity: 0, y: 60 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 border-t border-black/10 pt-12"
+                >
+                  {/* Auto Number */}
+                  <div className="md:col-span-2">
+                    <div
+                      className="text-6xl md:text-8xl text-black/40"
+                      style={{ fontWeight: 700 }}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </div>
                   </div>
 
-                  {/* Capabilities */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                    {service.capabilities.map((capability) => (
-                      <div
-                        key={capability}
-                        className="text-sm sm:text-base text-black/60 
-                                  border border-black/20 rounded-md 
-                                  px-4 py-3 
-                                  hover:border-[#FF4D00] hover:text-[#FF4D00] 
-                                  transition-all duration-300"
+                  {/* Content */}
+                  <div className="md:col-span-10 space-y-8">
+                    <div>
+                      <h2
+                        className="text-4xl md:text-6xl mb-6"
+                        style={{ fontWeight: 700 }}
                       >
-                        {capability}
-                      </div>
-                    ))}
+                        {service.title}
+                      </h2>
+
+                      <ImageWithFallback
+                        src={service.featuredImage}
+                        alt={service.title}
+                        className="w-full h-full object-cover"
+                      />
+
+                      <p className="text-xl text-black/60 leading-relaxed max-w-3xl">
+                        {service.shortDescription}
+                      </p>
+
+                      {service.price && (
+                        <motion.div
+                          className="mt-6 relative inline-block"
+                          whileHover={{ scale: 1.05 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                        >
+                          {/* Pulse Glow Background */}
+                          <motion.div
+                            className="absolute inset-0 rounded-xl bg-[#FF4D00]"
+                            animate={{
+                              opacity: [0.4, 0.8, 0.4],
+                              scale: [1, 1.08, 1],
+                            }}
+                            transition={{
+                              duration: 2.5,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                            style={{ filter: "blur(18px)" }}
+                          />
+
+                          {/* Glass Badge */}
+                          <div
+                            className="
+                              relative 
+                              bg-[#FF4D00]/80
+                              backdrop-blur-md
+                              border border-white/20
+                              text-black
+                              px-6 py-3
+                              rounded-xl
+                              font-bold
+                              text-sm md:text-base
+                              tracking-wide
+                              shadow-lg
+                              transition-all duration-300
+                            "
+                          >
+                            {service.price}
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+
+                    {/* Optional full content preview */}
+                    <p className="text-black/50 max-w-3xl">
+                      {service.fullContent}
+                    </p>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
             ))}
           </div>
         </Container>

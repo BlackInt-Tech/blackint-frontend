@@ -29,7 +29,6 @@ export function Contact() {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  
   const [showPopup, setShowPopup] = useState(false);
   
   const handleChange = (
@@ -54,7 +53,7 @@ export function Contact() {
       });
     }
   };
-  
+
       const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -401,6 +400,34 @@ export function Contact() {
           </div>
         </Container>
       </Section>
+
+      {showPopup && (
+        <motion.div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowPopup(false)}
+        >
+          <motion.div
+            className="bg-black border border-[#FF4D00]/40 shadow-[0_0_40px_rgba(255,77,0,0.2)] rounded-xl p-8 ..."
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-[#FF4D00] text-4xl mb-4">✓</div>
+
+            <h3 className="text-xl font-semibold mb-2">
+              Success
+            </h3>
+
+            <p className="text-white/60">
+              {successMessage}
+            </p>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Map Section */}
       <Section className="relative bg-black py-32 overflow-hidden">

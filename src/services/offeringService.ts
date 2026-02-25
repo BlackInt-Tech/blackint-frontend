@@ -1,12 +1,22 @@
 import { api } from "./api";
-import { Project } from "../types/project";
+import { Offering } from "../types/offering";
 
-export const getPublishedOfferings = async (): Promise<Project[]> => {
-  const response = await api.get("/api/offerings/published");
-
-  if (!response.data?.data) {
-  throw new Error("Invalid API response structure");
+interface OfferingResponse {
+  success: boolean;
+  message: string;
+  data: Offering[];
+  status: number;
+  timestamp: string;
 }
 
-return response.data.data;
+export const getPublishedOfferings = async (): Promise<Offering[]> => {
+  const response = await api.get<OfferingResponse>(
+    "/api/offerings/published"
+  );
+
+  if (!response.data?.data) {
+    throw new Error("Invalid API response structure");
+  }
+
+  return response.data.data;
 };

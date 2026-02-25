@@ -1,31 +1,39 @@
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'motion/react';
-import { Header } from './components/nav/header';
-import { Footer } from './components/nav/footer';
-import { CustomCursor } from './components/cursor/custom-cursor';
-import { Preloader } from './components/preloader/preloader';
-import { BackToTop } from './components/ui/back-to-top';
-import { Homepage } from './pages/homepage';
-import { Services } from './pages/services';
-import { Work } from './pages/work';
-import { CaseStudy } from './pages/case-study';
-import { About } from './pages/about';
-import { Insights } from './pages/insights';
-import { BlogArticle } from './pages/blog-article';
-import { Contact } from './pages/contact';
-import { HeaderThemeProvider } from './context/header-theme';
+import { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { AnimatePresence } from "motion/react";
+import { Header } from "./components/nav/header";
+import { Footer } from "./components/nav/footer";
+import { CustomCursor } from "./components/cursor/custom-cursor";
+import { Preloader } from "./components/preloader/preloader";
+import { BackToTop } from "./components/ui/back-to-top";
+import { Homepage } from "./pages/homepage";
+import { Services } from "./pages/services";
+import { Work } from "./pages/work";
+import { CaseStudy } from "./pages/case-study";
+import { About } from "./pages/about";
+import { Insights } from "./pages/insights";
+import { BlogArticle } from "./pages/blog-article";
+import { Contact } from "./pages/contact";
+import { HeaderThemeProvider } from "./context/header-theme";
+import NotFound from "./pages/not-found";
 
+// Scroll Reset
 function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, [pathname]);
 
   return null;
 }
 
+// Animated Routes
 function AnimatedRoutes() {
   const location = useLocation();
 
@@ -41,6 +49,7 @@ function AnimatedRoutes() {
         <Route path="/insights/:slug" element={<BlogArticle />} />
         <Route path="/blog/:slug" element={<BlogArticle />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
   );
@@ -52,20 +61,20 @@ export default function App() {
   return (
     <Router>
       <HeaderThemeProvider>
-      {isLoading ? (
-        <Preloader onComplete={() => setIsLoading(false)} />
-      ) : (
-        <>
-          <CustomCursor />
-          <ScrollToTop />
-          <Header />
-          <main className="min-h-screen">
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-          <BackToTop />
-        </>
-      )}
+        {isLoading ? (
+          <Preloader onComplete={() => setIsLoading(false)} />
+        ) : (
+          <>
+            <CustomCursor />
+            <ScrollToTop />
+            <Header />
+            <main className="min-h-screen">
+              <AnimatedRoutes />
+            </main>
+            <Footer />
+            <BackToTop />
+          </>
+        )}
       </HeaderThemeProvider>
     </Router>
   );

@@ -13,6 +13,37 @@ import { Project } from "../../types/project";
 import { Offering } from "../../types/offering";
 import { Insight } from "../../types/insight";
 
+// SMART HOMEPAGE ALGORITHM
+function smartSelect<T extends {
+  isFeatured?: boolean;
+  publishedAt?: string | null;
+  createdAt?: string | null;
+}>(
+  items: T[],
+  limit: number = 6
+): T[] {
+
+  if (!items || items.length === 0) return [];
+
+  const featured: T[] = items.filter(item => item.isFeatured);
+  const normal: T[] = items.filter(item => !item.isFeatured);
+
+  const sortByDate = (a: T, b: T) => {
+    const dateA = new Date(a.publishedAt ?? a.createdAt ?? 0).getTime();
+    const dateB = new Date(b.publishedAt ?? b.createdAt ?? 0).getTime();
+    return dateB - dateA;
+  };
+
+  featured.sort(sortByDate);
+  normal.sort(sortByDate);
+
+  const shuffledNormal: T[] = [...normal].sort(() => 0.5 - Math.random());
+
+  const combined: T[] = [...featured, ...shuffledNormal];
+
+  return combined.slice(0, limit);
+}
+
 export function Homepage() {
 
   const [projects, setProjects] = useState<Project[]>([]);
@@ -35,9 +66,10 @@ export function Homepage() {
           getPublishedInsights(),
         ]);
 
-      setProjects(projectsData || []);
-      setOfferings(offeringsData || []);
-      setInsights(insightsData || []);
+      setProjects(smartSelect<Project>(projectsData || [], 6));
+      setOfferings(smartSelect<Offering>(offeringsData || [], 6));
+      setInsights(smartSelect<Insight>(insightsData || [], 6));
+
     } catch (error) {
       console.error("Homepage Load Error:", error);
     } finally {
@@ -243,7 +275,7 @@ export function Homepage() {
                 projects.map((project, index) => (
                   <motion.div
                     key={project.publicId || index}
-                    className="group"
+                    className="group cursor-pointer"
                     initial={{ opacity: 0, y: 60 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -251,19 +283,19 @@ export function Homepage() {
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <motion.div
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 0.95 }}
                         transition={{ duration: 0.6 }}
                         className="w-full h-full"
                       >
                         <ImageWithFallback
                           src={project.featuredImage}
                           alt={project.title}
-                          className="absolute inset-0 w-full h-full object-cover"
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500"
                         />
                       </motion.div>
                     </div>
 
-                    <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl mt-2 group-hover:text-[#FF4D00] transition-colors">
+                    <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl mt-2 transition-colors duration-300 group-hover:text-[#FF4D00]">
                       {project.title}
                     </h3>
 
@@ -273,8 +305,27 @@ export function Homepage() {
                   </motion.div>
                 ))}
             </div>
-          </motion.div>
-        </Container>
+
+            {/* VIEW ALL PROJECTS CTA */}
+            <motion.div
+              className="mt-20 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <a
+                href="/work"
+                className="inline-flex items-center gap-3 border border-black/20 px-10 py-5 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300"
+              >
+                <span className="text-sm uppercase tracking-widest">
+                  VIEW ALL PROJECTS
+                </span>
+                <span className="text-xl">+</span>
+              </a>
+            </motion.div>
+            </motion.div>
+          </Container>
         </motion.div>
       </Section>
 
@@ -381,7 +432,7 @@ export function Homepage() {
                 offerings.map((service, index) => (
                   <motion.div
                     key={service.publicId || index}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center"
+                    className="group grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center cursor-pointer"
                     initial={{ opacity: 0, y: 60 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -391,7 +442,7 @@ export function Homepage() {
                         {service.title}
                       </div>
 
-                      <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6 transition-colors">
+                      <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-6 transition-colors duration-300 group-hover:text-[#FF4D00]">
                         {service.title}
                       </h3>
 
@@ -406,14 +457,14 @@ export function Homepage() {
                       }`}
                     >
                       <motion.div
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 0.95 }}
                         transition={{ duration: 0.6 }}
                         className="w-full h-full"
                       >
                         <ImageWithFallback
                           src={service.featuredImage}
                           alt={service.title}
-                          className="absolute inset-0 w-full h-full object-cover"
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500"
                         />
                       </motion.div>
                     </div>
@@ -475,6 +526,7 @@ export function Homepage() {
               insights.map((insight, index) => (
                 <motion.div
                   key={insight.publicId || index}
+                  className="group cursor-pointer"
                   initial={{ opacity: 0, y: 60 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -482,18 +534,19 @@ export function Homepage() {
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <motion.div
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 0.95 }}
                       transition={{ duration: 0.6 }}
                       className="w-full h-full"
                     >
                       <ImageWithFallback
-                        src={insight.image || insight.image}
+                        src={insight.featuredImage}
                         alt={insight.title}
-                        className="absolute inset-0 w-full h-full object-cover"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500"
                       />
                     </motion.div>
                   </div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl mt-6 transition-colors font-semibold">
+
+                  <h3 className="text-lg sm:text-xl md:text-2xl mt-6 font-semibold transition-colors duration-300 group-hover:text-[#FF4D00]">
                     {insight.title}
                   </h3>
                 </motion.div>
