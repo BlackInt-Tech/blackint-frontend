@@ -45,13 +45,13 @@ export function CustomCursor() {
   return (
     <>
       
-      {/* Middle Circle */}
+      {/* Outer Circle */}
       <motion.div
         className="fixed top-0 left-0 w-6 h-6 border border-white/50 rounded-full pointer-events-none z-[9999] mix-blend-difference"
         animate={{
           x: mousePosition.x - 12,
           y: mousePosition.y - 12,
-          scale: isHovering ? 1.8 : 1,
+          scale: isHovering ? 1.4 : 1,
           borderColor: isHovering ? 'rgba(255, 77, 0, 0.8)' : 'rgba(255, 255, 255, 0.5)',
         }}
         transition={{
@@ -66,8 +66,8 @@ export function CustomCursor() {
       <motion.div
         className="fixed top-0 left-0 w-1.5 h-1.5 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference"
         animate={{
-          x: mousePosition.x - 3,
-          y: mousePosition.y - 3,
+          x: mousePosition.x - 2,
+          y: mousePosition.y - 2,
           scale: isHovering ? 2 : 1,
           backgroundColor: isHovering ? '#FF4D00' : '#FFFFFF',
         }}
