@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const ERROR_IMG_SRC =
   'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODgiIGhlaWdodD0iODgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIuMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIzLjciPjxyZWN0IHg9IjE2IiB5PSIxNiIgd2lkdGg9IjU2IiBoZWlnaHQ9IjU2IiByeD0iNiIvPjxwYXRoIGQ9Im0xNiA1OCAxNi0xOCAzMiAzMiIvPjxjaXJjbGUgY3g9IjUzIiBjeT0iMzUiIHI9IjciLz48L3N2Zz4='
@@ -10,6 +10,11 @@ export function ImageWithFallback(
 
   const { src, alt, className, style, ...rest } = props
 
+ 
+  useEffect(() => {
+    setDidError(false)
+  }, [src])
+
   if (didError) {
     return (
       <div
@@ -18,9 +23,8 @@ export function ImageWithFallback(
       >
         <img
           src={ERROR_IMG_SRC}
-          alt="Error loading image"
+          alt="Error loading"
           className="w-12 h-12 opacity-40"
-          {...rest}
         />
       </div>
     )
@@ -30,9 +34,11 @@ export function ImageWithFallback(
     <img
       src={src}
       alt={alt}
-      className={`w-full h-full ${className ?? ''}`}
+      referrerPolicy="no-referrer"
+      className={className}
       style={style}
       onError={() => setDidError(true)}
+      loading="lazy"
       {...rest}
     />
   )

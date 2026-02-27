@@ -150,40 +150,25 @@ useEffect(() => {
 
                       {service.price && (
                         <motion.div
-                          className="mt-6 relative inline-block"
+                          className="mt-6 inline-block"
                           whileHover={{ scale: 1.05 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 18 }}
                         >
-                          {/* Pulse Glow Background */}
-                          <motion.div
-                            className="absolute inset-0 rounded-xl bg-[#FF4D00]"
-                            animate={{
-                              opacity: [0.4, 0.8, 0.4],
-                              scale: [1, 1.08, 1],
-                            }}
-                            transition={{
-                              duration: 2.5,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                            }}
-                            style={{ filter: "blur(18px)" }}
-                          />
-
-                          {/* Glass Badge */}
                           <div
                             className="
-                              relative 
-                              bg-[#FF4D00]/80
-                              backdrop-blur-md
+                              relative
+                              bg-black
+                              text-white
                               border border-white/20
-                              text-black
                               px-6 py-3
-                              rounded-xl
+                              rounded-md
                               font-bold
                               text-sm md:text-base
                               tracking-wide
-                              shadow-lg
-                              transition-all duration-300
+                              transition-all duration-300 ease-out
+                              hover:bg-[#FF4D00]
+                              hover:text-white
+                              hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
                             "
                           >
                             {service.price}

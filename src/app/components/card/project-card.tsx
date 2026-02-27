@@ -15,7 +15,7 @@ export function ProjectCard({ title, industry, role, image, slug, featured = fal
     return (
       <Link to={`/work/${slug}`} className="block group">
         <motion.div
-          className="relative h-[70vh] overflow-hidden"
+          className="relative min-h-[400px] sm:h-[70vh] overflow-hidden"
           whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           data-cursor="VIEW"
