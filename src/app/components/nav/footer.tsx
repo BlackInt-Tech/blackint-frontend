@@ -3,6 +3,10 @@ import { motion } from 'motion/react';
 import { Instagram, Linkedin, Twitter, Facebook } from 'lucide-react';
 import { Container } from '../layout/container';
 import LogoPrimary from '../../assets/logo-primary.png';
+import instagramIcon from "../../assets/instagram.png";
+import facebookIcon from "../../assets/facebook.png";
+import linkedinIcon from "../../assets/linkedin.png";
+import whatsappIcon from "../../assets/whatsapp.png";
 
 export function Footer() {
   return (
@@ -19,7 +23,7 @@ export function Footer() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <div className="w-20 h-20 sm:w-20 sm:h-20 md:w-20 md:h-20 mx-auto sm:mx-0 rounded-full overflow-hidden flex items-center justify-center mb-6">
+              <div className="w-15 h-15 sm:w-15 sm:h-15 md:w-15 md:h-15 mx-auto sm:mx-0 rounded-full overflow-hidden flex items-center justify-center mb-6">
                 <img
                   src={LogoPrimary}
                   alt="BlackInt Logo"
@@ -27,8 +31,8 @@ export function Footer() {
                 />
               </div>
 
-              <p className="text-base sm:text-lg leading-relaxed" style={{ fontWeight: 600 }}>
-                Making great things<br className="hidden sm:block" /> in Silicon Valley.
+              <p className="text-base sm:text-lg leading-relaxed" style={{ fontWeight: 400 }}>
+                Build. Automate. Grow.<br className="hidden sm:block"/> Making great things in India.
               </p>
             </motion.div>
           </div>
@@ -46,18 +50,25 @@ export function Footer() {
               </div>
 
               <a
-                href="mailto:hello@baunfire.com"
+                href="mailto:contact@blackint.in"
                 className="block text-[#FF4D00] text-base sm:text-lg mb-2 hover:underline"
               >
-                hello@baunfire.com
+                contact@blackint.in
               </a>
 
               <a
-                href="tel:(408)899-8998"
+                href="tel:+919288268417"
                 className="block text-[#FF4D00] text-base sm:text-lg hover:underline"
               >
-                (408) 899-8998
+                +91 9288268417
               </a>
+              
+              <div className="text-s text-white/60 leading-relaxed">
+              <br />
+                Greater Noida<br />
+                Delhi NCR, India 201310
+              </div>
+
             </motion.div>
           </div>
 
@@ -74,17 +85,12 @@ export function Footer() {
               </div>
 
               <nav className="space-y-2 text-white/60 text-sm mb-6">
-                <Link to="/work" className="block hover:text-white transition-colors">Work</Link>
-                <Link to="/services" className="block hover:text-white transition-colors">Services</Link>
-                <Link to="/about" className="block hover:text-white transition-colors">About</Link>
-                <Link to="/insights" className="block hover:text-white transition-colors">Insights</Link>
-                <Link to="/contact" className="block hover:text-white transition-colors">Contact</Link>
+                <Link to="/work" className="block hover:text-[#FF4D00] transition-colors">Work</Link>
+                <Link to="/services" className="block hover:text-[#FF4D00] transition-colors">Services</Link>
+                <Link to="/about" className="block hover:text-[#FF4D00] transition-colors">About</Link>
+                <Link to="/insights" className="block hover:text-[#FF4D00] transition-colors">Insights</Link>
+                <Link to="/contact" className="block hover:text-[#FF4D00] transition-colors">Contact</Link>
               </nav>
-
-              <div className="text-xs text-white/40 leading-relaxed">
-                75 E Santa Clara St, Ste 1425<br />
-                San Jose, California 95113
-              </div>
             </motion.div>
           </div>
         </div>
@@ -100,19 +106,41 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
           >
-            {[ 
-              { icon: Instagram, label: 'Instagram' },
-              { icon: Facebook, label: 'Facebook' },
-              { icon: Twitter, label: 'Twitter' },
-              { icon: Linkedin, label: 'LinkedIn' }
+            {[
+              {
+                icon: whatsappIcon,
+                label: "Whatsapp",
+                link: "https://whatsapp.com"
+              },
+              {
+                icon: instagramIcon,
+                label: "Instagram",
+                link: "https://www.instagram.com/blackinttech?igsh=MWExd3N3YjlrMW43Zw=="
+              },
+              {
+                icon: facebookIcon,
+                label: "Facebook",
+                link: "https://facebook.com"
+              },
+              {
+                icon: linkedinIcon,
+                label: "LinkedIn",
+                link: "https://www.linkedin.com/company/blackint-tech/"
+              }
             ].map((social) => (
               <a
                 key={social.label}
-                href="#"
+                href={social.link}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-white/40 hover:text-[#FF4D00] transition-colors"
                 aria-label={social.label}
               >
-                <social.icon size={20} />
+                <img
+                  src={social.icon}
+                  alt={social.label}
+                  className="w-5 h-5 object-contain brightness-0 invert opacity-60 hover:opacity-100 transition"
+                />
               </a>
             ))}
           </motion.div>

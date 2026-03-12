@@ -3,6 +3,10 @@ import { motion, useScroll, AnimatePresence, useTransform } from 'motion/react';
 import { Instagram, Linkedin, Twitter, Facebook } from 'lucide-react';
 import LogoPrimary from '../../assets/logo-primary.png';
 import LogoInverse from '../../assets/logo-inverse.png';
+import instagramIcon from "../../assets/instagram.png";
+import facebookIcon from "../../assets/facebook.png";
+import linkedinIcon from "../../assets/linkedin.png";
+import whatsappIcon from "../../assets/whatsapp.png";
 import { useHeaderTheme } from '../../context/header-theme';
 import { useRef } from 'react';
 
@@ -220,45 +224,68 @@ function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
                 </div>
 
                 <a
-                  href="mailto:hello@baunfire.com"
+                  href="mailto:contact@blackint.in"
                   className="block text-[#FF4D00] text-lg sm:text-xl mb-2 hover:underline"
                 >
-                  hello@baunfire.com
+                  contact@blaclint.in
                 </a>
 
                 <a
-                  href="tel:(408)899-8998"
+                  href="tel:+919288268417"
                   className="block text-[#FF4D00] text-lg sm:text-xl mb-6 hover:underline"
                 >
-                  (408) 899-8998
+                  +91 9288268417
                 </a>
 
                 <div className="text-sm text-white/40 leading-relaxed mb-10">
-                  75 E Santa Clara St, Ste 1425<br />
-                  San Jose, California 95113
+                  Greater Noida, Delhi NCR<br />
+                  India 201310
                 </div>
               </motion.div>
 
-              {/* Social Icons */}
+              {/* Social */}
               <motion.div
-                className="flex gap-6 justify-center lg:justify-start"
+                className="flex gap-5 justify-center md:justify-start"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
               >
                 {[
-                  { icon: Instagram, label: "Instagram" },
-                  { icon: Facebook, label: "Facebook" },
-                  { icon: Twitter, label: "Twitter" },
-                  { icon: Linkedin, label: "LinkedIn" },
+                  {
+                    icon: whatsappIcon,
+                    label: "Whatsapp",
+                    link: "https://whatsapp.com"
+                  },
+                  {
+                    icon: instagramIcon,
+                    label: "Instagram",
+                    link: "https://www.instagram.com/blackinttech?igsh=MWExd3N3YjlrMW43Zw=="
+                  },
+                  {
+                    icon: facebookIcon,
+                    label: "Facebook",
+                    link: "https://facebook.com"
+                  },
+                  {
+                    icon: linkedinIcon,
+                    label: "LinkedIn",
+                    link: "https://www.linkedin.com/company/blackint-tech/"
+                  }
                 ].map((social) => (
                   <a
                     key={social.label}
-                    href="#"
-                    aria-label={social.label}
+                    href={social.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-white/40 hover:text-[#FF4D00] transition-colors"
+                    aria-label={social.label}
                   >
-                    <social.icon size={20} />
+                    <img
+                      src={social.icon}
+                      alt={social.label}
+                      className="w-5 h-5 object-contain brightness-0 invert opacity-60 hover:opacity-100 transition"
+                    />
                   </a>
                 ))}
               </motion.div>

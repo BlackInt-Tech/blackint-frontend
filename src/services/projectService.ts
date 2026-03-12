@@ -11,7 +11,7 @@ interface ProjectResponse {
 
 export const getPublishedProjects = async (): Promise<Project[]> => {
   const response = await api.get<ProjectResponse>(
-    "/api/projects/published"
+    "/api/projects/getPublished"
   );
 
   if (!response.data?.data) {
@@ -24,7 +24,7 @@ export const getPublishedProjects = async (): Promise<Project[]> => {
 export const getProjectBySlug = async (
   slug: string
 ): Promise<Project> => {
-  const response = await api.get(`/api/projects/slug/${slug}`);
+  const response = await api.get(`/api/projects/getBySlug/${slug}`);
 
   if (!response.data?.data) {
     throw new Error("Invalid API response");

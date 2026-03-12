@@ -9,6 +9,7 @@ import { useHeaderTheme } from '../context/header-theme';
 import { useEffect, useState} from 'react';
 import { getPublishedProjects } from "../../services/projectService";
 import { Project } from "../../types/project";
+import { getCachedData, setCachedData } from '../utils/cache';
 
 export function Work() {
   const { setTheme } = useHeaderTheme();
@@ -31,21 +32,32 @@ export function Work() {
 }, [scrollY, setTheme]);
 
   useEffect(() => {
-  async function loadProjects() {
-    try {
-      setLoading(true);
-      const data = await getPublishedProjects();
-      setProjects(data || []);
-    } catch (error) {
-      console.error("Work Load Error:", error);
-    } finally {
-      setLoading(false);
+    async function loadProject() {
+      try {
+        setLoading(true);
+
+        const cached = getCachedData<Project[]>("work_projects");
+
+        if (cached) {
+          setProjects(cached);
+          setLoading(false);
+          return;
+        }
+
+        const data = await getPublishedProjects();
+        setProjects(data || []);
+
+        setCachedData("work_projects", data || []);
+      } catch (error) {
+        console.error("Work Page Error:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  loadProjects();
-}, []);
-
+    loadProject();
+  }, []);
+  
   return (
     <>
       <ScrollIndicator />

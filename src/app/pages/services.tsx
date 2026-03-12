@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useScroll } from "motion/react";
 import { getPublishedOfferings } from "../../services/offeringService";
 import { Offering } from "../../types/offering";
+import { getCachedData, setCachedData } from '../utils/cache';
 
 export function Services() {
   const { setTheme } = useHeaderTheme();
@@ -34,10 +35,22 @@ useEffect(() => {
   async function loadServices() {
     try {
       setLoading(true);
+
+      const cached = getCachedData<Offering[]>("services_offerings");
+
+      if (cached) {
+        setServices(cached);
+        setLoading(false);
+        return;
+      }
+
       const data = await getPublishedOfferings();
+
       setServices(data || []);
+
+      setCachedData("services_offerings", data || []);
     } catch (error) {
-      console.error("Services Load Error:", error);
+      console.error("Services Page Error:", error);
     } finally {
       setLoading(false);
     }
@@ -156,21 +169,21 @@ useEffect(() => {
                         >
                           <div
                             className="
-                              relative
-                              bg-black
-                              text-white
-                              border border-white/20
-                              px-6 py-3
-                              rounded-md
-                              font-bold
-                              text-sm md:text-base
-                              tracking-wide
-                              transition-all duration-300 ease-out
-                              hover:bg-[#FF4D00]
-                              hover:text-white
-                              hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
-                            "
-                          >
+                                relative
+                                border-black
+                                text-black
+                                border border-black/40
+                                px-6 py-3
+                                rounded-md
+                                font-bold
+                                text-sm md:text-base
+                                tracking-wide
+                                transition-all duration-300 ease-out
+                                hover:border-[#FF4D00]
+                                hover:text-[#FF4D00]
+                                hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
+                              "
+                            >
                             {service.price}
                           </div>
                         </motion.div>

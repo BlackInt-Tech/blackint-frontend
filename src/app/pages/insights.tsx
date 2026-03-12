@@ -9,6 +9,7 @@ import { useEffect, useState} from "react";
 import { useScroll } from "motion/react";
 import { getPublishedInsights } from "../../services/insightService";
 import { Insight } from "../../types/insight";
+import { getCachedData, setCachedData } from '../utils/cache';
 
 export function Insights() {
   const { setTheme } = useHeaderTheme();
@@ -43,6 +44,25 @@ async function loadInsights(pageNumber: number) {
   try {
     setLoading(true);
 
+    const cacheKey = `insights_page_${pageNumber}`;
+
+    const cached = getCachedData<Insight[]>(cacheKey);
+
+    if (cached) {
+      if (pageNumber === 0) {
+        setInsights(cached);
+      } else {
+        setInsights((prev) => [...prev, ...cached]);
+      }
+
+      if (cached.length === 0) {
+        setHasMore(false);
+      }
+
+      setLoading(false);
+      return;
+    }
+
     const data = await getPublishedInsights(pageNumber, 6);
 
     if (data.length === 0) {
@@ -54,6 +74,8 @@ async function loadInsights(pageNumber: number) {
     } else {
       setInsights((prev) => [...prev, ...data]);
     }
+
+    setCachedData(cacheKey, data);
 
   } catch (error) {
     console.error("Insights Load Error:", error);

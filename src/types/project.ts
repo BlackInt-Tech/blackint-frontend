@@ -5,6 +5,7 @@ export interface Project {
   shortDescription: string;
   fullContent: string;
   featuredImage: string;
+  galleryImages?: string[];
   clientName: string;
   projectUrl: string;
   status: string;

@@ -6,9 +6,51 @@ import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Facebook } from 'luc
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect, useState } from "react";
 import { submitContact } from "../../services/contactService";
+import { getCachedData, setCachedData } from "../utils/cache";
+import { getPublishedOfferings } from "../../services/offeringService";
+import { Offering } from "../../types/offering";
+import { useLocation } from "react-router-dom";
 
 export function Contact() {
+
+  const [servicesList, setServicesList] = useState<Offering[]>([]);
   const { setTheme } = useHeaderTheme();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.selectedService) {
+      setFormData((prev) => ({
+        ...prev,
+        services: [location.state.selectedService],
+      }));
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    async function loadServices() {
+      try {
+        const cacheKey = "contact_offerings";
+        const cached = getCachedData<Offering[]>(cacheKey);
+
+        if (cached) {
+          setServicesList(cached);
+          return;
+        }
+
+        const data = await getPublishedOfferings();
+
+        if (data) {
+          setServicesList(data);
+          setCachedData(cacheKey, data);
+        }
+
+      } catch (error) {
+        console.error("Failed to load offerings", error);
+      }
+    }
+
+    loadServices();
+  }, []);
 
   useEffect(() => {
     setTheme("primary");
@@ -30,6 +72,7 @@ export function Contact() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -40,17 +83,38 @@ export function Contact() {
     });
   };
 
-  const handleServiceChange = (service: string) => {
-    if (formData.services.includes(service)) {
-      setFormData({
-        ...formData,
-        services: formData.services.filter((s) => s !== service),
-      });
+  const handleServiceChange = (serviceTitle: string) => {
+    let updatedServices;
+
+    if (formData.services.includes(serviceTitle)) {
+      updatedServices = formData.services.filter(
+        (s) => s !== serviceTitle
+      );
     } else {
-      setFormData({
-        ...formData,
-        services: [...formData.services, service],
-      });
+      updatedServices = [...formData.services, serviceTitle];
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      services: updatedServices,
+    }));
+
+    const selectedObjects = servicesList.filter((s) =>
+      updatedServices.includes(s.title)
+    );
+
+    const totalPrice = selectedObjects.reduce((acc, curr) => {
+      const priceNumber = parseInt(
+        curr.price?.replace(/[^\d]/g, "") || "0"
+      );
+      return acc + priceNumber;
+    }, 0);
+
+    if (totalPrice > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        budget: `Approx ₹${totalPrice.toLocaleString()}`
+      }));
     }
   };
 
@@ -103,6 +167,14 @@ export function Contact() {
         }
       };
 
+      const isFormValid =
+        formData.firstName.trim() !== "" &&
+        formData.lastName.trim() !== "" &&
+        formData.email.trim() !== "" &&
+        formData.projectIdea.trim() !== "" &&
+        formData.services.length > 0 &&
+        formData.budget !== "";
+
   return (
     <>
       <ScrollIndicator />
@@ -120,12 +192,12 @@ export function Contact() {
               GET IN TOUCH
             </div>
             <h1
-              className="text-6xl md:text-9xl mb-12 leading-[1.05]"
+              className="text-5xl md:text-8xl mb-10 leading-[1.05]"
               style={{ fontWeight: 700 }}
             >
               Let's create something amazing.
             </h1>
-            <p className="text-xl md:text-2xl text-white/60 max-w-3xl leading-relaxed">
+            <p className="text-l md:text-xl text-white/60 max-w-3xl leading-relaxed">
               Whether you have a project in mind or just want to chat about the possibilities, we'd love to hear from you.
             </p>
           </motion.div>
@@ -188,6 +260,7 @@ export function Contact() {
                   type="email"
                   name="email"
                   required
+                  pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$"
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
@@ -200,8 +273,10 @@ export function Contact() {
                   Phone *
                 </label>
                 <input
-                  type="text"
+                  type="tel"
                   name="phone"
+                  pattern="^(\+91[\-\s]?)?[6-9]\d{9}$"
+                  title="Enter valid 10-digit Indian mobile number"
                   value={formData.phone}
                   onChange={handleChange}
                   className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
@@ -227,41 +302,31 @@ export function Contact() {
                 <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
                   Services *
                 </label>
+
                 <div className="flex flex-wrap gap-3">
-                  {["Website Development", "SEO", "Social Media", "Branding", "UI/UX Design"].map((service) => (
+                  {servicesList.map((service) => (
                     <button
                       type="button"
-                      key={service}
-                      onClick={() => handleServiceChange(service)}
-                      className={`px-4 py-2 border rounded-full text-sm transition-all ${
-                        formData.services.includes(service)
-                          ? "bg-[#FF4D00] text-white border-[#FF4D00]"
-                          : "border-white/20 text-white/60"
-                      }`}
+                      key={service.publicId}
+                      onClick={() => handleServiceChange(service.title)}
+                      className={`
+                        px-4 py-2 rounded-full text-sm border transition-all duration-300
+                        ${
+                          formData.services.includes(service.title)
+                            ? "bg-[#FF4D00] text-white border-[#FF4D00]"
+                            : "border-white/20 text-white/60 hover:border-[#FF4D00] hover:text-white"
+                        }
+                      `}
                     >
-                      {service}
+                      {service.title}
+                      {service.price && (
+                        <span className="ml-2 text-xs opacity-70">
+                          ({service.price})
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
-              </div>
-
-              {/* Budget */}
-              <div>
-                <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                  Project Budget *
-                </label>
-                <select
-                  name="budget"
-                  value={formData.budget}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
-                >
-                  <option value="" className="bg-black">Select a range</option>
-                  <option value="₹10k - ₹25k" className="bg-black">₹10k - ₹25k</option>
-                  <option value="₹25k - ₹50k" className="bg-black">₹25k - ₹50k</option>
-                  <option value="₹50k - ₹100k" className="bg-black">₹50k - ₹100k</option>
-                  <option value="₹100k+" className="bg-black">₹100k+</option>
-                </select>
               </div>
 
               {/* Project Idea */}
@@ -278,31 +343,24 @@ export function Contact() {
                 />
               </div>
 
-              {/* Message */}
-              <div>
-                <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                  Additional Message *
-                </label>
-                <textarea
-                  name="message"
-                  rows={4}
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00] resize-none"
-                />
-              </div>
-
               {/* Submit */}
               <motion.button
                 type="submit"
-                disabled={loading}
-                className="bg-[#FF4D00] text-white px-10 py-5 hover:bg-[#ff6a2d] transition-colors uppercase tracking-widest text-sm disabled:opacity-60"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                disabled={loading || !isFormValid && captchaToken !== null}
+                className={`px-10 py-5 uppercase tracking-widest text-sm transition-all
+                  ${
+                    loading || !isFormValid && captchaToken !== null
+                      ? "bg-gray-700 text-white/40 cursor-not-allowed"
+                      : "bg-[#FF4D00] text-white hover:bg-[#ff6a2d]"
+                  }
+                `}
               >
                 {loading ? "Requesting..." : "Request Call Back"}
               </motion.button>
-            </form>
+                <p className="text-xs text-white/40 mt-4">
+                  Your information is confidential and secure.
+                </p>
+              </form>
             </motion.div>
           </div>
         </Container>

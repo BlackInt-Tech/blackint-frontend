@@ -56,7 +56,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
                       rotateX: 0 
                     } : {}}
                     transition={{
-                      duration: 0.9,
+                      duration: 1.2,
                       ease: [0.22, 1, 0.36, 1],
                       delay: 0.08 * index
                     }}
@@ -74,12 +74,12 @@ export function Preloader({ onComplete }: PreloaderProps) {
             </div>
             
             <motion.div
-              className="mt-12 text-xs uppercase tracking-widest text-white/40"
+              className="mt-12 text-l uppercase tracking-widest text-white/80"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
             >
-              Creative Technology Studio
+              Build. Automate. Grow.
             </motion.div>
           </div>
         </motion.div>

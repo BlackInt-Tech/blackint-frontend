@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useScroll } from "motion/react";
 import { getProjectBySlug } from '../../services/projectService';
 import { Project } from '../../types/project';
+import { getCachedData, setCachedData } from '../utils/cache';
 
 export function CaseStudy() {
 
@@ -20,30 +21,47 @@ export function CaseStudy() {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // =============================
-  // FETCH PROJECT FROM BACKEND
-  // =============================
   useEffect(() => {
-    async function fetchProject() {
-      try {
-        if (!slug) return;
-
-        setLoading(true);
-        const data = await getProjectBySlug(slug);
-        setProject(data);
-      } catch (error) {
-        console.error("Project fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
+  async function fetchProject() {
+    if (!slug) {
+      setLoading(false);
+      return;
     }
 
-    fetchProject();
-  }, [slug]);
+    try {
+      setLoading(true);
 
-  // =============================
-  // KEEP YOUR THEME LOGIC SAME
-  // =============================
+      const cacheKey = `project_slug_${slug}`;
+
+      // Check cache first
+      const cached = getCachedData<Project>(cacheKey);
+
+      if (cached) {
+        setProject(cached);
+        return;
+      }
+
+      // No cache → Call API
+      const data = await getProjectBySlug(slug);
+
+      if (data) {
+        setProject(data);
+        setCachedData(cacheKey, data);
+      } else {
+        setProject(null);
+      }
+
+    } catch (error) {
+      console.error("Project fetch error:", error);
+      setProject(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchProject();
+}, [slug]);
+
   useEffect(() => {
     setTheme("primary");
 
@@ -80,9 +98,7 @@ export function CaseStudy() {
     <>
       <ScrollIndicator />
 
-      {/* =========================================
-          HERO IMAGE
-      ========================================== */}
+      {/* HERO IMAGE */}
 
       <div className="h-screen relative bg-black">
 
@@ -93,7 +109,7 @@ export function CaseStudy() {
           transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
         >
           <ImageWithFallback
-            src={project.featuredImage}
+            src={project.featuredImage || project.galleryImages?.[0]}
             alt={project.title}
             className="w-full h-full object-cover opacity-70"
           />
@@ -124,9 +140,7 @@ export function CaseStudy() {
         </div>
       </div>
 
-      {/* =========================================
-          PROJECT META
-      ========================================== */}
+      {/* Project Details */}
 
       <Section className="border-b border-white/10 bg-black">
         <Container>
@@ -178,9 +192,7 @@ export function CaseStudy() {
         </Container>
       </Section>
 
-            {/* =========================================
-          CHALLENGE
-      ========================================== */}
+            {/* Challanges */}
 
       <Section className="bg-white text-black py-32">
         <Container>
@@ -224,9 +236,7 @@ export function CaseStudy() {
       </Section>
 
 
-      {/* =========================================
-          SOLUTION
-      ========================================== */}
+      {/* Solutions */}
 
       <Section className="bg-black py-32">
         <Container>
@@ -273,7 +283,7 @@ export function CaseStudy() {
                 viewport={{ once: true }}
               >
                 <ImageWithFallback
-                  src={project.featuredImage}
+                  src={project.galleryImages?.[0]}
                   alt={project.title}
                   className="w-full h-full object-cover"
                 />
@@ -285,53 +295,50 @@ export function CaseStudy() {
       </Section>
 
 
-      {/* =========================================
-          UI SHOWCASE
-      ========================================== */}
-
+      {/* UI Showcase */}
       <Section className="bg-white text-black py-32">
         <Container>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-            <motion.div
-              className="aspect-[4/5] overflow-hidden"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <ImageWithFallback
-                src={project.featuredImage}
-                alt={project.title}
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
+            {project.galleryImages?.[1] && (
+              <motion.div
+                className="aspect-[4/5] overflow-hidden rounded-xl"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                <ImageWithFallback
+                  src={project.galleryImages[1]}
+                  alt={`${project.title} gallery 2`}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
 
-            <motion.div
-              className="aspect-[4/5] overflow-hidden"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              <ImageWithFallback
-                src={project.featuredImage}
-                alt={project.title}
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
-
+            {project.galleryImages?.[2] && (
+              <motion.div
+                className="aspect-[4/5] overflow-hidden rounded-xl"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
+                <ImageWithFallback
+                  src={project.galleryImages[2]}
+                  alt={`${project.title} gallery 3`}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
           </div>
         </Container>
       </Section>
 
-
-      {/* =========================================
-          RESULTS
-      ========================================== */}
-
+      {/* Results */}
       <Section className="bg-black py-32">
         <Container>
-
           <motion.div
             className="mb-20"
             initial={{ opacity: 0, y: 40 }}
@@ -345,7 +352,7 @@ export function CaseStudy() {
               The Results
             </h2>
           </motion.div>
-
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
 
             <motion.div
@@ -395,9 +402,7 @@ export function CaseStudy() {
       </Section>
 
 
-      {/* =========================================
-          NEXT PROJECT
-      ========================================== */}
+      {/* Next Project */}
 
       <Section className="bg-white text-black py-32">
         <Container>

@@ -4,7 +4,7 @@ import { Section } from "../components/layout/section";
 import { ScrollIndicator } from "../components/ui/scroll-indicator";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useHeaderTheme } from "../context/header-theme";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useScroll } from "motion/react";
 import { Link } from "react-router-dom";
 import { getPublishedProjects } from "../../services/projectService";
@@ -13,6 +13,8 @@ import { getPublishedInsights } from "../../services/insightService";
 import { Project } from "../../types/project";
 import { Offering } from "../../types/offering";
 import { Insight } from "../../types/insight";
+import { getCachedData, setCachedData } from "../utils/cache";
+import { useNavigate } from "react-router-dom";
 
 export function Homepage() {
 
@@ -20,15 +22,41 @@ export function Homepage() {
   const [offerings, setOfferings] = useState<Offering[]>([]);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loading, setLoading] = useState(false);
+  const words = [
+                  "Design.",
+                  "Development.",
+                  "Marketing.",
+                  "Branding.",
+                  "Strategy.",
+                  "Growth."];
 
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
+  const navigate = useNavigate();
 
   useEffect(() => {
   async function loadData() {
     try {
       setLoading(true);
 
+      const cacheKey = "homepage_data";
+
+      // Check cache first
+      const cached = getCachedData<{
+        projects: Project[];
+        offerings: Offering[];
+        insights: Insight[];
+      }>(cacheKey);
+
+      if (cached) {
+        setProjects(cached.projects);
+        setOfferings(cached.offerings);
+        setInsights(cached.insights);
+        setLoading(false);
+        return;
+      }
+
+      // No cache → Call APIs
       const [projectsData, offeringsData, insightsData] =
         await Promise.all([
           getPublishedProjects(),
@@ -36,13 +64,20 @@ export function Homepage() {
           getPublishedInsights(),
         ]);
 
-        console.log("Projects:", projectsData);
-        console.log("Offerings:", offeringsData);
-        console.log("Insights:", insightsData);
+      const slicedProjects = (projectsData || []).slice(0, 6);
+      const slicedOfferings = (offeringsData || []).slice(0, 6);
+      const slicedInsights = (insightsData || []).slice(0, 6);
 
-      setProjects((projectsData || []).slice(0, 6));
-      setOfferings((offeringsData || []).slice(0, 6));
-      setInsights((insightsData || []).slice(0, 6));
+      setProjects(slicedProjects);
+      setOfferings(slicedOfferings);
+      setInsights(slicedInsights);
+
+      // Store combined data in cache
+      setCachedData(cacheKey, {
+        projects: slicedProjects,
+        offerings: slicedOfferings,
+        insights: slicedInsights,
+      });
 
     } catch (error) {
       console.error("Homepage Load Error:", error);
@@ -68,6 +103,46 @@ export function Homepage() {
     return () => unsubscribe();
   }, [scrollY, setTheme]);
 
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentWord = words[currentWordIndex];
+    const typingSpeed = isDeleting ? 50 : 100;
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setDisplayText(currentWord.substring(0, displayText.length + 1));
+        if (displayText === currentWord) {
+          setTimeout(() => setIsDeleting(true), 1000); // pause before deleting
+        }
+      } else {
+        setDisplayText(currentWord.substring(0, displayText.length - 1));
+        if (displayText === "") {
+          setIsDeleting(false);
+          setCurrentWordIndex((prev) => (prev + 1) % words.length);
+        }
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, currentWordIndex]);
+
+  const particles = useMemo(() => {
+    return [...Array(25)].map((_, i) => {
+      const size = Math.random() * 30 + 10;
+
+      return {
+        id: i,
+        size,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        duration: Math.random() * 10 + 5,
+      };
+    });
+  }, []);
+
   return (
     <>
       <ScrollIndicator />
@@ -81,38 +156,34 @@ export function Homepage() {
       >
         {/* Floating Particles */}
         <div className="absolute inset-0 z-[1] pointer-events-none">
-          {[...Array(25)].map((_, i) => {
-            const size = Math.random() * 25 + 5;
-
-            return (
-              <motion.div
-                key={i}
-                className="absolute rounded-full"
-                style={{
-                  width: size,
-                  height: size,
-                  border: "1.2px solid rgba(255, 255, 255, 0.6)",
-                  boxShadow: `
-                    0 0 25px rgba(255,106,0,0.4),
-                    0 0 80px rgba(255,106,0,0.25),
-                    inset 0 0 20px rgba(255,106,0,0.15)
-                  `,
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  opacity: 0.4,
-                }}
-                animate={{
-                  x: [0, 200],
-                  y: [0, -150],
-                }}
-                transition={{
-                  duration: Math.random() * 10 + 5,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-            );
-          })}
+          {particles.map((particle) => (
+            <motion.div
+              key={particle.id}
+              className="absolute rounded-full"
+              style={{
+                width: particle.size,
+                height: particle.size,
+                border: "1.2px solid rgba(255, 255, 255, 0.6)",
+                boxShadow: `
+                  0 0 25px rgba(255,106,0,0.4),
+                  0 0 80px rgba(255,106,0,0.25),
+                  inset 0 0 20px rgba(255,106,0,0.15)
+                `,
+                top: particle.top,
+                left: particle.left,
+                opacity: 0.4,
+              }}
+              animate={{
+                x: [0, 200],
+                y: [0, -150],
+              }}
+              transition={{
+                duration: particle.duration,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+          ))}
         </div>
 
         {/* Ambient Glow */}
@@ -129,52 +200,34 @@ export function Homepage() {
           <div className="max-w-5xl">
 
             {/* Top Label */}
-            <motion.div
-              className="text-xs sm:text-sm uppercase tracking-[0.3em] mb-6 sm:mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            >
+            <div className="text-xs sm:text-sm uppercase tracking-[0.3em] mb-6 sm:mb-8">
               WE ARE BLACK<span className="text-[#FF4D00]">INT</span>
-            </motion.div>
+            </div>
 
             {/* Heading */}
-            <motion.h1
-              className="text-3xl sm:text-5xl md:text-6xl lg:text-8xl leading-[1.05] mb-6 sm:mb-8"
-              style={{ fontWeight: 700 }}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
+            <h1
+              className="text-3xl sm:text-5xl md:text-5xl lg:text-7xl leading-[1.05] mb-6 sm:mb-8"
+              style={{ fontWeight: 800}}
             >
-              A digital agency <br className="hidden sm:block" />
-              focused on web.
-            </motion.h1>
+              A Digital Agency <br />
+              Focused On{" "} <span className="inline-block min-w-[12ch] text-[#FF4D00]"> {displayText} </span>
+            </h1>
 
             {/* Description */}
-            <motion.p
-              className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-3xl mb-8 sm:mb-10"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1 }}
-            >
-              We are a creative team of designers, developers, strategists,
-              and producers building elevated websites in the heart of Silicon Valley.
-            </motion.p>
+            <p className="text-base sm:text-s md:text-lg lg:text-xl text-white/80 max-w-3xl mb-8 sm:mb-10">
+              Creating technology-driven ecosystems where businesses build faster, automate smarter, and grow stronger in an increasingly digital world.
+            </p>
 
             {/* CTA */}
-            <motion.a
-              href="/contact"
+            <a
+              href="/about"
               className="inline-flex items-center gap-3 border border-white/20 px-6 sm:px-8 py-3 sm:py-4 hover:border-[#FF4D00] transition-all duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.2 }}
             >
               <span className="text-xs sm:text-sm uppercase tracking-widest">
                 GET TO KNOW US
               </span>
               <span className="text-lg sm:text-xl">+</span>
-            </motion.a>
-
+            </a>
           </div>
         </Container>
       </Section>
@@ -450,8 +503,7 @@ export function Homepage() {
                           {service.title}
                         </h2>
 
-                        <div className="relative overflow-hidden aspect-[4/3] rounded-xl mb-6">
-                          <motion.div
+                          <div className="relative overflow-hidden aspect-[4/3] rounded-xl mb-6 max-w-[80%]">                          <motion.div
                             whileHover={{ scale: 1.05 }}
                             transition={{ duration: 0.6 }}
                             className="w-full h-full"
@@ -474,25 +526,30 @@ export function Homepage() {
                             whileHover={{ scale: 1.05 }}
                             transition={{ type: "spring", stiffness: 300, damping: 18 }}
                           >
-                            <div
+                            <button
+                              onClick={() =>
+                                navigate("/contact", {
+                                  state: { selectedService: service.title },
+                                })
+                              }
                               className="
                                 relative
-                                bg-black
-                                text-white
-                                border border-white/20
+                                border-black
+                                text-black
+                                border border-black/40
                                 px-6 py-3
                                 rounded-md
                                 font-bold
                                 text-sm md:text-base
                                 tracking-wide
                                 transition-all duration-300 ease-out
-                                hover:bg-[#FF4D00]
-                                hover:text-white
+                                hover:border-[#FF4D00]
+                                hover:text-[#FF4D00]
                                 hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
                               "
                             >
                               {service.price}
-                            </div>
+                            </button>
                           </motion.div>
                         )}
                       </div>

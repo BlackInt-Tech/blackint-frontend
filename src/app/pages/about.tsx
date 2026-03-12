@@ -28,23 +28,23 @@ const values = [
 
 const team = [
   {
-    name: 'Alex Johnson',
-    role: 'Creative Director',
+    name: 'Ritik Raj',
+    role: 'FOUNDER & CEO',
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
   },
   {
-    name: 'Sarah Chen',
+    name: 'Souvik Haldar',
     role: 'Lead Developer',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
   },
   {
-    name: 'Michael Brown',
-    role: 'Strategy Lead',
+    name: 'Vicky Anand',
+    role: 'Marketing Lead',
     image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
   },
   {
-    name: 'Emily Rodriguez',
-    role: 'UX Designer',
+    name: 'Ayesh Biswal',
+    role: 'UI/UX Lead',
     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
   },
 ];
@@ -87,15 +87,14 @@ export function About() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="max-w-5xl"
           >
-            <div className="text-s uppercase tracking-[0.3em] text-[#FF4D00] mb-8">
-              A DIGITAL AGENCY
+            <div className="text-xs sm:text-sm uppercase tracking-[0.3em] mb-6 sm:mb-8">
+              WE ARE BLACK<span className="text-[#FF4D00]">INT</span>
             </div>
-            <h1 className="text-5xl md:text-7xl mb-12 leading-[1.1]" style={{ fontWeight: 700 }}>
-              We are a <br/>web design and development company.
+            <h1 className="text-5xl md:text-7xl mb-12 leading-[1.1] text-white/80" style={{ fontWeight: 700 }}>
+              A Digital Agency<br/>Focused on Design, Development & Marketing.
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-3xl leading-relaxed">
-              Building websites that drive traffic, engagement, and conversion for industry-leading brands and startups in Silicon Valley.
-            </p>
+            <p className="text-xl md:text-2xl text-[#FF4D00]/75 max-w-3xl leading-relaxed">
+              Creating technology-driven ecosystems where businesses build faster, automate smarter, and grow stronger in an increasingly digital world.            </p>
           </motion.div>
         </Container>
       </Section>
@@ -123,21 +122,21 @@ export function About() {
                 className="text-4xl md:text-6xl mb-6"
                 style={{ fontWeight: 700 }}
               >
-                Creating digital experiences since 2015.
+                Building Scalable Digital Products
               </h2>
 
               <div className="space-y-4 text-lg text-black/60 leading-relaxed">
                 <p>
-                  Founded in the heart of Silicon Valley, BlackInt has grown from a
-                  small design studio to a full-service digital agency.
+                  BlackInt is a technology and digital solutions company helping startups,
+                  businesses, and growing brands build powerful digital platforms.
                 </p>
                 <p>
-                  We've helped dozens of startups and established brands transform
-                  their digital presence and achieve their business goals.
+                  From websites and SaaS applications to automation systems and AI-powered tools,
+                  we create solutions that streamline operations and accelerate growth.
                 </p>
                 <p>
-                  Our team combines creativity, technical expertise, and strategic
-                  thinking to deliver exceptional results.
+                  By combining strategy, design, and scalable technology,
+                  we build digital products that perform, convert, and scale with your business.
                 </p>
               </div>
             </motion.div>
@@ -158,11 +157,13 @@ export function About() {
                 whileHover={{ scale: 1.04 }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               >
+                <div className="mt-35">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800"
+                  src="https://images.unsplash.com/photo-1632835256917-9932799fee58?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDZ8fHxlbnwwfHx8fHw%3D"
                   alt="Our team"
                   className="w-full h-full object-cover"
                 />
+                </div>
               </motion.div>
             </motion.div>
 
@@ -279,12 +280,13 @@ export function About() {
       {/* Stats Section */}
       <Section className="bg-black text-white py-32">
         <Container>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-9">
             {[
-              { number: '150+', label: 'Projects Completed' },
-              { number: '50+', label: 'Happy Clients' },
-              { number: '12', label: 'Team Members' },
-              { number: '9', label: 'Years Experience' },
+              { number: "Web", label: "Modern Web Platforms" },
+              { number: "SaaS", label: "SaaS Platforms" },
+              { number: "AI", label: "AI-Powered Systems" },
+              { number: "API", label: "API Integrations" },
+              { number: "Cloud", label: "Scalable Infrastructure" },
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -294,10 +296,10 @@ export function About() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-5xl md:text-7xl mb-4 text-[#FF4D00]" style={{ fontWeight: 900 }}>
+                <div className="text-3xl md:text-5xl mb-3 text-[#FF4D00]" style={{ fontWeight: 900 }}>
                   {stat.number}
                 </div>
-                <div className="text-sm text-white/60 uppercase tracking-widest">
+                <div className="text-xs text-white/60 uppercase tracking-wider">
                   {stat.label}
                 </div>
               </motion.div>
@@ -320,7 +322,7 @@ export function About() {
               Want to join our team?
             </h2>
             <a
-              href="/contact"
+              href="/openings"
               className="inline-flex items-center gap-3 border border-black/20 px-8 py-4 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300"
             >
               <span className="text-sm uppercase tracking-widest">VIEW OPEN POSITIONS</span>
