@@ -274,7 +274,6 @@ export function Contact() {
                 <input
                   type="tel"
                   name="phone"
-                  pattern="^(\+91[\-\s]?)?[6-9]\d{9}$"
                   title="Enter valid 10-digit Indian mobile number"
                   value={formData.phone}
                   onChange={handleChange}
