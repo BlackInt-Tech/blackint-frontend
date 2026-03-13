@@ -71,3 +71,10 @@ body {
 img {
   will-change: transform;
 }
+
+/* Hide default cursor on desktop for custom cursor */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+}
