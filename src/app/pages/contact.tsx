@@ -260,7 +260,6 @@ export function Contact() {
                   type="email"
                   name="email"
                   required
-                  pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$"
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
