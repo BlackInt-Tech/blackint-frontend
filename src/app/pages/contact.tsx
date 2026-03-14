@@ -171,9 +171,11 @@ export function Contact() {
         formData.firstName.trim() !== "" &&
         formData.lastName.trim() !== "" &&
         formData.email.trim() !== "" &&
+        formData.company.trim() !== "" &&
         formData.projectIdea.trim() !== "" &&
+        formData.message.trim() !== "" &&
         formData.services.length > 0 &&
-        formData.budget !== "";
+        formData.budget.trim() !== "";
 
   return (
     <>
