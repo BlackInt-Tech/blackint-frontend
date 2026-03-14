@@ -191,7 +191,7 @@ export function Contact() {
     formData.lastName.trim() !== "" &&
     formData.email.trim() !== "" &&
     formData.company.trim() !== "" &&
-    formData.projectIdea.trim() !== "" &&
+    formData.projectIdea.trim().length >= 20 &&
     formData.services.length > 0 &&
     formData.budget.trim() !== "";
       return (
@@ -393,13 +393,15 @@ export function Contact() {
                   <textarea
                     name="projectIdea"
                     rows={4}
+                    maxLength={20}
                     value={formData.projectIdea}
                     onChange={handleChange}
                     className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00] resize-none"
                   />
-
+                  <p className="text-xs text-white/40 mt-2">
+                    {formData.projectIdea.length}/20 minimum characters
+                  </p>
                 </div>
-
 
                 {/* Submit Button */}
                 <motion.button
