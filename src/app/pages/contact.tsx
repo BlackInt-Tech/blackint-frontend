@@ -192,6 +192,7 @@ export function Contact() {
     formData.email.trim() !== "" &&
     formData.company.trim() !== "" &&
     formData.projectIdea.trim().length >= 20 &&
+    formData.projectIdea.trim().length <= 500 &&
     formData.services.length > 0 &&
     formData.budget.trim() !== "";
       return (
@@ -393,14 +394,16 @@ export function Contact() {
                   <textarea
                     name="projectIdea"
                     rows={4}
-                    maxLength={20}
+                    minLength={20}
+                    maxLength={500}
                     value={formData.projectIdea}
                     onChange={handleChange}
                     className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00] resize-none"
                   />
-                  <p className="text-xs text-white/40 mt-2">
-                    {formData.projectIdea.length}/20 minimum characters
-                  </p>
+                  <div className="flex justify-between text-xs text-white/40 mt-2">
+                    <span>Minimum 20 characters</span>
+                    {formData.projectIdea.length}/500
+                  </div>
                 </div>
 
                 {/* Submit Button */}
