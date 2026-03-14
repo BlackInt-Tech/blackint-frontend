@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Container } from "../components/layout/container";
 import { Section } from "../components/layout/section";
 import { ScrollIndicator } from "../components/ui/scroll-indicator";
@@ -817,26 +817,23 @@ export function Homepage() {
               viewport={{ once: true }}
             >
               <h2
-                className="text-4xl sm:text-6xl md:text-8xl inline-flex flex-wrap justify-center"
+                className="text-4xl sm:text-6xl md:text-8xl inline-flex flex-wrap justify-center text-center"
                 style={{ fontWeight: 900 }}
               >
                 {"LET'S TALK".split("").map((char, index) => (
                   <motion.span
                     key={index}
                     className="inline-block"
-                    initial={{ y: 60 }}   // reduced from 100
-                    whileInView={{ y: 0 }}
-                    viewport={{ once: true, margin: "-20px" }}
+                    initial={{ y: 40, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true }}
                     transition={{
-                      duration: 0.2,
-                      delay: index * 0.02,
+                      duration: 0.35,
+                      delay: index * 0.05,
                       ease: [0.22, 1, 0.36, 1],
                     }}
-                    whileHover={{
-                      y: -10,            // reduced from -20
-                      color: "#FF4D00",
-                      transition: { duration: 0.3 },
-                    }}
+                    whileHover={{ y: -10, color: "#FF4D00", transition: { duration: 0.25 }}}
+                    whileTap={{ y: -6, color: "#FF4D00" }}
                   >
                     {char === " " ? "\u00A0" : char}
                   </motion.span>

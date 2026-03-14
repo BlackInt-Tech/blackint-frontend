@@ -139,13 +139,6 @@ export function Contact() {
           });
 
           if (response.success) {
-            setSuccessMessage(response.message);
-            setShowPopup(true);
-
-            setTimeout(() => {
-              setShowPopup(false);
-            }, 3000);
-
             setFormData({
               firstName: "",
               lastName: "",
@@ -157,6 +150,13 @@ export function Contact() {
               projectIdea: "",
               message: "",
             });
+
+            setSuccessMessage(response.message);
+            setShowPopup(true);
+
+            setTimeout(() => {
+              setShowPopup(false);
+            }, 3000);
           } else {
             setErrorMessage("Something went wrong. Please try again.");
           }
@@ -344,10 +344,10 @@ export function Contact() {
               {/* Submit */}
               <motion.button
                 type="submit"
-                disabled={loading || !isFormValid && captchaToken !== null}
+                disabled={loading || !isFormValid}
                 className={`px-10 py-5 uppercase tracking-widest text-sm transition-all
                   ${
-                    loading || !isFormValid && captchaToken !== null
+                    loading || !isFormValid
                       ? "bg-gray-700 text-white/40 cursor-not-allowed"
                       : "bg-[#FF4D00] text-white hover:bg-[#ff6a2d]"
                   }
@@ -373,8 +373,7 @@ export function Contact() {
           onClick={() => setShowPopup(false)}
         >
           <motion.div
-            className="bg-black border border-[#FF4D00]/40 shadow-[0_0_40px_rgba(255,77,0,0.2)] rounded-xl p-8 ..."
-            initial={{ scale: 0.8, opacity: 0 }}
+            className="bg-black border border-[#FF4D00]/40 shadow-[0_0_40px_rgba(255,77,0,0.2)] rounded-xl p-8"            initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.3 }}
             onClick={(e) => e.stopPropagation()}
@@ -503,21 +502,45 @@ export function Contact() {
             <div className="space-y-8">
               {[
                 {
-                  q: 'What is your typical project timeline?',
-                  a: 'Most projects take 8-12 weeks from kickoff to launch, depending on scope and complexity.',
+                  q: "What types of digital solutions does BlackInt specialize in?",
+                  a: "BlackInt specializes in building modern digital platforms including websites, SaaS applications, AI-powered systems, custom business tools, and scalable cloud-based solutions. Our focus is on creating high-performance, secure, and scalable technology that helps businesses grow and operate more efficiently."
                 },
                 {
-                  q: 'Do you work with startups?',
-                  a: 'Absolutely! We love working with startups and have helped many launch their digital presence.',
+                  q: "Do you build custom software tailored to specific business needs?",
+                  a: "Yes. Every project we build is customized according to the client’s business goals, workflows, and technical requirements. Instead of generic templates, we design and develop tailored digital solutions that solve real problems and deliver measurable value."
                 },
                 {
-                  q: 'What is your design process?',
-                  a: 'We follow a proven process: Discovery, Strategy, Design, Development, and Launch with ongoing support.',
+                  q: "Can BlackInt help startups build their first product or MVP?",
+                  a: "Absolutely. We work closely with startups to design and develop Minimum Viable Products (MVPs), helping them launch faster and validate their ideas. Our team provides guidance on product architecture, scalability, and technology choices for long-term success."
                 },
                 {
-                  q: 'Do you offer ongoing support?',
-                  a: 'Yes, we offer maintenance and support packages to keep your website running smoothly.',
+                  q: "What technologies does your development team use?",
+                  a: "Our team works with modern technologies including React, Next.js, Spring Boot, Node.js, cloud infrastructure, APIs, and AI integrations. We choose the best tech stack based on project requirements to ensure performance, scalability, and future growth."
                 },
+                {
+                  q: "How does the project collaboration process work?",
+                  a: "Our process typically includes discovery, planning, design, development, testing, and deployment. Throughout the project, we maintain transparent communication, provide progress updates, and collaborate closely with clients to ensure the final product aligns with their vision."
+                },
+                {
+                  q: "Do you provide UI/UX design along with development?",
+                  a: "Yes. We design modern, intuitive user interfaces and experiences before development begins. Our UI/UX process focuses on usability, aesthetics, and performance to ensure the final product is not only functional but also engaging for users."
+                },
+                {
+                  q: "Can you integrate third-party services and APIs into our system?",
+                  a: "Yes. We integrate various third-party services including payment gateways, authentication systems, analytics tools, CRMs, and other APIs. Our goal is to seamlessly connect your platform with the tools your business already uses."
+                },
+                {
+                  q: "Do you provide maintenance and support after launch?",
+                  a: "Yes. After launching a project, we offer ongoing maintenance and support to ensure everything runs smoothly. This includes performance monitoring, bug fixes, security updates, feature improvements, and technical assistance whenever needed."
+                },
+                {
+                  q: "Can BlackInt scale platforms as businesses grow?",
+                  a: "Yes. We build platforms with scalability in mind from the start. Our architectures are designed to handle increasing users, data, and traffic, ensuring your system continues to perform reliably as your business expands."
+                },
+                {
+                  q: "How can businesses start a project with BlackInt?",
+                  a: "Getting started is simple. You can reach out through our contact form with your project idea or requirements. Our team will review your request, schedule a consultation, and guide you through the next steps to bring your digital vision to life."
+                }
               ].map((faq, index) => (
                 <motion.div
                   key={index}

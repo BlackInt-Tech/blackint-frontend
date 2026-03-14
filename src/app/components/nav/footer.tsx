@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Instagram, Linkedin, Twitter, Facebook } from 'lucide-react';
 import { Container } from '../layout/container';
 import LogoPrimary from '../../assets/logo-primary.png';
 import instagramIcon from "../../assets/instagram.png";
 import facebookIcon from "../../assets/facebook.png";
 import linkedinIcon from "../../assets/linkedin.png";
 import whatsappIcon from "../../assets/whatsapp.png";
+import {TermsOfService}  from '../../pages/termsofservices';
+import {PrivacyPolicy}  from '../../pages/privacypolicy';
 
 export function Footer() {
   return (
@@ -32,7 +33,7 @@ export function Footer() {
               </div>
 
               <p className="text-base sm:text-lg leading-relaxed" style={{ fontWeight: 400 }}>
-                Build. Automate. Grow.<br className="hidden sm:block"/> Making great things in India.
+                Build. Automate. Grow.<br/> Making great things in India.
               </p>
             </motion.div>
           </div>
@@ -154,8 +155,13 @@ export function Footer() {
             transition={{ delay: 0.4 }}
           >
             <span>© 2026 BlackInt. All Rights Reserved.</span>
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <a href="/privacy-policy" className="hover:text-white transition-colors">
+              Privacy Policy
+              </a>
+
+              <a href="/terms-of-service" className="hover:text-white transition-colors">
+              Terms of Service
+              </a>
           </motion.div>
         </div>
       </Container>

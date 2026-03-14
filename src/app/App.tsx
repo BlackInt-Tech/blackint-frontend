@@ -21,6 +21,8 @@ import { BlogArticle } from "./pages/blog-article";
 import { Contact } from "./pages/contact";
 import { HeaderThemeProvider } from "./context/header-theme";
 import NotFound from "./pages/not-found";
+import { PrivacyPolicy } from "./pages/privacypolicy";
+import { TermsOfService } from "./pages/termsofservices";
 
 // Scroll Reset
 function ScrollToTop() {
@@ -50,6 +52,8 @@ function AnimatedRoutes() {
         <Route path="/blog/:slug" element={<BlogArticle />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
       </Routes>
     </AnimatePresence>
   );
