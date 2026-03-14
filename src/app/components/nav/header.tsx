@@ -8,7 +8,7 @@ import facebookIcon from "../../assets/facebook.png";
 import linkedinIcon from "../../assets/linkedin.png";
 import whatsappIcon from "../../assets/whatsapp.png";
 import { useHeaderTheme } from '../../context/header-theme';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 export function Header() {
   const { theme, setTheme, isMenuOpen, setIsMenuOpen } = useHeaderTheme();  
@@ -22,6 +22,20 @@ export function Header() {
   const logoSrc = isLight ? LogoPrimary : LogoInverse;
   const { scrollY } = useScroll();
   const collapseProgress = useTransform(scrollY, [0, 200], [0, 1]);
+
+  useEffect(() => {
+  const scrollY = window.scrollY;
+
+  if (isMenuOpen) {
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+  } else {
+    const top = document.body.style.top;
+    document.body.style.position = "";
+    document.body.style.top = "";
+    window.scrollTo(0, parseInt(top || "0") * -1);
+  }
+}, [isMenuOpen]);
 
   return (
     <>
