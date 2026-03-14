@@ -8,8 +8,7 @@ interface SectionProps {
 
 export function Section({ children, className = '', fullHeight = false }: SectionProps) {
   return (
-    <section className={`py-16 md:py-[120px] ${fullHeight ? 'min-h-screen' : ''} ${className}`}>
-      {children}
+    <section className={`py-16 md:py-[120px] relative ${className}`}>      {children}
     </section>
   );
 }

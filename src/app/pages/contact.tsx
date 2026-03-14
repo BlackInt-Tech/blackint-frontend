@@ -1,9 +1,8 @@
-import { motion } from 'motion/react';
-import { Container } from '../components/layout/container';
-import { Section } from '../components/layout/section';
-import { ScrollIndicator } from '../components/ui/scroll-indicator';
-import { Mail, Phone, MapPin, Instagram, Linkedin, Twitter, Facebook } from 'lucide-react';
-import { useHeaderTheme } from '../context/header-theme';
+import { motion } from "motion/react";
+import { Container } from "../components/layout/container";
+import { Section } from "../components/layout/section";
+import { ScrollIndicator } from "../components/ui/scroll-indicator";
+import { useHeaderTheme } from "../context/header-theme";
 import { useEffect, useState } from "react";
 import { submitContact } from "../../services/contactService";
 import { getCachedData, setCachedData } from "../utils/cache";
@@ -29,6 +28,7 @@ export function Contact() {
   useEffect(() => {
     async function loadServices() {
       try {
+
         const cacheKey = "contact_offerings";
         const cached = getCachedData<Offering[]>(cacheKey);
 
@@ -50,6 +50,7 @@ export function Contact() {
     }
 
     loadServices();
+
   }, []);
 
   useEffect(() => {
@@ -64,26 +65,27 @@ export function Contact() {
     company: "",
     services: [] as string[],
     budget: "",
-    projectIdea: "",
-    message: "",
+    projectIdea: ""
   });
 
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+
   };
 
   const handleServiceChange = (serviceTitle: string) => {
+
     let updatedServices;
 
     if (formData.services.includes(serviceTitle)) {
@@ -104,80 +106,95 @@ export function Contact() {
     );
 
     const totalPrice = selectedObjects.reduce((acc, curr) => {
+
       const priceNumber = parseInt(
         curr.price?.replace(/[^\d]/g, "") || "0"
       );
+
       return acc + priceNumber;
+
     }, 0);
 
     if (totalPrice > 0) {
+
       setFormData((prev) => ({
         ...prev,
         budget: `Approx ₹${totalPrice.toLocaleString()}`
       }));
+
     }
+
   };
 
-      const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
 
-        setLoading(true);
-        setErrorMessage("");
-        setSuccessMessage("");
+    e.preventDefault();
 
-        try {
-          const response = await submitContact({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            phone: formData.phone,
-            company: formData.company,
-            services: formData.services,
-            budget: formData.budget,
-            projectIdea: formData.projectIdea,
-            message: formData.message,
-          });
+    setLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
-          if (response.success) {
-            setFormData({
-              firstName: "",
-              lastName: "",
-              email: "",
-              phone: "",
-              company: "",
-              services: [],
-              budget: "",
-              projectIdea: "",
-              message: "",
-            });
+    try {
 
-            setSuccessMessage(response.message);
-            setShowPopup(true);
+      const response = await submitContact({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        services: formData.services,
+        budget: formData.budget,
+        projectIdea: formData.projectIdea,
+        message: formData.projectIdea || "Website inquiry"
+      });
 
-            setTimeout(() => {
-              setShowPopup(false);
-            }, 3000);
-          } else {
-            setErrorMessage("Something went wrong. Please try again.");
-          }
-        } catch (error) {
-          setErrorMessage("Server error. Please try again later.");
-        } finally {
-          setLoading(false);
-        }
-      };
+      if (response.success) {
 
-      const isFormValid =
-        formData.firstName.trim() !== "" &&
-        formData.lastName.trim() !== "" &&
-        formData.email.trim() !== "" &&
-        formData.company.trim() !== "" &&
-        formData.projectIdea.trim() !== "" &&
-        formData.message.trim() !== "" &&
-        formData.services.length > 0 &&
-        formData.budget.trim() !== "";
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          company: "",
+          services: [],
+          budget: "",
+          projectIdea: ""
+        });
 
-  return (
+        setSuccessMessage(response.message);
+        setShowPopup(true);
+
+        setTimeout(() => {
+          setShowPopup(false);
+        }, 3000);
+
+      } else {
+
+        setErrorMessage("Something went wrong. Please try again.");
+
+      }
+
+    } catch (error) {
+
+      setErrorMessage("Server error. Please try again later.");
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+  const isFormValid =
+    formData.firstName.trim() !== "" &&
+    formData.lastName.trim() !== "" &&
+    formData.email.trim() !== "" &&
+    formData.company.trim() !== "" &&
+    formData.projectIdea.trim() !== "" &&
+    formData.services.length > 0 &&
+    formData.budget.trim() !== "";
+      return (
     <>
       <ScrollIndicator />
 
@@ -190,182 +207,227 @@ export function Contact() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="max-w-5xl"
           >
+
             <div className="text-xl uppercase tracking-[0.3em] text-[#FF4D00] mb-8">
               GET IN TOUCH
             </div>
+
             <h1
               className="text-5xl md:text-8xl mb-10 leading-[1.05]"
               style={{ fontWeight: 700 }}
             >
               Let's create something amazing.
             </h1>
-            <p className="text-l md:text-xl text-white/60 max-w-3xl leading-relaxed">
-              Whether you have a project in mind or just want to chat about the possibilities, we'd love to hear from you.
+
+            <p className="text-lg md:text-xl text-white/60 max-w-3xl leading-relaxed">
+              Whether you have a project in mind or just want to chat about the possibilities,
+              we'd love to hear from you.
             </p>
+
           </motion.div>
         </Container>
       </Section>
 
-      {/* Contact Form and Info */}
-      <Section className="bg-black pb-32">
+
+      {/* Contact Form */}
+      <Section className="bg-black pb-24">
         <Container>
+
           <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
 
-            {/* Contact Form */}
+            {/* Form Column */}
             <motion.div
-              className="md:col-span-7"
+              className="col-span-1 md:col-span-7 w-full max-w-2xl"
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
 
-            <form className="space-y-8" onSubmit={handleSubmit}>
+              <form
+                className="flex flex-col gap-8"
+                onSubmit={handleSubmit}
+              >
 
-              {/* First & Last Name */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* First Name + Last Name */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                      First Name *
+                    </label>
+
+                    <input
+                      type="text"
+                      name="firstName"
+                      required
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
+                    />
+                  </div>
+
+
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                      Last Name *
+                    </label>
+
+                    <input
+                      type="text"
+                      name="lastName"
+                      required
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
+                    />
+                  </div>
+
+                </div>
+
+
+                {/* Email */}
                 <div>
+
                   <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                    First Name *
+                    Email *
                   </label>
+
                   <input
-                    type="text"
-                    name="firstName"
+                    type="email"
+                    name="email"
                     required
-                    value={formData.firstName}
+                    value={formData.email}
                     onChange={handleChange}
                     className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
                   />
+
                 </div>
 
+
+                {/* Phone */}
                 <div>
+
                   <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                    Last Name *
+                    Phone *
                   </label>
+
                   <input
-                    type="text"
-                    name="lastName"
-                    required
-                    value={formData.lastName}
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
                     onChange={handleChange}
                     className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
                   />
+
                 </div>
-              </div>
 
-              {/* Email */}
-              <div>
-                <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
-                />
-              </div>
 
-              {/* Phone */}
-              <div>
-                <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                  Phone *
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  title="Enter valid 10-digit Indian mobile number"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
-                />
-              </div>
+                {/* Company */}
+                <div>
 
-              {/* Company */}
-              <div>
-                <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                  Company Name *
-                </label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
-                />
-              </div>
+                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                    Company Name *
+                  </label>
 
-              {/* Services Multi Select */}
-              <div>
-                <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                  Services *
-                </label>
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
+                  />
 
-                <div className="flex flex-wrap gap-3">
-                  {servicesList.map((service) => (
-                    <button
-                      type="button"
-                      key={service.publicId}
-                      onClick={() => handleServiceChange(service.title)}
-                      className={`
-                        px-4 py-2 rounded-full text-sm border transition-all duration-300
-                        ${
-                          formData.services.includes(service.title)
-                            ? "bg-[#FF4D00] text-white border-[#FF4D00]"
-                            : "border-white/20 text-white/60 hover:border-[#FF4D00] hover:text-white"
-                        }
-                      `}
-                    >
-                      {service.title}
-                      {service.price && (
-                        <span className="ml-2 text-xs opacity-70">
-                          ({service.price})
-                        </span>
-                      )}
-                    </button>
-                  ))}
                 </div>
-              </div>
 
-              {/* Project Idea */}
-              <div>
-                <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                  Describe Your Project *
-                </label>
-                <textarea
-                  name="projectIdea"
-                  rows={4}
-                  value={formData.projectIdea}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00] resize-none"
-                />
-              </div>
 
-              {/* Submit */}
-              <motion.button
-                type="submit"
-                disabled={loading || !isFormValid}
-                className={`px-10 py-5 uppercase tracking-widest text-sm transition-all
+                {/* Services */}
+                <div>
+
+                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                    Services *
+                  </label>
+
+                  <div className="flex flex-wrap gap-3 max-h-[220px] overflow-y-auto pr-2">
+
+                    {servicesList.map((service) => (
+
+                      <button
+                        type="button"
+                        key={service.publicId}
+                        onClick={() => handleServiceChange(service.title)}
+                        className={`
+                          px-4 py-2 rounded-full text-sm border transition-all duration-300
+                          ${
+                            formData.services.includes(service.title)
+                              ? "bg-[#FF4D00] text-white border-[#FF4D00]"
+                              : "border-white/20 text-white/60 hover:border-[#FF4D00] hover:text-white"
+                          }
+                        `}
+                      >
+
+                        {service.title}
+
+                        {service.price && (
+                          <span className="ml-2 text-xs opacity-70">
+                            ({service.price})
+                          </span>
+                        )}
+
+                      </button>
+
+                    ))}
+
+                  </div>
+
+                </div>
+
+
+                {/* Project Idea */}
+                <div>
+
+                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                    Describe Your Project *
+                  </label>
+
+                  <textarea
+                    name="projectIdea"
+                    rows={4}
+                    value={formData.projectIdea}
+                    onChange={handleChange}
+                    className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00] resize-none"
+                  />
+
+                </div>
+
+
+                {/* Submit Button */}
+                <motion.button
+                  type="submit"
+                  disabled={loading || !isFormValid}
+                  className={`mt-8 w-full md:w-auto px-10 py-5 uppercase tracking-widest text-sm transition-all rounded-md
                   ${
                     loading || !isFormValid
-                      ? "bg-gray-700 text-white/40 cursor-not-allowed"
+                      ? "bg-gray-600 text-white/70 cursor-not-allowed"
                       : "bg-[#FF4D00] text-white hover:bg-[#ff6a2d]"
-                  }
-                `}
-              >
-                {loading ? "Requesting..." : "Request Call Back"}
-              </motion.button>
-                <p className="text-xs text-white/40 mt-4">
+                  }`}
+                >
+                  {loading ? "Requesting..." : "Request Call Back"}
+                </motion.button>
+
+                <p className="text-xs text-white/40">
                   Your information is confidential and secure.
                 </p>
+
               </form>
+
             </motion.div>
+
           </div>
+
         </Container>
       </Section>
-
+            {/* Success Popup */}
       {showPopup && (
         <motion.div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100]"
@@ -375,7 +437,8 @@ export function Contact() {
           onClick={() => setShowPopup(false)}
         >
           <motion.div
-            className="bg-black border border-[#FF4D00]/40 shadow-[0_0_40px_rgba(255,77,0,0.2)] rounded-xl p-8"            initial={{ scale: 0.8, opacity: 0 }}
+            className="bg-black border border-[#FF4D00]/40 shadow-[0_0_40px_rgba(255,77,0,0.2)] rounded-xl p-8"
+            initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.3 }}
             onClick={(e) => e.stopPropagation()}
@@ -393,8 +456,10 @@ export function Contact() {
         </motion.div>
       )}
 
+
       {/* Map Section */}
-      <Section className="relative bg-black py-32 overflow-hidden">
+      <Section className="relative bg-black py-32 overflow-visible">
+
         <motion.div
           className="absolute inset-0 bg-black z-20"
           initial={{ x: "0%" }}
@@ -407,6 +472,7 @@ export function Contact() {
         />
 
         <Container>
+
           <motion.div
             className="relative z-10 space-y-12"
             initial={{ opacity: 0, y: 40 }}
@@ -414,19 +480,30 @@ export function Contact() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
+
             <div className="text-center text-white">
+
               <div className="text-xs uppercase tracking-[0.3em] text-white/40 mb-4">
                 OUR LOCATION
               </div>
-              <h2 className="text-4xl md:text-6xl mb-6" style={{ fontWeight: 700 }}>
+
+              <h2
+                className="text-4xl md:text-6xl mb-6"
+                style={{ fontWeight: 700 }}
+              >
                 Greater Noida, India
               </h2>
+
               <p className="text-lg text-white/60 max-w-2xl mx-auto">
-                Operating from Greater Noida, Uttar Pradesh — working with clients globally.
+                Operating from Greater Noida, Uttar Pradesh —
+                working with clients globally.
               </p>
+
             </div>
 
+
             <div className="group relative overflow-hidden rounded-xl h-[420px] md:h-[520px] border border-white/10">
+
               <iframe
                 title="BlackInt Location - Greater Noida"
                 src="https://www.google.com/maps?q=Greater+Noida,+Uttar+Pradesh,+India&output=embed"
@@ -450,6 +527,7 @@ export function Contact() {
               />
 
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
+
                 <motion.span
                   className="absolute inline-flex h-16 w-16 rounded-full bg-[#FF4D00]/30"
                   animate={{
@@ -478,15 +556,23 @@ export function Contact() {
                 />
 
                 <span className="relative inline-flex h-3 w-3 rounded-full bg-[#FF4D00] shadow-[0_0_12px_rgba(255,77,0,0.8)]" />
+
               </div>
+
             </div>
+
           </motion.div>
+
         </Container>
       </Section>
 
+
+
       {/* FAQ Section */}
       <Section className="bg-black py-32">
+
         <Container>
+
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -494,14 +580,21 @@ export function Contact() {
             transition={{ duration: 0.8 }}
             className="max-w-4xl mx-auto"
           >
+
             <div className="text-xs uppercase tracking-[0.3em] text-white/40 mb-8 text-center">
               COMMON QUESTIONS
             </div>
-            <h2 className="text-4xl md:text-6xl mb-16 text-center" style={{ fontWeight: 700 }}>
+
+            <h2
+              className="text-4xl md:text-6xl mb-16 text-center"
+              style={{ fontWeight: 700 }}
+            >
               Frequently Asked Questions
             </h2>
 
+
             <div className="space-y-8">
+
               {[
                 {
                   q: "What types of digital solutions does BlackInt specialize in?",
@@ -544,6 +637,7 @@ export function Contact() {
                   a: "Getting started is simple. You can reach out through our contact form with your project idea or requirements. Our team will review your request, schedule a consultation, and guide you through the next steps to bring your digital vision to life."
                 }
               ].map((faq, index) => (
+
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
@@ -552,18 +646,27 @@ export function Contact() {
                   transition={{ delay: index * 0.1 }}
                   className="border-b border-white/10 pb-6"
                 >
+
                   <h3 className="text-xl mb-3" style={{ fontWeight: 600 }}>
                     {faq.q}
                   </h3>
+
                   <p className="text-white/60 leading-relaxed">
                     {faq.a}
                   </p>
+
                 </motion.div>
+
               ))}
+
             </div>
+
           </motion.div>
+
         </Container>
+
       </Section>
+
     </>
   );
 }

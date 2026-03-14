@@ -65,7 +65,7 @@ export function CustomCursor() {
     <>
       {/* Outer Circle */}
       <motion.div
-        className="fixed top-0 left-0 w-6 h-6 border border-white/50 rounded-full pointer-events-none z-[9999] mix-blend-difference"
+        className="custom-cursor cursor-circle fixed top-0 left-0 w-6 h-6 border border-white/50 rounded-full pointer-events-none z-[9999] mix-blend-difference"
         animate={{
           x: mousePosition.x - 12,
           y: mousePosition.y - 12,
@@ -84,7 +84,7 @@ export function CustomCursor() {
 
       {/* Inner Dot */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference"
+        className="custom-cursor cursor-dot fixed top-0 left-0 w-1.5 h-1.5 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference"
         animate={{
           x: mousePosition.x - 2,
           y: mousePosition.y - 2,
@@ -101,7 +101,7 @@ export function CustomCursor() {
 
       {isHovering && cursorText && (
         <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[9998] text-white text-xs font-medium uppercase tracking-wider"
+          className="custom-cursor cursor-text fixed top-0 left-0 pointer-events-none z-[9998] text-white text-xs font-medium uppercase tracking-wider"
           initial={{ opacity: 0 }}
           animate={{
             x: mousePosition.x + 20,

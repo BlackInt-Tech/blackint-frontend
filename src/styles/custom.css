@@ -1,18 +1,27 @@
-/* Custom Cursor - Hide on Mobile */
-@media (max-width: 768px) {
-  [class*="cursor"] {
+/* Disable custom cursor for touch devices (mobile + tablet) */
+@media (hover: none) and (pointer: coarse) {
+  .custom-cursor,
+  .cursor-dot,
+  .cursor-circle,
+  .cursor-text {
     display: none !important;
+  }
+
+  body {
+    cursor: auto !important;
   }
 }
 
-/* Hide default cursor everywhere on desktop */
-@media (min-width: 769px) {
-  * {
-    cursor: none !important;
-  }
-  
-  a, button, [role="button"], input, textarea, select {
-    cursor: none !important;
+/* Hide default cursor only on desktop */
+@media (hover: hover) and (pointer: fine) {
+  body,
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select {
+    cursor: none;
   }
 }
 
