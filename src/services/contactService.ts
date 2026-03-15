@@ -14,7 +14,8 @@ export interface ContactRequest {
 
 export const submitContact = async (data: ContactRequest) => {
   const response = await api.post(
-    "/api/contacts/submit",{
+    "/contacts/submit",
+    {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -25,7 +26,6 @@ export const submitContact = async (data: ContactRequest) => {
       projectIdea: data.projectIdea,
       message: data.message
     }
-    
   );
 
   return response.data;

@@ -10,8 +10,9 @@ interface OfferingResponse {
 }
 
 export const getPublishedOfferings = async (): Promise<Offering[]> => {
+
   const response = await api.get<OfferingResponse>(
-    "/api/offerings/getPublished"
+    "/offerings/getPublished"
   );
 
   if (!response.data?.data) {
