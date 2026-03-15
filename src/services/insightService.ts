@@ -13,11 +13,10 @@ export const getPublishedInsights = async (
   page = 0,
   size = 6
 ): Promise<Insight[]> => {
+
   const response = await api.get<InsightResponse>(
-    "/api/blogs/getPublished",
-    {
-      params: { page, size },
-    }
+    "/blogs/getPublished",
+    { params: { page, size } }
   );
 
   if (!response.data?.data) {
@@ -28,7 +27,8 @@ export const getPublishedInsights = async (
 };
 
 export const getBlogBySlug = async (slug: string): Promise<Insight> => {
-  const response = await api.get(`/api/blogs/getBySlug/${slug}`);
+
+  const response = await api.get(`/blogs/getBySlug/${slug}`);
 
   if (!response.data?.data) {
     throw new Error("Invalid API response structure");
