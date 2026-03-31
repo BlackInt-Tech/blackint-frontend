@@ -8,6 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import { useHeaderTheme } from "../context/header-theme";
 import { useEffect, useState } from "react";
 import { getBlogBySlug } from "../../services/insightService";
+import { getPublishedInsights } from "../../services/insightService";
 import { Insight } from "../../types/insight";
 import { getCachedData, setCachedData } from "../utils/cache";
 
@@ -18,6 +19,8 @@ export function BlogArticle() {
 
   const [blog, setBlog] = useState<Insight | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const [relatedBlogs, setRelatedBlogs] = useState<Insight[]>([]);
 
   // Header theme scroll logic
   useEffect(() => {
@@ -48,23 +51,27 @@ export function BlogArticle() {
         setLoading(true);
 
         const cacheKey = `blog_slug_${slug}`;
-
-        // Check cache
         const cached = getCachedData<Insight>(cacheKey);
 
-        if (cached) {
-          setBlog(cached);
-          return;
+        let currentBlog = cached;
+
+        if (!currentBlog) {
+          currentBlog = await getBlogBySlug(slug);
+          if (currentBlog) {
+            setCachedData(cacheKey, currentBlog);
+          }
         }
 
-        // Fetch from API
-        const data = await getBlogBySlug(slug);
+        setBlog(currentBlog);
 
-        if (data) {
-          setBlog(data);
-          setCachedData(cacheKey, data);
-        } else {
-          setBlog(null);
+        const insights = await getPublishedInsights(0, 6);
+
+        if (insights && currentBlog) {
+          const filtered = insights
+            .filter((item: Insight) => item.slug !== currentBlog.slug)
+            .slice(0, 2);
+
+          setRelatedBlogs(filtered);
         }
 
       } catch (error) {
@@ -129,7 +136,7 @@ export function BlogArticle() {
 
               <h1
                 className="text-5xl md:text-7xl mb-6 leading-tight text-white"
-                style={{ fontWeight: 900 }}
+                style={{ fontWeight: 700 }}
               >
                 {blog.title}
               </h1>
@@ -150,7 +157,7 @@ export function BlogArticle() {
       <Section className="py-0 bg-black pb-12">
         <Container>
           <motion.div
-            className="aspect-[21/9] overflow-hidden mb-12"
+            className="w-full max-h-[500px] flex items-center justify-center mb-12"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -158,7 +165,7 @@ export function BlogArticle() {
             <ImageWithFallback
               src={blog.featuredImage}
               alt={blog.title}
-              className="w-full h-full object-cover"
+              className="max-w-full max-h-[500px] object-contain"
             />
           </motion.div>
         </Container>
@@ -185,46 +192,39 @@ export function BlogArticle() {
       {/* Related Articles */}
       <Section className="bg-black py-32">
         <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-12"
-          >
-            <h3
-              className="text-4xl md:text-5xl text-white"
-              style={{ fontWeight: 700 }}
-            >
-              Related Articles
-            </h3>
-          </motion.div>
+          <h3 className="text-4xl md:text-5xl text-white mb-12 font-bold">
+            Related Articles
+          </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="group cursor-pointer"
-            >
-              <Link to="/insights">
-                <div className="aspect-[16/10] overflow-hidden mb-4">
-                  <ImageWithFallback
-                    src={blog.featuredImage}
-                    alt={blog.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="text-xs uppercase tracking-widest text-white/40 mb-2">
-                  {blog.category}
-                </div>
-                <h4
-                  className="text-2xl text-white group-hover:text-[#FF4D00] transition-colors"
-                  style={{ fontWeight: 600 }}
-                >
-                  {blog.title}
-                </h4>
-              </Link>
-            </motion.div>
+            {relatedBlogs.map((item, index) => (
+              <motion.div
+                key={item.slug}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                className="group cursor-pointer"
+              >
+                <Link to={`/insights/${item.slug}`}>
+                  <div className="aspect-[16/10] overflow-hidden mb-4">
+                    <ImageWithFallback
+                      src={item.featuredImage}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+
+                  <div className="text-xs uppercase tracking-widest text-white/40 mb-2">
+                    {item.category}
+                  </div>
+
+                  <h4 className="text-2xl text-white group-hover:text-[#FF4D00] transition-colors font-semibold">
+                    {item.title}
+                  </h4>
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </Container>
       </Section>
