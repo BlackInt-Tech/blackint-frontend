@@ -516,7 +516,7 @@ export function Homepage() {
                           </motion.div>
                         </div>
 
-                        <p className="text-lg md:text-xl text-black/60 leading-relaxed max-w-3xl">
+                        <p className="text-lg md:text-xl text-black leading-relaxed max-w-3xl">
                           {service.shortDescription}
                         </p>
 
@@ -553,14 +553,6 @@ export function Homepage() {
                           </motion.div>
                         )}
                       </div>
-
-                      {/* Optional full content preview */}
-                      {service.fullContent && (
-                        <p className="text-black/50 max-w-3xl">
-                          {service.fullContent}
-                        </p>
-                      )}
-
                     </div>
                   </motion.div>
               ))}
