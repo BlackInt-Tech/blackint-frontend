@@ -6,7 +6,8 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect, useState } from 'react';
 import { useScroll } from "motion/react";
-import { getPublishedOfferings } from "../../services/offeringService";
+import { Rocket, TrendingUp, Briefcase, Crown } from "lucide-react";
+import { getHomepageData } from '../../services/homepageService';
 import { Offering } from "../../types/offering";
 import { getCachedData, setCachedData } from '../utils/cache';
 
@@ -16,6 +17,65 @@ export function Services() {
 
   const [services, setServices] = useState<Offering[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const packages = [
+    {
+      name: "Startup",
+      icon: <Rocket size={28} />,
+      tagline: "Launch your digital presence",
+      original: "₹24,999",
+      price: "₹12,999",
+      features: [
+        "Landing Page Website",
+        "Basic Branding",
+        "SEO Setup",
+        "1 Ad Campaign Setup"
+      ]
+    },
+    {
+      name: "Growth",
+      icon: <TrendingUp size={28} />,
+      tagline: "Scale traffic & leads",
+      original: "₹59,999",
+      price: "₹34,999",
+      features: [
+        "Business Website (5–7 pages)",
+        "UI/UX Design",
+        "SEO + Social Setup",
+        "Meta Ads Management",
+        "Email Marketing Setup"
+      ]
+    },
+    {
+      name: "Business",
+      icon: <Briefcase size={28} />,
+      tagline: "Optimize & grow revenue",
+      original: "₹1,20,000",
+      price: "₹74,999",
+      features: [
+        "Custom Website / E-commerce",
+        "Funnel Optimization",
+        "Meta + Google Ads",
+        "CRM Automation",
+        "Growth Strategy"
+      ]
+    },
+    {
+      name: "Enterprise",
+      icon: <Crown size={28} />,
+      tagline: "Full-scale digital ecosystem",
+      original: "₹3,50,000",
+      price: "₹1,99,000",
+      features: [
+        "Custom Software / SaaS",
+        "Full Marketing System",
+        "AI Automation + Chatbots",
+        "Dedicated Team",
+        "Advanced Analytics"
+      ]
+    }
+  ];
+  const [activePlan, setActivePlan] = useState(1);
 
   useEffect(() => {
   setTheme("inverse");
@@ -36,19 +96,23 @@ useEffect(() => {
     try {
       setLoading(true);
 
-      const cached = getCachedData<Offering[]>("services_offerings");
+      const cacheKey = "homepage_data";
+
+      const cached = getCachedData<{
+        offerings: Offering[];
+      }>(cacheKey);
 
       if (cached) {
-        setServices(cached);
-        setLoading(false);
+        setServices(cached.offerings);
         return;
       }
 
-      const data = await getPublishedOfferings();
+      const data = await getHomepageData();
 
-      setServices(data || []);
+      setServices(data.offerings || []);
 
-      setCachedData("services_offerings", data || []);
+      setCachedData(cacheKey, data);
+
     } catch (error) {
       console.error("Services Page Error:", error);
     } finally {
@@ -84,6 +148,9 @@ useEffect(() => {
               Through great UX, design, and development, we help brands create meaningful connections with their audiences.
             </p>
           </motion.div>
+
+          
+
         </Container>
       </Section>
 
@@ -103,14 +170,139 @@ useEffect(() => {
               className="w-full h-full object-cover"
             />
           </motion.div>
+
+          <Section className="py-24 md:py-16">
+              <Container>
+
+                {/* HEADER */}
+                <div className="text-center mb-16 md:mb-20">
+                  <h2 className="text-3xl md:text-5xl font-semibold text-[#FF4D00] tracking-tight">
+                    Scale Faster with the Right Plan
+                  </h2>
+                  <p className="text-black/80 mt-4 text-sm md:text-base max-w-xl mx-auto">
+                    Performance-driven packages for every stage. <br />From launch to dominance — we grow with you.
+                  </p>
+                </div>
+
+                {/* GRID */}
+                <div className="
+                  grid 
+                  gap-8 md:gap-10 lg:gap-12
+                  md:grid-cols-2 
+                  lg:grid-cols-2
+                ">
+
+                  {packages.map((pkg, index) => {
+                    const isPopular = pkg.name === "Growth";
+
+                    return (
+                      <div
+                        key={index}
+                        className={`
+                          group relative rounded-2xl flex flex-col
+                          p-8 md:p-10 lg:p-12
+                          min-h-[520px]
+
+                          backdrop-blur-xl
+                          bg-black/90
+                          border border-white/10
+
+                          transition-all duration-500 ease-out
+
+                          hover:scale-[1.04]
+                          hover:-translate-y-2
+                          hover:border-[#FF4D00]/40
+                          hover:shadow-black
+                        `}
+                      >
+
+                        {/* MOST POPULAR TAG */}
+                        {isPopular && (
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                            <span className="bg-[#FF4D00] text-white text-xs px-3 py-1 rounded-full">
+                              Most Popular
+                            </span>
+                          </div>
+                        )}
+
+                        {/* CONTENT */}
+                        <div className="relative z-10 flex flex-col h-full">
+
+                          {/* ICON */}
+                          <div className="mb-4 text-[#FF4D00]">
+                            {pkg.icon}
+                          </div>
+
+                          {/* TITLE */}
+                          <h3 className="text-xl md:text-2xl font-semibold text-white">
+                            {pkg.name}
+                          </h3>
+
+                          <p className="text-white/60 text-sm mt-1 mb-5">
+                            {pkg.tagline}
+                          </p>
+
+                          {/* PRICE */}
+                          <div className="mb-6">
+                            <span className="line-through text-white/30 text-sm mr-2">
+                              {pkg.original}
+                            </span>
+                            <span className="text-[#FF4D00] text-2xl font-semibold">
+                              {pkg.price}
+                            </span>
+                            <p className="text-xs text-white/40 mt-1">
+                              One-time payment
+                            </p>
+                          </div>
+
+                          {/* FEATURES */}
+                          <ul className="space-y-2 text-sm text-white/70 mb-6 flex-1">
+                            {pkg.features.map((f, i) => (
+                              <li key={i}>✓ {f}</li>
+                            ))}
+                          </ul>
+
+                          {/* BUTTON */}
+                          <button className="
+                            w-full py-3 px-4
+                            rounded-full
+                            font-medium text-sm
+
+                            bg-white
+                            text-[#FF4D00]
+                            border border-white
+
+                            transition-all duration-300 ease-out
+
+                            hover:border-[#FF4D00]
+                            hover:bg-[#FF4D00]
+                            hover:text-white
+                            hover:shadow-[0_8px_25px_rgba(255,77,0,0.35)]
+                            hover:scale-[1.02]
+
+                            active:scale-[0.98]
+                          ">
+                            Get Started
+                          </button>
+
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                </div>
+
+              </Container>
+            </Section>
+
         </Container>
       </Section>
 
       {/* Services List */}
       <Section className="bg-white text-black pb-32">
         <Container>
-          <div className="text-xl md:text-2xl uppercase tracking-[0.3em] text-[#FF4D00] mb-8">
-              SERVICES WE OFFER
+          <div className="text-lg md:text-xl uppercase tracking-[0.3em] text-[#FF4D00] mb-8">
+              WE HAVE SEPERATE SERVICES FOR EVERY NEED
             </div>
           <div className="space-y-20 md:space-y-32">
             {loading && services.length === 0 && (
@@ -129,7 +321,7 @@ useEffect(() => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 border-t border-black/10 pt-12"
+                  className="grid grid-cols-1 md:grid-cols-10 gap-8 md:gap-16 border-t border-black/10 pt-12"
                 >
                   {/* Auto Number */}
                   <div className="md:col-span-2">

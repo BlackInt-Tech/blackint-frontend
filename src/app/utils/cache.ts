@@ -1,4 +1,4 @@
-export const CACHE_DURATION = 1000 * 60 * 60 * 24; 
+export const CACHE_DURATION = 300000; 
 
 export function getCachedData<T>(key: string): T | null {
   const cached = localStorage.getItem(key);

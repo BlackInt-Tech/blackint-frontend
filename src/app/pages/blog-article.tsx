@@ -8,7 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import { useHeaderTheme } from "../context/header-theme";
 import { useEffect, useState } from "react";
 import { getBlogBySlug } from "../../services/insightService";
-import { getPublishedInsights } from "../../services/insightService";
+import { getHomepageData } from "../../services/homepageService";
 import { Insight } from "../../types/insight";
 import { getCachedData, setCachedData } from "../utils/cache";
 
@@ -41,46 +41,55 @@ export function BlogArticle() {
 
   // Blog Load Logic with Cache
   useEffect(() => {
-    async function loadBlog() {
-      if (!slug) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-
-        const cacheKey = `blog_slug_${slug}`;
-        const cached = getCachedData<Insight>(cacheKey);
-
-        let currentBlog = cached;
-
-        if (!currentBlog) {
-          currentBlog = await getBlogBySlug(slug);
-          if (currentBlog) {
-            setCachedData(cacheKey, currentBlog);
-          }
-        }
-
-        setBlog(currentBlog);
-
-        const insights = await getPublishedInsights(0, 6);
-
-        if (insights && currentBlog) {
-          const filtered = insights
-            .filter((item: Insight) => item.slug !== currentBlog.slug)
-            .slice(0, 2);
-
-          setRelatedBlogs(filtered);
-        }
-
-      } catch (error) {
-        console.error("Blog load error:", error);
-        setBlog(null);
-      } finally {
-        setLoading(false);
-      }
+   async function loadBlog() {
+    if (!slug) {
+      setLoading(false);
+      return;
     }
+
+    try {
+      setLoading(true);
+
+      const cacheKey = `blog_slug_${slug}`;
+      const cached = getCachedData<Insight>(cacheKey);
+
+      let currentBlog = cached;
+
+      if (!currentBlog) {
+        currentBlog = await getBlogBySlug(slug);
+        if (currentBlog) {
+          setCachedData(cacheKey, currentBlog);
+        }
+      }
+
+      setBlog(currentBlog);
+
+      const homepageCacheKey = "homepage_data";
+
+      let homepageData = getCachedData<{
+        insights: Insight[];
+      }>(homepageCacheKey);
+
+      if (!homepageData) {
+        homepageData = await getHomepageData();
+        setCachedData(homepageCacheKey, homepageData);
+      }
+
+      if (homepageData?.insights && currentBlog) {
+        const filtered = homepageData.insights
+          .filter((item: Insight) => item.slug !== currentBlog.slug)
+          .slice(0, 2);
+
+        setRelatedBlogs(filtered);
+      }
+
+    } catch (error) {
+      console.error("Blog load error:", error);
+      setBlog(null);
+    } finally {
+      setLoading(false);
+    }
+  }
 
     loadBlog();
   }, [slug]);
