@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect, useState} from "react";
 import { useScroll } from "motion/react";
-import { getPublishedInsights } from "../../services/insightService";
+import { getHomepageData } from '../../services/homepageService';
 import { Insight } from "../../types/insight";
 import { getCachedData, setCachedData } from '../utils/cache';
 
@@ -17,8 +17,6 @@ export function Insights() {
 
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
   setTheme("inverse");
@@ -37,52 +35,36 @@ export function Insights() {
 }, [scrollY, setTheme]);
 
 useEffect(() => {
-  loadInsights(0);
-}, []);
+  async function loadInsights() {
+    try {
+      setLoading(true);
 
-async function loadInsights(pageNumber: number) {
-  try {
-    setLoading(true);
+      const cacheKey = "homepage_data";
 
-    const cacheKey = `insights_page_${pageNumber}`;
+      const cached = getCachedData<{
+        insights: Insight[];
+      }>(cacheKey);
 
-    const cached = getCachedData<Insight[]>(cacheKey);
-
-    if (cached) {
-      if (pageNumber === 0) {
-        setInsights(cached);
-      } else {
-        setInsights((prev) => [...prev, ...cached]);
+      if (cached) {
+        setInsights(cached.insights || []);
+        return;
       }
 
-      if (cached.length === 0) {
-        setHasMore(false);
-      }
+      const data = await getHomepageData();
 
+      setInsights(data.insights || []);
+
+      setCachedData(cacheKey, data);
+
+    } catch (error) {
+      console.error("Insights Load Error:", error);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const data = await getPublishedInsights(pageNumber, 6);
-
-    if (data.length === 0) {
-      setHasMore(false);
-    }
-
-    if (pageNumber === 0) {
-      setInsights(data);
-    } else {
-      setInsights((prev) => [...prev, ...data]);
-    }
-
-    setCachedData(cacheKey, data);
-
-  } catch (error) {
-    console.error("Insights Load Error:", error);
-  } finally {
-    setLoading(false);
   }
-}
+
+  loadInsights();
+}, []);
 
   return (
     <>
@@ -171,31 +153,6 @@ async function loadInsights(pageNumber: number) {
               </motion.div>
             ))}
           </div>
-          
-          {/* Load More Button */}
-          {hasMore && (
-            <motion.div
-              className="text-center mt-20"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-            >
-              <button
-                onClick={() => {
-                  const nextPage = page + 1;
-                  setPage(nextPage);
-                  loadInsights(nextPage);
-                }}
-                disabled={loading}
-                className="inline-flex items-center gap-3 border border-black/20 px-8 py-4 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300"
-              >
-                <span className="text-sm uppercase tracking-widest">
-                  {loading ? "Loading..." : "VIEW MORE INSIGHTS"}
-                </span>
-                <span className="text-xl">+</span>
-              </button>
-            </motion.div>
-          )}
         </Container>
       </Section>
 

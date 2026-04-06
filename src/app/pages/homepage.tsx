@@ -4,12 +4,11 @@ import { Section } from "../components/layout/section";
 import { ScrollIndicator } from "../components/ui/scroll-indicator";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useHeaderTheme } from "../context/header-theme";
+import { Rocket, TrendingUp, Briefcase, Crown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useScroll } from "motion/react";
 import { Link } from "react-router-dom";
-import { getPublishedProjects } from "../../services/projectService";
-import { getPublishedOfferings } from "../../services/offeringService";
-import { getPublishedInsights } from "../../services/insightService";
+import { getHomepageData } from "../../services/homepageService";
 import { Project } from "../../types/project";
 import { Offering } from "../../types/offering";
 import { Insight } from "../../types/insight";
@@ -33,61 +32,105 @@ export function Homepage() {
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
   const navigate = useNavigate();
+  const packages = [
+    {
+      name: "Startup",
+      icon: <Rocket size={28} />,
+      tagline: "Launch your digital presence",
+      original: "₹24,999",
+      price: "₹12,999",
+      features: [
+        "Landing Page Website",
+        "Basic Branding",
+        "SEO Setup",
+        "1 Ad Campaign Setup"
+      ]
+    },
+    {
+      name: "Growth",
+      icon: <TrendingUp size={28} />,
+      tagline: "Scale traffic & leads",
+      original: "₹59,999",
+      price: "₹34,999",
+      features: [
+        "Business Website (5–7 pages)",
+        "UI/UX Design",
+        "SEO + Social Setup",
+        "Meta Ads Management",
+        "Email Marketing Setup"
+      ]
+    },
+    {
+      name: "Business",
+      icon: <Briefcase size={28} />,
+      tagline: "Optimize & grow revenue",
+      original: "₹1,20,000",
+      price: "₹74,999",
+      features: [
+        "Custom Website / E-commerce",
+        "Funnel Optimization",
+        "Meta + Google Ads",
+        "CRM Automation",
+        "Growth Strategy"
+      ]
+    },
+    {
+      name: "Enterprise",
+      icon: <Crown size={28} />,
+      tagline: "Full-scale digital ecosystem",
+      original: "₹3,50,000",
+      price: "₹1,99,000",
+      features: [
+        "Custom Software / SaaS",
+        "Full Marketing System",
+        "AI Automation + Chatbots",
+        "Dedicated Team",
+        "Advanced Analytics"
+      ]
+    }
+  ];
+  const [activePlan, setActivePlan] = useState(1);
 
   useEffect(() => {
-  async function loadData() {
-    try {
-      setLoading(true);
+    async function loadData() {
+      try {
+        setLoading(true);
 
-      const cacheKey = "homepage_data";
+        const cacheKey = "homepage_data";
 
-      // Check cache first
-      const cached = getCachedData<{
-        projects: Project[];
-        offerings: Offering[];
-        insights: Insight[];
-      }>(cacheKey);
+        // Check cache
+        const cached = getCachedData<{
+          projects: Project[];
+          offerings: Offering[];
+          insights: Insight[];
+        }>(cacheKey);
 
-      if (cached) {
-        setProjects(cached.projects);
-        setOfferings(cached.offerings);
-        setInsights(cached.insights);
+        if (cached) {
+          setProjects(cached.projects);
+          setOfferings(cached.offerings);
+          setInsights(cached.insights);
+          return;
+        }
+
+        const data = await getHomepageData();
+        console.log("DATA:", data);
+
+        setProjects(data.projects);
+        setOfferings(data.offerings);
+        setInsights(data.insights);
+
+        // Cache it
+        setCachedData(cacheKey, data);
+
+      } catch (error) {
+        console.error("Homepage Load Error:", error);
+      } finally {
         setLoading(false);
-        return;
       }
-
-      // No cache → Call APIs
-      const [projectsData, offeringsData, insightsData] =
-        await Promise.all([
-          getPublishedProjects(),
-          getPublishedOfferings(),
-          getPublishedInsights(),
-        ]);
-
-      const slicedProjects = (projectsData || []).slice(0, 6);
-      const slicedOfferings = (offeringsData || []).slice(0, 6);
-      const slicedInsights = (insightsData || []).slice(0, 6);
-
-      setProjects(slicedProjects);
-      setOfferings(slicedOfferings);
-      setInsights(slicedInsights);
-
-      // Store combined data in cache
-      setCachedData(cacheKey, {
-        projects: slicedProjects,
-        offerings: slicedOfferings,
-        insights: slicedInsights,
-      });
-
-    } catch (error) {
-      console.error("Homepage Load Error:", error);
-    } finally {
-      setLoading(false);
     }
-  }
 
-  loadData();
-}, []);
+    loadData();
+  }, []);
 
   useEffect(() => {
     setTheme("primary");
@@ -115,7 +158,7 @@ export function Homepage() {
       if (!isDeleting) {
         setDisplayText(currentWord.substring(0, displayText.length + 1));
         if (displayText === currentWord) {
-          setTimeout(() => setIsDeleting(true), 1000); // pause before deleting
+          setTimeout(() => setIsDeleting(true), 1000);
         }
       } else {
         setDisplayText(currentWord.substring(0, displayText.length - 1));
@@ -443,123 +486,146 @@ export function Homepage() {
             </div>
 
             <motion.div
-              className="mb-24 relative z-10"
+              className="mb-12 md:mb 16 relative z-10"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="text-l uppercase tracking-[0.3em] text-[#FF4D00] mb-6 font-bold">
+              <div className="text-2xl uppercase tracking-[0.3em] text-[#FF4D00] mb-6 font-bold">
                 WHAT WE DO
               </div>
-              <p className="text-2xl md:text-3xl max-w-3xl leading-relaxed font-bold text-black/80">
-                We design and build digital experiences that elevate brands and drive
-                measurable business outcomes.
+              <p className="text-lg md:text-xl max-w-3xl leading-relaxed text-black/80">
+                We design and build powerful digital experiences that elevate brands, engage audiences, and drive measurable business growth.
               </p>
             </motion.div>
 
-            <div className="text-xl md:text-2xl uppercase tracking-[0.3em] text-[#FF4D00] mb-12">
-                  SERVICES WE OFFER
-            </div>
+            <Section className="py-24 md:py-16">
+              <Container>
 
-            <div className="space-y-20 md:space-y-32">
+                {/* HEADER */}
+                <div className="text-center mb-16 md:mb-20">
+                  <h2 className="text-3xl md:text-5xl font-semibold text-[#FF4D00] tracking-tight">
+                    Scale Faster with the Right Plan
+                  </h2>
+                  <p className="text-black/80 mt-4 text-sm md:text-base max-w-xl mx-auto">
+                    Performance-driven packages for every stage.<br />From launch to dominance — we grow with you.
+                  </p>
+                </div>
 
-              {loading && offerings.length === 0 && (
-                <p className="text-black/40">Loading services...</p>
-              )}
+                {/* GRID */}
+                <div className="
+                  grid 
+                  gap-8 md:gap-10 lg:gap-12
+                  md:grid-cols-2 
+                  lg:grid-cols-2
+                ">
 
-              {!loading && offerings.length === 0 && (
-                <p className="text-black/40">No services available.</p>
-              )}
+                  {packages.map((pkg, index) => {
+                    const isPopular = pkg.name === "Growth";
 
-              {offerings.length > 0 &&
-                offerings.map((service, index) => (
-                  <motion.div
-                    key={service.publicId || index}
-                    initial={{ opacity: 0, y: 60 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8, delay: index * 0.1 }}
-                    className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 border-t border-black/10 pt-12"
-                  >
-                    {/* Auto Number */}
-                    <div className="md:col-span-2">
+                    return (
                       <div
-                        className="text-6xl md:text-8xl text-black/30"
-                        style={{ fontWeight: 700 }}
+                        key={index}
+                        className={`
+                          group relative rounded-2xl flex flex-col
+                          p-8 md:p-10 lg:p-12
+                          min-h-[520px]
+
+                          backdrop-blur-xl
+                          bg-black/90
+                          border border-white/10
+
+                          transition-all duration-500 ease-out
+
+                          hover:scale-[1.04]
+                          hover:-translate-y-2
+                          hover:border-[#FF4D00]/40
+                          hover:shadow-black
+                        `}
                       >
-                        {String(index + 1).padStart(2, "0")}
-                      </div>
-                    </div>
 
-                    {/* Content */}
-                    <div className="md:col-span-10 space-y-8">
-
-                      <div>
-                        <h2
-                          className="text-3xl md:text-5xl mb-6 group-hover:text-[#FF4D00] transition-colors duration-300"
-                          style={{ fontWeight: 700 }}
-                        >
-                          {service.title}
-                        </h2>
-
-                          <div className="relative overflow-hidden aspect-[4/3] rounded-xl mb-6 max-w-[80%]">                          <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            transition={{ duration: 0.6 }}
-                            className="w-full h-full"
-                          >
-                            <ImageWithFallback
-                              src={service.featuredImage}
-                              alt={service.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </motion.div>
-                        </div>
-
-                        <p className="text-lg md:text-xl text-black leading-relaxed max-w-3xl">
-                          {service.shortDescription}
-                        </p>
-
-                        {service.price && (
-                          <motion.div
-                            className="mt-6 inline-block"
-                            whileHover={{ scale: 1.05 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                          >
-                            <button
-                              onClick={() =>
-                                navigate("/contact", {
-                                  state: { selectedService: service.title },
-                                })
-                              }
-                              className="
-                                relative
-                                border-black
-                                text-black
-                                border border-black/40
-                                px-6 py-3
-                                rounded-md
-                                font-bold
-                                text-sm md:text-base
-                                tracking-wide
-                                transition-all duration-300 ease-out
-                                hover:border-[#FF4D00]
-                                hover:text-[#FF4D00]
-                                hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
-                              "
-                            >
-                              {service.price}
-                            </button>
-                          </motion.div>
+                        {/* MOST POPULAR TAG */}
+                        {isPopular && (
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                            <span className="bg-[#FF4D00] text-white text-xs px-3 py-1 rounded-full">
+                              Most Popular
+                            </span>
+                          </div>
                         )}
+
+                        {/* CONTENT */}
+                        <div className="relative z-10 flex flex-col h-full">
+
+                          {/* ICON */}
+                          <div className="mb-4 text-[#FF4D00]">
+                            {pkg.icon}
+                          </div>
+
+                          {/* TITLE */}
+                          <h3 className="text-xl md:text-2xl font-semibold text-white">
+                            {pkg.name}
+                          </h3>
+
+                          <p className="text-white/60 text-sm mt-1 mb-5">
+                            {pkg.tagline}
+                          </p>
+
+                          {/* PRICE */}
+                          <div className="mb-6">
+                            <span className="line-through text-white/30 text-sm mr-2">
+                              {pkg.original}
+                            </span>
+                            <span className="text-[#FF4D00] text-2xl font-semibold">
+                              {pkg.price}
+                            </span>
+                            <p className="text-xs text-white/40 mt-1">
+                              One-time payment
+                            </p>
+                          </div>
+
+                          {/* FEATURES */}
+                          <ul className="space-y-2 text-sm text-white/70 mb-6 flex-1">
+                            {pkg.features.map((f, i) => (
+                              <li key={i}>✓ {f}</li>
+                            ))}
+                          </ul>
+
+                          {/* BUTTON */}
+                          <button className="
+                            w-full py-3 px-4
+                            rounded-full
+                            font-medium text-sm
+
+                            bg-white
+                            text-[#FF4D00]
+                            border border-white
+
+                            transition-all duration-300 ease-out
+
+                            hover:border-[#FF4D00]
+                            hover:bg-[#FF4D00]
+                            hover:text-white
+                            hover:shadow-[0_8px_25px_rgba(255,77,0,0.35)]
+                            hover:scale-[1.02]
+
+                            active:scale-[0.98]
+                          ">
+                            Get Started
+                          </button>
+
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
-              ))}
-            </div>
+                    );
+                  })}
+
+                </div>
+
+              </Container>
+            </Section>
             
             <motion.div
-              className="mt-32 text-center relative z-10"
+              className="mt-16 md:mt-20 text-center relative z-10"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

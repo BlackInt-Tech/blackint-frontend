@@ -6,6 +6,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect } from "react";
 import { useScroll } from "motion/react";
+import founder_profile from "../assets/founder_profile.jpeg";
 
 const values = [
   {
@@ -27,26 +28,26 @@ const values = [
 ];
 
 const team = [
-  {
-    name: 'Ritik Raj',
-    role: 'FOUNDER & CEO',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
-  },
-  {
-    name: 'Souvik Haldar',
-    role: 'Lead Developer',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
-  },
-  {
-    name: 'Vicky Anand',
-    role: 'Marketing Lead',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
-  },
-  {
-    name: 'Ayesh Biswal',
-    role: 'UI/UX Lead',
-    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
-  },
+  // {
+  //   name: 'Ritik Raj',
+  //   role: 'FOUNDER & CEO',
+  //   image: founder_profile,
+  // },
+  // {
+  //   name: 'Ritik Raj',
+  //   role: 'Lead Developer',
+  //   image: founder_profile,
+  // },
+  // {
+  //   name: 'Ritik Raj',
+  //   role: 'Marketing Lead',
+  //   image: founder_profile,
+  // },
+  // {
+  //   name: 'Ritik Raj',
+  //   role: 'UI/UX Lead',
+  //   image: founder_profile,
+  // },
 ];
 
 export function About() {

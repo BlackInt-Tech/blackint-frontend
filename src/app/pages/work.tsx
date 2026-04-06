@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { useScroll } from "motion/react";
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect, useState} from 'react';
-import { getPublishedProjects } from "../../services/projectService";
+import { getHomepageData } from '../../services/homepageService';
 import { Project } from "../../types/project";
 import { getCachedData, setCachedData } from '../utils/cache';
 
@@ -36,18 +36,24 @@ export function Work() {
       try {
         setLoading(true);
 
-        const cached = getCachedData<Project[]>("work_projects");
+        const cacheKey = "homepage_data";
+
+        const cached = getCachedData<{
+          projects: Project[];
+        }>(cacheKey);
 
         if (cached) {
-          setProjects(cached);
-          setLoading(false);
+          setProjects(cached.projects || []);
           return;
         }
 
-        const data = await getPublishedProjects();
-        setProjects(data || []);
+        const data = await getHomepageData();
 
-        setCachedData("work_projects", data || []);
+        setProjects(data.projects || []);
+
+        // shared cache
+        setCachedData(cacheKey, data);
+
       } catch (error) {
         console.error("Work Page Error:", error);
       } finally {

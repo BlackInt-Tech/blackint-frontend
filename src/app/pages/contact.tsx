@@ -6,7 +6,7 @@ import { useHeaderTheme } from "../context/header-theme";
 import { useEffect, useState } from "react";
 import { submitContact } from "../../services/contactService";
 import { getCachedData, setCachedData } from "../utils/cache";
-import { getPublishedOfferings } from "../../services/offeringService";
+import { getHomepageData } from "../../services/homepageService";
 import { Offering } from "../../types/offering";
 import { useLocation } from "react-router-dom";
 
@@ -29,20 +29,22 @@ export function Contact() {
     async function loadServices() {
       try {
 
-        const cacheKey = "contact_offerings";
-        const cached = getCachedData<Offering[]>(cacheKey);
+        const cacheKey = "homepage_data";
+
+        const cached = getCachedData<{
+          offerings: Offering[];
+        }>(cacheKey);
 
         if (cached) {
-          setServicesList(cached);
+          setServicesList(cached.offerings || []);
           return;
         }
 
-        const data = await getPublishedOfferings();
+        const data = await getHomepageData();
 
-        if (data) {
-          setServicesList(data);
-          setCachedData(cacheKey, data);
-        }
+        setServicesList(data.offerings || []);
+
+        setCachedData(cacheKey, data);
 
       } catch (error) {
         console.error("Failed to load offerings", error);
@@ -368,12 +370,6 @@ export function Contact() {
                       >
 
                         {service.title}
-
-                        {service.price && (
-                          <span className="ml-2 text-xs opacity-70">
-                            ({service.price})
-                          </span>
-                        )}
 
                       </button>
 
