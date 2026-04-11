@@ -513,7 +513,7 @@ export function Homepage() {
                             {pkg.title}
                           </h3>
 
-                          <p className="text-white/80text-sm mt-1 mb-5">
+                          <p className="text-white/70 text-sm mt-1 mb-5">
                             {pkg.fullContent || ""}
                           </p>
 
