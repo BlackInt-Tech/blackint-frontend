@@ -191,7 +191,7 @@ useEffect(() => {
                           </h3>
 
                           {/* DESCRIPTION */}
-                          <p className="text-white/80 text-sm mt-1 mb-5">
+                          <p className="text-white/70 text-sm mt-1 mb-5">
                             {pkg.fullContent || " "}
                           </p>
 
@@ -282,17 +282,25 @@ useEffect(() => {
                 className="grid md:grid-cols-2 gap-10 md:gap-16 border-t border-black/10 pt-16"
               >
 
-                {/* LEFT → IMAGE */}
-                <div className="relative">
-                  <ImageWithFallback
-                    src={service.featuredImage}
-                    alt={service.title}
-                    className="w-full h-[350px] object-cover rounded-xl"
-                  />
+                {/* LEFT → IMAGE + NUMBER */}
+                <div className="space-y-4">
 
-                  {/* NUMBER OVERLAY */}
-                  <div className="absolute top-4 left-4 text-5xl text-white/30 font-bold">
+                  {/* NUMBER ABOVE IMAGE */}
+                  <div className="text-5xl md:text-6xl text-black/20 font-bold">
                     {String(index + 1).padStart(2, "0")}
+                  </div>
+
+                  {/* IMAGE */}
+                  <div className="overflow-hidden rounded-xl">
+                    <ImageWithFallback
+                      src={service.featuredImage}
+                      alt={service.title}
+                      className="
+                        w-full h-[350px] object-cover
+                        transition-transform duration-500 ease-out
+                        hover:scale-110
+                      "
+                    />
                   </div>
                 </div>
 
