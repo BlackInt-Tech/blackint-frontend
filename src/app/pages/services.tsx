@@ -191,8 +191,8 @@ useEffect(() => {
                           </h3>
 
                           {/* DESCRIPTION */}
-                          <p className="text-white/60 text-sm mt-1 mb-5">
-                            {pkg.shortDescription?.[0] || "Premium growth package"}
+                          <p className="text-white/80 text-sm mt-1 mb-5">
+                            {pkg.fullContent || " "}
                           </p>
 
                           {/* PRICE */}
@@ -201,12 +201,12 @@ useEffect(() => {
                               {pkg.price}
                             </span>
                             <p className="text-xs text-[#FF4D00]/80 mt-1">
-                              {pkg.offeringType}
+                              Offer Package
                             </p>
                           </div>
 
                           {/* FEATURES */}
-                          <ul className="space-y-2 text-sm text-white/70 mb-6 flex-1">
+                          <ul className="space-y-2 text-sm text-white mb-6 flex-1">
                             {pkg.shortDescription?.map((feature, i) => (
                               <li key={i}>✓ {feature}</li>
                             ))}
@@ -262,7 +262,7 @@ useEffect(() => {
             WE HAVE SEPARATE SERVICES FOR EVERY NEED
           </div>
 
-          <div className="space-y-20 md:space-y-32">
+          <div className="space-y-24">
 
             {loading && services.length === 0 && (
               <p className="text-black/40">Loading services...</p>
@@ -277,103 +277,83 @@ useEffect(() => {
                 key={service.publicId || index}
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="grid grid-cols-1 md:grid-cols-10 gap-8 md:gap-16 border-t border-black/10 pt-12"
+                className="grid md:grid-cols-2 gap-10 md:gap-16 border-t border-black/10 pt-16"
               >
 
-                {/* NUMBER */}
-                <div className="md:col-span-2">
-                  <div className="text-6xl md:text-8xl text-black/40 font-bold">
+                {/* LEFT → IMAGE */}
+                <div className="relative">
+                  <ImageWithFallback
+                    src={service.featuredImage}
+                    alt={service.title}
+                    className="w-full h-[350px] object-cover rounded-xl"
+                  />
+
+                  {/* NUMBER OVERLAY */}
+                  <div className="absolute top-4 left-4 text-5xl text-white/30 font-bold">
                     {String(index + 1).padStart(2, "0")}
                   </div>
                 </div>
 
-                {/* CONTENT */}
-                <div className="md:col-span-10 space-y-8">
+                {/* RIGHT → CONTENT */}
+                <div className="flex flex-col justify-center space-y-6">
 
-                  <div>
+                  {/* TITLE */}
+                  <h2 className="text-3xl md:text-4xl font-bold">
+                    {service.title}
+                  </h2>
 
-                    {/* TITLE */}
-                    <h2 className="text-4xl md:text-6xl mb-6 font-bold">
-                      {service.title}
-                    </h2>
+                  {/* FEATURES */}
+                  <ul className="text-base text-black/60 space-y-2">
+                    {service.shortDescription?.map((item, i) => (
+                      <li key={i}>• {item}</li>
+                    ))}
+                  </ul>
 
-                    {/* IMAGE */}
-                    <ImageWithFallback
-                      src={service.featuredImage}
-                      alt={service.title}
-                      className="w-full h-[400px] object-cover rounded-xl"
-                    />
+                  {/* PRICE (CLEAN ORANGE) */}
+                  {service.price && (
+                    <div className="text-2xl font-semibold text-[#FF4D00]">
+                      {service.price}
+                    </div>
+                  )}
 
-                    {/* FEATURES */}
-                    <ul className="text-xl text-black/60 leading-relaxed max-w-3xl mt-6 space-y-2">
-                      {service.shortDescription?.map((item, i) => (
-                        <li key={i}>• {item}</li>
-                      ))}
-                    </ul>
+                  {/* PREMIUM CTA BUTTON */}
+                  <button
+                    onClick={() =>
+                      navigate("/contact", {
+                        state: {
+                          offeringType: "SERVICE",
+                          offeringName: service.title,
+                          offeringPrice: service.price
+                        }
+                      })
+                    }
+                    className="
+                      mt-2 px-6 py-3 w-fit
+                      rounded-md
+                      font-medium
 
-                    {/* PRICE */}
-                    {service.price && (
-                      <motion.div
-                        className="mt-6 inline-block"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                      >
-                        <div className="
-                          border border-black/40
-                          text-black
-                          px-6 py-3
-                          rounded-md
-                          font-bold
-                          text-sm md:text-base
-                          tracking-wide
-                          transition-all duration-300 ease-out
-                          hover:border-[#FF4D00]
-                          hover:text-[#FF4D00]
-                          hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
-                        ">
-                          {service.price}
-                        </div>
-                      </motion.div>
-                    )}
+                      bg-black text-white
+                      border border-black
 
-                    {/* CTA BUTTON (CRITICAL 🔥) */}
-                    <button
-                      onClick={() =>
-                        navigate("/contact", {
-                          state: {
-                            offeringType: "SERVICE",
-                            offeringName: service.title,
-                            offeringPrice: service.price
-                          }
-                        })
-                      }
-                      className="
-                        mt-6 px-6 py-3
-                        border border-black/40
-                        rounded-md
-                        text-black
-                        font-medium
+                      transition-all duration-300 ease-out
 
-                        transition-all duration-300
-
-                        hover:border-[#FF4D00]
-                        hover:text-[#FF4D00]
-                        hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
-                      "
-                    >
-                      Get Service
-                    </button>
-
-                  </div>
+                      hover:bg-[#FF4D00]
+                      hover:border-[#FF4D00]
+                      hover:shadow-[0_0_30px_rgba(255,77,0,0.6)]
+                    "
+                  >
+                    Get Service
+                  </button>
 
                   {/* FULL CONTENT */}
-                  <p className="text-black/50 max-w-3xl">
+                  <p className="text-black/50 text-sm">
                     {service.fullContent}
                   </p>
 
                 </div>
+
               </motion.div>
             ))}
 
