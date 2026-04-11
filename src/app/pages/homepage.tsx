@@ -513,8 +513,8 @@ export function Homepage() {
                             {pkg.title}
                           </h3>
 
-                          <p className="text-white/60 text-sm mt-1 mb-5">
-                            {pkg.shortDescription[0] || ""}
+                          <p className="text-white/80text-sm mt-1 mb-5">
+                            {pkg.fullContent || ""}
                           </p>
 
                           {/* PRICE */}
@@ -528,7 +528,7 @@ export function Homepage() {
                           </div>
 
                           {/* FEATURES */}
-                          <ul className="space-y-2 text-sm text-white/70 mb-6 flex-1">
+                          <ul className="space-y-2 text-sm text-white mb-6 flex-1">
                             {pkg.shortDescription.map((f, i) => (
                               <li key={i}>✓ {f}</li>
                             ))}
