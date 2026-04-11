@@ -463,8 +463,12 @@ export function Homepage() {
                 <div className="
                   grid 
                   gap-8 md:gap-10 lg:gap-12
+
+                  grid-cols-1
                   md:grid-cols-2 
                   lg:grid-cols-2
+
+                  justify-items-center
                 ">
 
                   {packages.map((pkg, index) => {
@@ -474,6 +478,9 @@ export function Homepage() {
                       <div
                         key={index}
                         className={`
+                          w-full
+                          max-w-md md:max-w-none
+
                           group relative rounded-2xl flex flex-col
                           p-8 md:p-10 lg:p-12
                           min-h-[520px]
@@ -487,7 +494,7 @@ export function Homepage() {
                           hover:scale-[1.04]
                           hover:-translate-y-2
                           hover:border-[#FF4D00]/40
-                          hover:shadow-black
+                        "
                         `}
                       >
 
