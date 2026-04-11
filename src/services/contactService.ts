@@ -6,10 +6,10 @@ export interface ContactRequest {
   email: string;
   phone: string;
   company: string;
-  services: string[];
-  budget: string;
+  offeringType: "PACKAGE" | "SERVICE";
+  offeringName: string;
+  offeringPrice: string;
   projectIdea: string;
-  message: string;
 }
 
 export const submitContact = async (data: ContactRequest) => {
@@ -21,10 +21,10 @@ export const submitContact = async (data: ContactRequest) => {
       email: data.email,
       phone: data.phone,
       company: data.company,
-      services: data.services,
-      budget: data.budget,
+      offeringType: data.offeringType,
+      offeringName: data.offeringName,
+      offeringPrice: data.offeringPrice,
       projectIdea: data.projectIdea,
-      message: data.message
     }
   );
 

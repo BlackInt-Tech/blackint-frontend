@@ -18,7 +18,8 @@ import { useNavigate } from "react-router-dom";
 export function Homepage() {
 
   const [projects, setProjects] = useState<Project[]>([]);
-  const [offerings, setOfferings] = useState<Offering[]>([]);
+  const [services, setServices] = useState<Offering[]>([]);
+  const [packages, setPackages] = useState<Offering[]>([]);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loading, setLoading] = useState(false);
   const words = [
@@ -32,63 +33,6 @@ export function Homepage() {
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
   const navigate = useNavigate();
-  const packages = [
-    {
-      name: "Startup",
-      icon: <Rocket size={28} />,
-      tagline: "Launch your digital presence",
-      original: "₹24,999",
-      price: "₹12,999",
-      features: [
-        "Landing Page Website",
-        "Basic Branding",
-        "SEO Setup",
-        "1 Ad Campaign Setup"
-      ]
-    },
-    {
-      name: "Growth",
-      icon: <TrendingUp size={28} />,
-      tagline: "Scale traffic & leads",
-      original: "₹59,999",
-      price: "₹34,999",
-      features: [
-        "Business Website (5–7 pages)",
-        "UI/UX Design",
-        "SEO + Social Setup",
-        "Meta Ads Management",
-        "Email Marketing Setup"
-      ]
-    },
-    {
-      name: "Business",
-      icon: <Briefcase size={28} />,
-      tagline: "Optimize & grow revenue",
-      original: "₹1,20,000",
-      price: "₹74,999",
-      features: [
-        "Custom Website / E-commerce",
-        "Funnel Optimization",
-        "Meta + Google Ads",
-        "CRM Automation",
-        "Growth Strategy"
-      ]
-    },
-    {
-      name: "Enterprise",
-      icon: <Crown size={28} />,
-      tagline: "Full-scale digital ecosystem",
-      original: "₹3,50,000",
-      price: "₹1,99,000",
-      features: [
-        "Custom Software / SaaS",
-        "Full Marketing System",
-        "AI Automation + Chatbots",
-        "Dedicated Team",
-        "Advanced Analytics"
-      ]
-    }
-  ];
   const [activePlan, setActivePlan] = useState(1);
 
   useEffect(() => {
@@ -101,22 +45,24 @@ export function Homepage() {
         // Check cache
         const cached = getCachedData<{
           projects: Project[];
-          offerings: Offering[];
+          services: Offering[];
+          packages: Offering[];
           insights: Insight[];
         }>(cacheKey);
 
         if (cached) {
           setProjects(cached.projects);
-          setOfferings(cached.offerings);
+          setServices(cached.services);
+          setPackages(cached.packages);
           setInsights(cached.insights);
           return;
         }
 
         const data = await getHomepageData();
-        console.log("DATA:", data);
 
         setProjects(data.projects);
-        setOfferings(data.offerings);
+        setServices(data.services);
+        setPackages(data.packages);
         setInsights(data.insights);
 
         // Cache it
@@ -522,7 +468,7 @@ export function Homepage() {
                 ">
 
                   {packages.map((pkg, index) => {
-                    const isPopular = pkg.name === "Growth";
+                    const isPopular = pkg.title === "Growth";
 
                     return (
                       <div
@@ -564,56 +510,62 @@ export function Homepage() {
 
                           {/* TITLE */}
                           <h3 className="text-xl md:text-2xl font-semibold text-white">
-                            {pkg.name}
+                            {pkg.title}
                           </h3>
 
                           <p className="text-white/60 text-sm mt-1 mb-5">
-                            {pkg.tagline}
+                            {pkg.shortDescription[0] || ""}
                           </p>
 
                           {/* PRICE */}
                           <div className="mb-6">
-                            <span className="line-through text-white/30 text-sm mr-2">
-                              {pkg.original}
-                            </span>
                             <span className="text-[#FF4D00] text-2xl font-semibold">
                               {pkg.price}
                             </span>
-                            <p className="text-xs text-white/40 mt-1">
-                              One-time payment
+                            <p className="text-xs text-[#FF4D00]/80 mt-1">
+                              Offer Package
                             </p>
                           </div>
 
                           {/* FEATURES */}
                           <ul className="space-y-2 text-sm text-white/70 mb-6 flex-1">
-                            {pkg.features.map((f, i) => (
+                            {pkg.shortDescription.map((f, i) => (
                               <li key={i}>✓ {f}</li>
                             ))}
                           </ul>
 
                           {/* BUTTON */}
-                          <button className="
-                            w-full py-3 px-4
-                            rounded-full
-                            font-medium text-sm
+                          <button 
+                            onClick={() =>
+                              navigate("/contact", {
+                                state: {
+                                  offeringType: "PACKAGE",
+                                  offeringName: pkg.title,
+                                  offeringPrice: pkg.price
+                                }
+                              })
+                            }
+                            className="
+                              w-full py-3 px-4
+                              rounded-full
+                              font-medium text-sm
 
-                            bg-white
-                            text-[#FF4D00]
-                            border border-white
+                              bg-white
+                              text-[#FF4D00]
+                              border border-white
 
-                            transition-all duration-300 ease-out
+                              transition-all duration-300 ease-out
 
-                            hover:border-[#FF4D00]
-                            hover:bg-[#FF4D00]
-                            hover:text-white
-                            hover:shadow-[0_8px_25px_rgba(255,77,0,0.35)]
-                            hover:scale-[1.02]
+                              hover:border-[#FF4D00]
+                              hover:bg-[#FF4D00]
+                              hover:text-white
+                              hover:shadow-[0_8px_25px_rgba(255,77,0,0.35)]
+                              hover:scale-[1.02]
 
-                            active:scale-[0.98]
-                          ">
+                              active:scale-[0.98]
+                            ">
                             Get Started
                           </button>
-
                         </div>
                       </div>
                     );

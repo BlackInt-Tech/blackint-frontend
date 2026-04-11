@@ -12,52 +12,10 @@ import { useLocation } from "react-router-dom";
 
 export function Contact() {
 
-  const [servicesList, setServicesList] = useState<Offering[]>([]);
+  const [services, setServices] = useState<Offering[]>([]);
+  const [packages, setPackages] = useState<Offering[]>([]);
   const { setTheme } = useHeaderTheme();
   const location = useLocation();
-
-  useEffect(() => {
-    if (location.state?.selectedService) {
-      setFormData((prev) => ({
-        ...prev,
-        services: [location.state.selectedService],
-      }));
-    }
-  }, [location.state]);
-
-  useEffect(() => {
-    async function loadServices() {
-      try {
-
-        const cacheKey = "homepage_data";
-
-        const cached = getCachedData<{
-          offerings: Offering[];
-        }>(cacheKey);
-
-        if (cached) {
-          setServicesList(cached.offerings || []);
-          return;
-        }
-
-        const data = await getHomepageData();
-
-        setServicesList(data.offerings || []);
-
-        setCachedData(cacheKey, data);
-
-      } catch (error) {
-        console.error("Failed to load offerings", error);
-      }
-    }
-
-    loadServices();
-
-  }, []);
-
-  useEffect(() => {
-    setTheme("primary");
-  }, [setTheme]);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -65,8 +23,10 @@ export function Contact() {
     email: "",
     phone: "",
     company: "",
-    services: [] as string[],
-    budget: "",
+    offeringType: "" as "PACKAGE" | "SERVICE" | "",
+    offeringName: "",
+    offeringPrice: "",
+    selectedServices: [] as string[],
     projectIdea: ""
   });
 
@@ -75,59 +35,70 @@ export function Contact() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
 
-  const handleChange = (
+  useEffect(() => {
+    if (location.state) {
+      const { offeringType, offeringName, offeringPrice } = location.state;
+
+      setFormData((prev) => ({
+        ...prev,
+        offeringType,
+        offeringName,
+        offeringPrice
+      }));
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getHomepageData();
+
+        setServices(data.services || []);
+        setPackages(data.packages || []);
+
+      } catch (error) {
+        console.error("Failed to load offerings", error);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    setTheme("primary");
+  }, [setTheme]);
+
+    const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-
+    
   };
 
-  const handleServiceChange = (serviceTitle: string) => {
-
-    let updatedServices;
-
-    if (formData.services.includes(serviceTitle)) {
-      updatedServices = formData.services.filter(
-        (s) => s !== serviceTitle
-      );
-    } else {
-      updatedServices = [...formData.services, serviceTitle];
-    }
-
+  //SERVICE SELECT
+  const handleServiceSelect = (service: Offering) => {
     setFormData((prev) => ({
       ...prev,
-      services: updatedServices,
+      offeringType: "SERVICE",
+      offeringName: service.title,
+      offeringPrice: service.price
     }));
-
-    const selectedObjects = servicesList.filter((s) =>
-      updatedServices.includes(s.title)
-    );
-
-    const totalPrice = selectedObjects.reduce((acc, curr) => {
-
-      const priceNumber = parseInt(
-        curr.price?.replace(/[^\d]/g, "") || "0"
-      );
-
-      return acc + priceNumber;
-
-    }, 0);
-
-    if (totalPrice > 0) {
-
-      setFormData((prev) => ({
-        ...prev,
-        budget: `Approx ₹${totalPrice.toLocaleString()}`
-      }));
-
-    }
-
   };
 
+  //PACKAGE SELECT
+  const handlePackageSelect = (pkg: Offering) => {
+    setFormData((prev) => ({
+      ...prev,
+      offeringType: "PACKAGE",
+      offeringName: pkg.title,
+      offeringPrice: pkg.price
+    }));
+  };
+
+  //SUBMIT
   const handleSubmit = async (e: React.FormEvent) => {
 
     e.preventDefault();
@@ -144,10 +115,11 @@ export function Contact() {
         email: formData.email,
         phone: formData.phone,
         company: formData.company,
-        services: formData.services,
-        budget: formData.budget,
+
+        offeringType: formData.offeringType as "PACKAGE" | "SERVICE",
+        offeringName: formData.offeringName,
+        offeringPrice: formData.offeringPrice,
         projectIdea: formData.projectIdea,
-        message: formData.projectIdea || "Website inquiry"
       });
 
       if (response.success) {
@@ -158,46 +130,38 @@ export function Contact() {
           email: "",
           phone: "",
           company: "",
-          services: [],
-          budget: "",
+          offeringType: "",
+          offeringName: "",
+          offeringPrice: "",
+          selectedServices: [],
           projectIdea: ""
         });
 
         setSuccessMessage(response.message);
         setShowPopup(true);
 
-        setTimeout(() => {
-          setShowPopup(false);
-        }, 3000);
+        setTimeout(() => setShowPopup(false), 3000);
 
       } else {
-
-        setErrorMessage("Something went wrong. Please try again.");
-
+        setErrorMessage("Something went wrong.");
       }
 
-    } catch (error) {
-
-      setErrorMessage("Server error. Please try again later.");
-
+    } catch {
+      setErrorMessage("Server error.");
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   const isFormValid =
-    formData.firstName.trim() !== "" &&
-    formData.lastName.trim() !== "" &&
-    formData.email.trim() !== "" &&
-    formData.company.trim() !== "" &&
-    formData.projectIdea.trim().length >= 20 &&
-    formData.projectIdea.trim().length <= 500 &&
-    formData.services.length > 0 &&
-    formData.budget.trim() !== "";
-      return (
+    formData.firstName &&
+    formData.lastName &&
+    formData.email &&
+    formData.company &&
+    formData.projectIdea.length >= 20 &&
+    formData.offeringName !== "";
+
+    return (
     <>
       <ScrollIndicator />
 
@@ -343,42 +307,81 @@ export function Contact() {
 
                 </div>
 
-
-                {/* Services */}
-                <div>
-
+                {/* SERVICE TYPE */}
+                <div className="mb-6">
                   <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
-                    Services *
+                    Offering Type *
                   </label>
 
-                  <div className="flex flex-wrap gap-3 max-h-[220px] overflow-y-auto pr-2">
-
-                    {servicesList.map((service) => (
-
+                  <div className="flex gap-4">
+                    {["PACKAGE", "SERVICE"].map((type) => (
                       <button
+                        key={type}
                         type="button"
-                        key={service.publicId}
-                        onClick={() => handleServiceChange(service.title)}
-                        className={`
-                          px-4 py-2 rounded-full text-sm border transition-all duration-300
-                          ${
-                            formData.services.includes(service.title)
-                              ? "bg-[#FF4D00] text-white border-[#FF4D00]"
-                              : "border-white/20 text-white/60 hover:border-[#FF4D00] hover:text-white"
-                          }
-                        `}
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            offeringType: type as "PACKAGE" | "SERVICE",
+                            offeringName: "",
+                            offeringPrice: ""
+                          }))
+                        }
+                        className={`px-4 py-2 rounded-full border ${
+                          formData.offeringType === type
+                            ? "bg-[#FF4D00] text-white border-[#FF4D00]"
+                            : "border-white/20 text-white/60"
+                        }`}
                       >
-
-                        {service.title}
-
+                        {type === "PACKAGE" ? "Packages" : "Services"}
                       </button>
-
                     ))}
-
                   </div>
-
                 </div>
 
+                {/* SERVICES / PACKAGES */}
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                    {formData.offeringType === "PACKAGE" ? "Packages *" : "Services *"}
+                  </label>
+
+                  <div className="flex flex-wrap gap-3">
+
+                    {/* SERVICES */}
+                    {formData.offeringType === "SERVICE" &&
+                      services.map((service) => (
+                        <button
+                          key={service.publicId}
+                          type="button"
+                          onClick={() => handleServiceSelect(service)}
+                          className={`px-4 py-2 rounded-full text-sm border ${
+                            formData.offeringName === service.title
+                              ? "bg-[#FF4D00] text-white border-[#FF4D00]"
+                              : "border-white/20 text-white/60"
+                          }`}
+                        >
+                          {service.title} • {service.price}
+                        </button>
+                      ))}
+
+                    {/* PACKAGES */}
+                    {formData.offeringType === "PACKAGE" &&
+                      packages.map((pkg) => (
+                        <button
+                          key={pkg.publicId}
+                          type="button"
+                          onClick={() => handlePackageSelect(pkg)}
+                          className={`px-4 py-2 rounded-full text-sm border ${
+                            formData.offeringName === pkg.title
+                              ? "bg-[#FF4D00] text-white border-[#FF4D00]"
+                              : "border-white/20 text-white/60"
+                          }`}
+                        >
+                          {pkg.title} • {pkg.price}
+                        </button>
+                      ))}
+
+                  </div>
+                </div>
 
                 {/* Project Idea */}
                 <div>
@@ -406,7 +409,7 @@ export function Contact() {
                 <motion.button
                   type="submit"
                   disabled={loading || !isFormValid}
-                  className={`mt-8 w-full md:w-auto px-10 py-5 uppercase tracking-widest text-sm transition-all rounded-md
+                  className={`mt-8 w-full md:w-auto px-10 py-5 uppercase tracking-widest text-sm rounded-md transition
                   ${
                     loading || !isFormValid
                       ? "bg-gray-600 text-white/70 cursor-not-allowed"
@@ -421,14 +424,12 @@ export function Contact() {
                 </p>
 
               </form>
-
             </motion.div>
-
           </div>
-
         </Container>
       </Section>
-            {/* Success Popup */}
+
+      {/* Success Popup */}
       {showPopup && (
         <motion.div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100]"
@@ -567,8 +568,6 @@ export function Contact() {
         </Container>
       </Section>
 
-
-
       {/* FAQ Section */}
       <Section className="bg-black py-32">
 
@@ -655,19 +654,12 @@ export function Contact() {
                   <p className="text-white/60 leading-relaxed">
                     {faq.a}
                   </p>
-
                 </motion.div>
-
               ))}
-
             </div>
-
           </motion.div>
-
         </Container>
-
       </Section>
-
     </>
   );
 }

@@ -2,8 +2,9 @@ export interface Offering {
   publicId: string;
   title: string;
   slug: string;
-  shortDescription: string;
+  shortDescription: string[];
   fullContent: string;
+  offeringType: "PACKAGE" | "SERVICE";
   icon: string;
   featuredImage: string;
   price: string;
