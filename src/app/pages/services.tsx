@@ -10,71 +10,17 @@ import { Rocket, TrendingUp, Briefcase, Crown } from "lucide-react";
 import { getHomepageData } from '../../services/homepageService';
 import { Offering } from "../../types/offering";
 import { getCachedData, setCachedData } from '../utils/cache';
+import { useNavigate } from "react-router-dom";
 
 export function Services() {
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
 
   const [services, setServices] = useState<Offering[]>([]);
+  const [packages, setPackages] = useState<Offering[]>([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const packages = [
-    {
-      name: "Startup",
-      icon: <Rocket size={28} />,
-      tagline: "Launch your digital presence",
-      original: "₹24,999",
-      price: "₹12,999",
-      features: [
-        "Landing Page Website",
-        "Basic Branding",
-        "SEO Setup",
-        "1 Ad Campaign Setup"
-      ]
-    },
-    {
-      name: "Growth",
-      icon: <TrendingUp size={28} />,
-      tagline: "Scale traffic & leads",
-      original: "₹59,999",
-      price: "₹34,999",
-      features: [
-        "Business Website (5–7 pages)",
-        "UI/UX Design",
-        "SEO + Social Setup",
-        "Meta Ads Management",
-        "Email Marketing Setup"
-      ]
-    },
-    {
-      name: "Business",
-      icon: <Briefcase size={28} />,
-      tagline: "Optimize & grow revenue",
-      original: "₹1,20,000",
-      price: "₹74,999",
-      features: [
-        "Custom Website / E-commerce",
-        "Funnel Optimization",
-        "Meta + Google Ads",
-        "CRM Automation",
-        "Growth Strategy"
-      ]
-    },
-    {
-      name: "Enterprise",
-      icon: <Crown size={28} />,
-      tagline: "Full-scale digital ecosystem",
-      original: "₹3,50,000",
-      price: "₹1,99,000",
-      features: [
-        "Custom Software / SaaS",
-        "Full Marketing System",
-        "AI Automation + Chatbots",
-        "Dedicated Team",
-        "Advanced Analytics"
-      ]
-    }
-  ];
   const [activePlan, setActivePlan] = useState(1);
 
   useEffect(() => {
@@ -99,19 +45,25 @@ useEffect(() => {
       const cacheKey = "homepage_data";
 
       const cached = getCachedData<{
-        offerings: Offering[];
+        services: Offering[];
+        packages: Offering[];
       }>(cacheKey);
 
       if (cached) {
-        setServices(cached.offerings);
+        setServices(cached.services);
+        setPackages(cached.packages);
         return;
       }
 
       const data = await getHomepageData();
 
-      setServices(data.offerings || []);
+      setServices(data.services);
+      setPackages(data.packages);
 
-      setCachedData(cacheKey, data);
+      setCachedData(cacheKey, {
+        services: data.services,
+        packages: data.packages
+      });
 
     } catch (error) {
       console.error("Services Page Error:", error);
@@ -193,11 +145,11 @@ useEffect(() => {
                 ">
 
                   {packages.map((pkg, index) => {
-                    const isPopular = pkg.name === "Growth";
+                    const isPopular = pkg.title === "Growth";
 
                     return (
                       <div
-                        key={index}
+                        key={pkg.publicId || index}
                         className={`
                           group relative rounded-2xl flex flex-col
                           p-8 md:p-10 lg:p-12
@@ -230,81 +182,88 @@ useEffect(() => {
 
                           {/* ICON */}
                           <div className="mb-4 text-[#FF4D00]">
-                            {pkg.icon}
+                            {pkg.icon || "★"}
                           </div>
 
                           {/* TITLE */}
                           <h3 className="text-xl md:text-2xl font-semibold text-white">
-                            {pkg.name}
+                            {pkg.title}
                           </h3>
 
+                          {/* DESCRIPTION */}
                           <p className="text-white/60 text-sm mt-1 mb-5">
-                            {pkg.tagline}
+                            {pkg.shortDescription?.[0] || "Premium growth package"}
                           </p>
 
                           {/* PRICE */}
                           <div className="mb-6">
-                            <span className="line-through text-white/30 text-sm mr-2">
-                              {pkg.original}
-                            </span>
                             <span className="text-[#FF4D00] text-2xl font-semibold">
                               {pkg.price}
                             </span>
-                            <p className="text-xs text-white/40 mt-1">
-                              One-time payment
+                            <p className="text-xs text-[#FF4D00]/80 mt-1">
+                              {pkg.offeringType}
                             </p>
                           </div>
 
                           {/* FEATURES */}
                           <ul className="space-y-2 text-sm text-white/70 mb-6 flex-1">
-                            {pkg.features.map((f, i) => (
-                              <li key={i}>✓ {f}</li>
+                            {pkg.shortDescription?.map((feature, i) => (
+                              <li key={i}>✓ {feature}</li>
                             ))}
                           </ul>
 
                           {/* BUTTON */}
-                          <button className="
-                            w-full py-3 px-4
-                            rounded-full
-                            font-medium text-sm
+                          <button
+                            onClick={() =>
+                              navigate("/contact", {
+                                state: {
+                                  offeringType: "PACKAGE",
+                                  offeringName: pkg.title,
+                                  offeringPrice: pkg.price
+                                }
+                              })
+                            }
+                          className="
+                              w-full py-3 px-4
+                              rounded-full
+                              font-medium text-sm
 
-                            bg-white
-                            text-[#FF4D00]
-                            border border-white
+                              bg-white
+                              text-[#FF4D00]
+                              border border-white
 
-                            transition-all duration-300 ease-out
+                              transition-all duration-300 ease-out
 
-                            hover:border-[#FF4D00]
-                            hover:bg-[#FF4D00]
-                            hover:text-white
-                            hover:shadow-[0_8px_25px_rgba(255,77,0,0.35)]
-                            hover:scale-[1.02]
+                              hover:border-[#FF4D00]
+                              hover:bg-[#FF4D00]
+                              hover:text-white
+                              hover:shadow-[0_8px_25px_rgba(255,77,0,0.35)]
+                              hover:scale-[1.02]
 
-                            active:scale-[0.98]
-                          ">
+                              active:scale-[0.98]
+                            ">
                             Get Started
                           </button>
-
                         </div>
                       </div>
                     );
                   })}
-
                 </div>
-
               </Container>
             </Section>
-
         </Container>
       </Section>
 
       {/* Services List */}
       <Section className="bg-white text-black pb-32">
         <Container>
+
           <div className="text-lg md:text-xl uppercase tracking-[0.3em] text-[#FF4D00] mb-8">
-              WE HAVE SEPERATE SERVICES FOR EVERY NEED
-            </div>
+            WE HAVE SEPARATE SERVICES FOR EVERY NEED
+          </div>
+
           <div className="space-y-20 md:space-y-32">
+
             {loading && services.length === 0 && (
               <p className="text-black/40">Loading services...</p>
             )}
@@ -313,82 +272,111 @@ useEffect(() => {
               <p className="text-black/40">No services available.</p>
             )}
 
-            {services.length > 0 &&
-              services.map((service, index) => (
-                <motion.div
-                  key={service.publicId || index}
-                  initial={{ opacity: 0, y: 60 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className="grid grid-cols-1 md:grid-cols-10 gap-8 md:gap-16 border-t border-black/10 pt-12"
-                >
-                  {/* Auto Number */}
-                  <div className="md:col-span-2">
-                    <div
-                      className="text-6xl md:text-8xl text-black/40"
-                      style={{ fontWeight: 700 }}
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </div>
-                  </div>
+            {services.map((service, index) => (
+              <motion.div
+                key={service.publicId || index}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                className="grid grid-cols-1 md:grid-cols-10 gap-8 md:gap-16 border-t border-black/10 pt-12"
+              >
 
-                  {/* Content */}
-                  <div className="md:col-span-10 space-y-8">
-                    <div>
-                      <h2
-                        className="text-4xl md:text-6xl mb-6"
-                        style={{ fontWeight: 700 }}
+                {/* NUMBER */}
+                <div className="md:col-span-2">
+                  <div className="text-6xl md:text-8xl text-black/40 font-bold">
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
+                </div>
+
+                {/* CONTENT */}
+                <div className="md:col-span-10 space-y-8">
+
+                  <div>
+
+                    {/* TITLE */}
+                    <h2 className="text-4xl md:text-6xl mb-6 font-bold">
+                      {service.title}
+                    </h2>
+
+                    {/* IMAGE */}
+                    <ImageWithFallback
+                      src={service.featuredImage}
+                      alt={service.title}
+                      className="w-full h-[400px] object-cover rounded-xl"
+                    />
+
+                    {/* FEATURES */}
+                    <ul className="text-xl text-black/60 leading-relaxed max-w-3xl mt-6 space-y-2">
+                      {service.shortDescription?.map((item, i) => (
+                        <li key={i}>• {item}</li>
+                      ))}
+                    </ul>
+
+                    {/* PRICE */}
+                    {service.price && (
+                      <motion.div
+                        className="mt-6 inline-block"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 18 }}
                       >
-                        {service.title}
-                      </h2>
+                        <div className="
+                          border border-black/40
+                          text-black
+                          px-6 py-3
+                          rounded-md
+                          font-bold
+                          text-sm md:text-base
+                          tracking-wide
+                          transition-all duration-300 ease-out
+                          hover:border-[#FF4D00]
+                          hover:text-[#FF4D00]
+                          hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
+                        ">
+                          {service.price}
+                        </div>
+                      </motion.div>
+                    )}
 
-                      <ImageWithFallback
-                        src={service.featuredImage}
-                        alt={service.title}
-                        className="w-full h-full object-cover"
-                      />
+                    {/* CTA BUTTON (CRITICAL 🔥) */}
+                    <button
+                      onClick={() =>
+                        navigate("/contact", {
+                          state: {
+                            offeringType: "SERVICE",
+                            offeringName: service.title,
+                            offeringPrice: service.price
+                          }
+                        })
+                      }
+                      className="
+                        mt-6 px-6 py-3
+                        border border-black/40
+                        rounded-md
+                        text-black
+                        font-medium
 
-                      <p className="text-xl text-black/60 leading-relaxed max-w-3xl">
-                        {service.shortDescription}
-                      </p>
+                        transition-all duration-300
 
-                      {service.price && (
-                        <motion.div
-                          className="mt-6 inline-block"
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                        >
-                          <div
-                            className="
-                                relative
-                                border-black
-                                text-black
-                                border border-black/40
-                                px-6 py-3
-                                rounded-md
-                                font-bold
-                                text-sm md:text-base
-                                tracking-wide
-                                transition-all duration-300 ease-out
-                                hover:border-[#FF4D00]
-                                hover:text-[#FF4D00]
-                                hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
-                              "
-                            >
-                            {service.price}
-                          </div>
-                        </motion.div>
-                      )}
-                    </div>
+                        hover:border-[#FF4D00]
+                        hover:text-[#FF4D00]
+                        hover:shadow-[0_0_25px_rgba(255,77,0,0.6)]
+                      "
+                    >
+                      Get Service
+                    </button>
 
-                    {/* Optional full content preview */}
-                    <p className="text-black/50 max-w-3xl">
-                      {service.fullContent}
-                    </p>
                   </div>
-                </motion.div>
+
+                  {/* FULL CONTENT */}
+                  <p className="text-black/50 max-w-3xl">
+                    {service.fullContent}
+                  </p>
+
+                </div>
+              </motion.div>
             ))}
+
           </div>
         </Container>
       </Section>
