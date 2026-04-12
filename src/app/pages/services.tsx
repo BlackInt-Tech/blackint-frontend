@@ -180,24 +180,31 @@ useEffect(() => {
                         {/* CONTENT */}
                         <div className="relative z-10 flex flex-col h-full">
 
-                          {/* ICON (TOP-LEFT FIXED) */}
-                          <div className="absolute top-6 left-6">
+                          {/* ICON */}
+                          <div className="mb-6">
                             {pkg.featuredImage ? (
                               <div className="
-                                w-12 h-12 
-                                rounded-lg 
-                                bg-white/5 
+                                w-14 h-14
+                                rounded-lg
+                                bg-white/5
                                 flex items-center justify-center
-                                overflow-hidden
                               ">
                                 <img
                                   src={pkg.featuredImage}
                                   alt={pkg.title}
-                                  className="w-8 h-8 object-contain"
+                                  className="w-full h-full object-contain p-2"
                                 />
                               </div>
                             ) : (
-                              <span className="text-[#FF4D00] text-xl">★</span>
+                              <div className="
+                                w-14 h-14
+                                rounded-lg
+                                bg-white/5
+                                flex items-center justify-center
+                                text-[#FF4D00] text-xl
+                              ">
+                                ★
+                              </div>
                             )}
                           </div>
 
