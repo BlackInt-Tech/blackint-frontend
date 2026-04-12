@@ -186,7 +186,7 @@ useEffect(() => {
                               <div className="
                                 w-16 h-16
                                 rounded-lg
-                                bg-white/5
+                                bg-black
                                 flex items-center justify-center
                               ">
                                 <img

@@ -514,15 +514,15 @@ export function Homepage() {
                           <div className="mb-6">
                             {pkg.featuredImage ? (
                               <div className="
-                                w-14 h-14
+                                w-16 h-16
                                 rounded-lg
-                                bg-white/5
+                                bg-black
                                 flex items-center justify-center
                               ">
                                 <img
                                   src={pkg.featuredImage}
                                   alt={pkg.title}
-                                  className="w-full h-full object-contain p-2"
+                                  className="w-full h-full object-cover rounded-md"
                                 />
                               </div>
                             ) : (
