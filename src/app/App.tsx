@@ -5,7 +5,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence } from "framer-motion";
 import { Header } from "./components/nav/header";
 import { Footer } from "./components/nav/footer";
 import { CustomCursor } from "./components/cursor/custom-cursor";
@@ -23,6 +23,7 @@ import { HeaderThemeProvider } from "./context/header-theme";
 import NotFound from "./pages/not-found";
 import { PrivacyPolicy } from "./pages/privacypolicy";
 import { TermsOfService } from "./pages/termsofservices";
+import WhatsAppButton from "./components/WhatsAppButton";
 
 // Scroll Reset
 function ScrollToTop() {
@@ -72,14 +73,20 @@ export default function App() {
             <CustomCursor />
             <ScrollToTop />
             <Header />
+
             <main className="min-h-screen">
               <AnimatedRoutes />
             </main>
+
             <Footer />
             <BackToTop />
+
+            {/* WhatsApp Floating Button */}
+            <WhatsAppButton />
           </>
         )}
       </HeaderThemeProvider>
     </Router>
   );
+
 }
