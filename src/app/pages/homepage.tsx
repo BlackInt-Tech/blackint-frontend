@@ -132,16 +132,27 @@ export function Homepage() {
     });
   }, []);
 
-  const getNumericPrice = (price: string): number => {
-    if (!price) return 0;
+  const getNumericPrice = (price: string): number | null => {
+    if (!price) return null;
 
-    const match = price.match(/\d[\d,]*/); // extract number
-    return match ? Number(match[0].replace(/,/g, "")) : 0;
+    const match = price.match(/\d[\d,]*/);
+    return match ? Number(match[0].replace(/,/g, "")) : null;
   };
 
-  const sortedPackages = [...packages].sort(
-    (a, b) => getNumericPrice(a.price) - getNumericPrice(b.price)
-  );
+  const sortedPackages = [...packages].sort((a, b) => {
+    const priceA = getNumericPrice(a.price);
+    const priceB = getNumericPrice(b.price);
+
+    if (priceA !== null && priceB !== null) {
+      return priceA - priceB;
+    }
+
+    if (priceA !== null) return -1;
+
+    if (priceB !== null) return 1;
+
+    return 0;
+  });
 
   return (
     <>
@@ -457,8 +468,8 @@ export function Homepage() {
               </p>
             </motion.div>
 
-            <Section className="py-24 md:py-16">
-              <Container>
+            <Section className="py-24 md:py-16 px-2 md:px-0">
+              <Container className="px-2 md:px-0">
 
                 {/* HEADER */}
                 <div className="text-center mb-16 md:mb-20">
@@ -473,13 +484,10 @@ export function Homepage() {
                 {/* GRID */}
                 <div className="
                   grid 
-                  gap-8 md:gap-10 lg:gap-12
+                  gap-6 md:gap-10 lg:gap-12
 
                   grid-cols-1
-                  md:grid-cols-2 
-                  lg:grid-cols-2
-
-                  justify-items-center
+                  md:grid-cols-2
                 ">
 
                   {sortedPackages.map((pkg, index) => {
@@ -490,7 +498,6 @@ export function Homepage() {
                         key={index}
                         className={`
                           w-full
-                          max-w-md md:max-w-none
 
                           group relative rounded-2xl flex flex-col
                           p-8 md:p-10 lg:p-12
