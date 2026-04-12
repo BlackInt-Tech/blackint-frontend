@@ -108,7 +108,7 @@ useEffect(() => {
       
       {/* Hero Section */}
       <Section className="pt-32 md:pt-40 pb-20 bg-white text-black">
-        <Container>
+        <Container className="px-2 md:px-24">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -127,8 +127,6 @@ useEffect(() => {
               Through great UX, design, and development, we help brands create meaningful connections with their audiences.
             </p>
           </motion.div>
-
-          
 
         </Container>
       </Section>
