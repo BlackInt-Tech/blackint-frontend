@@ -151,154 +151,161 @@ useEffect(() => {
           </motion.div>
 
           <Section className="py-24 md:py-16 px-2 md:px-0">
-            <Container className="px-2 md:px-0">
+            <Container className="px-0">
+              <div className="-mx-3 md:mx-0">
 
-                {/* HEADER */}
-                <div className="text-center mb-16 md:mb-20">
-                  <h2 className="text-3xl md:text-5xl font-semibold text-[#FF4D00] tracking-tight">
-                    Scale Faster with the Right Plan
-                  </h2>
-                  <p className="text-black/80 mt-4 text-sm md:text-base max-w-xl mx-auto">
-                    Performance-driven packages for every stage. <br />From launch to dominance — we grow with you.
-                  </p>
-                </div>
+                  {/* HEADER */}
+                  <div className="text-center mb-16 md:mb-20">
+                    <h2 className="text-3xl md:text-5xl font-semibold text-[#FF4D00] tracking-tight">
+                      Scale Faster with the Right Plan
+                    </h2>
+                    <p className="text-black/80 mt-4 text-sm md:text-base max-w-xl mx-auto">
+                      Performance-driven packages for every stage. <br />From launch to dominance — we grow with you.
+                    </p>
+                  </div>
 
-                {/* GRID */}
-                <div className="
-                  grid 
-                  gap-6 md:gap-10 lg:gap-12
-                  grid-cols-1
-                  md:grid-cols-2 
-                ">
+                  {/* GRID */}
+                  <div className="
+                    grid 
+                    gap-5 md:gap-10 lg:gap-12
+                    grid-cols-1
+                    md:grid-cols-2
 
-                  {sortedPackages.map((pkg, index) => {
-                    const isPopular = pkg.title === "Growth";
+                    px-3 md:px-0
+                  ">
 
-                    return (
-                      <div
-                        key={pkg.publicId || index}
-                        className={`
-                          w-full
-                          group relative rounded-2xl flex flex-col
-                          p-8 md:p-10 lg:p-12
-                          min-h-[520px]
+                    {sortedPackages.map((pkg, index) => {
+                      const isPopular = pkg.title === "Growth";
 
-                          backdrop-blur-xl
-                          bg-black
-                          border border-white/10
+                      return (
+                        <div
+                          key={pkg.publicId || index}
+                          className={`
+                            w-full
 
-                          transition-all duration-500 ease-out
+                            group relative flex flex-col
+                            rounded-2xl
 
-                          hover:scale-[1.04]
-                          hover:-translate-y-2
-                          hover:border-[#FF4D00]/40
-                          hover:shadow-black
-                        `}
-                      >
+                            p-6 md:p-10 lg:p-12   /* 🔥 reduced mobile padding → more width feel */
+                            min-h-[520px]
 
-                        {/* MOST POPULAR TAG */}
-                        {isPopular && (
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                            <span className="bg-[#FF4D00] text-white text-xs px-3 py-1 rounded-full">
-                              Most Popular
-                            </span>
-                          </div>
-                        )}
+                            backdrop-blur-xl
+                            bg-black
+                            border border-white/10
 
-                        {/* CONTENT */}
-                        <div className="relative z-10 flex flex-col h-full">
+                            transition-all duration-500 ease-out
 
-                          {/* ICON */}
-                          <div className="mb-6">
-                            {pkg.featuredImage ? (
-                              <div className="
-                                w-16 h-16
-                                rounded-lg
-                                bg-black
-                                flex items-center justify-center
-                              ">
-                                <img
-                                  src={pkg.featuredImage}
-                                  alt={pkg.title}
-                                  className="w-full h-full object-cover rounded-md"
-                                />
-                              </div>
-                            ) : (
-                              <div className="
-                                w-14 h-14
-                                rounded-lg
-                                bg-white/5
-                                flex items-center justify-center
-                                text-[#FF4D00] text-xl
-                              ">
-                                ★
-                              </div>
-                            )}
-                          </div>
+                            hover:scale-[1.03]
+                            hover:-translate-y-2
+                            hover:border-[#FF4D00]/40
+                            hover:shadow-[0_10px_40px_rgba(0,0,0,0.5)]
+                          `}
+                        >
 
-                          {/* TITLE */}
-                          <h3 className="text-xl md:text-2xl font-semibold text-white">
-                            {pkg.title}
-                          </h3>
+                          {/* MOST POPULAR TAG */}
+                          {isPopular && (
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                              <span className="bg-[#FF4D00] text-white text-xs px-3 py-1 rounded-full">
+                                Most Popular
+                              </span>
+                            </div>
+                          )}
 
-                          {/* DESCRIPTION */}
-                          <p className="text-white/70 text-sm mt-1 mb-5">
-                            {pkg.fullContent || " "}
-                          </p>
+                          {/* CONTENT */}
+                          <div className="relative z-10 flex flex-col h-full">
 
-                          {/* PRICE */}
-                          <div className="mb-6">
-                            <span className="text-[#FF4D00] text-2xl font-semibold">
-                              {pkg.price}
-                            </span>
-                            <p className="text-xs text-[#FF4D00]/80 mt-1">
-                              Offer Package
+                            {/* ICON */}
+                            <div className="mb-6">
+                              {pkg.featuredImage ? (
+                                <div className="
+                                  w-16 h-16
+                                  rounded-lg
+                                  bg-black
+                                  flex items-center justify-center
+                                ">
+                                  <img
+                                    src={pkg.featuredImage}
+                                    alt={pkg.title}
+                                    className="w-full h-full object-cover rounded-md"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="
+                                  w-14 h-14
+                                  rounded-lg
+                                  bg-white/5
+                                  flex items-center justify-center
+                                  text-[#FF4D00] text-xl
+                                ">
+                                  ★
+                                </div>
+                              )}
+                            </div>
+
+                            {/* TITLE */}
+                            <h3 className="text-xl md:text-2xl font-semibold text-white">
+                              {pkg.title}
+                            </h3>
+
+                            {/* DESCRIPTION */}
+                            <p className="text-white/70 text-sm mt-1 mb-5">
+                              {pkg.fullContent || " "}
                             </p>
+
+                            {/* PRICE */}
+                            <div className="mb-6">
+                              <span className="text-[#FF4D00] text-2xl font-semibold">
+                                {pkg.price}
+                              </span>
+                              <p className="text-xs text-[#FF4D00]/80 mt-1">
+                                Offer Package
+                              </p>
+                            </div>
+
+                            {/* FEATURES */}
+                            <ul className="space-y-2 text-sm text-white mb-6 flex-1">
+                              {pkg.shortDescription?.map((feature, i) => (
+                                <li key={i}>✓ {feature}</li>
+                              ))}
+                            </ul>
+
+                            {/* BUTTON */}
+                            <button
+                              onClick={() =>
+                                navigate("/contact", {
+                                  state: {
+                                    offeringType: "PACKAGE",
+                                    offeringName: pkg.title,
+                                    offeringPrice: pkg.price
+                                  }
+                                })
+                              }
+                            className="
+                                w-full py-3 px-4
+                                rounded-full
+                                font-medium text-sm
+
+                                bg-white
+                                text-[#FF4D00]
+                                border border-white
+
+                                transition-all duration-300 ease-out
+
+                                hover:border-[#FF4D00]
+                                hover:bg-[#FF4D00]
+                                hover:text-white
+                                hover:shadow-[0_8px_25px_rgba(255,77,0,0.35)]
+                                hover:scale-[1.02]
+
+                                active:scale-[0.98]
+                              ">
+                              Get Started
+                            </button>
                           </div>
-
-                          {/* FEATURES */}
-                          <ul className="space-y-2 text-sm text-white mb-6 flex-1">
-                            {pkg.shortDescription?.map((feature, i) => (
-                              <li key={i}>✓ {feature}</li>
-                            ))}
-                          </ul>
-
-                          {/* BUTTON */}
-                          <button
-                            onClick={() =>
-                              navigate("/contact", {
-                                state: {
-                                  offeringType: "PACKAGE",
-                                  offeringName: pkg.title,
-                                  offeringPrice: pkg.price
-                                }
-                              })
-                            }
-                          className="
-                              w-full py-3 px-4
-                              rounded-full
-                              font-medium text-sm
-
-                              bg-white
-                              text-[#FF4D00]
-                              border border-white
-
-                              transition-all duration-300 ease-out
-
-                              hover:border-[#FF4D00]
-                              hover:bg-[#FF4D00]
-                              hover:text-white
-                              hover:shadow-[0_8px_25px_rgba(255,77,0,0.35)]
-                              hover:scale-[1.02]
-
-                              active:scale-[0.98]
-                            ">
-                            Get Started
-                          </button>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </Container>
             </Section>
