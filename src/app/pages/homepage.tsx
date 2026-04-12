@@ -132,6 +132,17 @@ export function Homepage() {
     });
   }, []);
 
+  const getNumericPrice = (price: string): number => {
+    if (!price) return 0;
+
+    const match = price.match(/\d[\d,]*/); // extract number
+    return match ? Number(match[0].replace(/,/g, "")) : 0;
+  };
+
+  const sortedPackages = [...packages].sort(
+    (a, b) => getNumericPrice(a.price) - getNumericPrice(b.price)
+  );
+
   return (
     <>
       <ScrollIndicator />
@@ -471,7 +482,7 @@ export function Homepage() {
                   justify-items-center
                 ">
 
-                  {packages.map((pkg, index) => {
+                  {sortedPackages.map((pkg, index) => {
                     const isPopular = pkg.title === "Growth";
 
                     return (
