@@ -489,7 +489,8 @@ export function Homepage() {
             ">
 
               {sortedPackages.map((pkg, index) => {
-                      const isPopular = pkg.title === "Growth";
+                      const isPopular = pkg.title === sortedPackages[1].title;
+                      const isValuable = pkg.title === sortedPackages[0].title;
 
                       return (
                         <div
@@ -500,7 +501,7 @@ export function Homepage() {
                             group relative flex flex-col
                             rounded-2xl
 
-                            p-6 md:p-10 lg:p-12   /* 🔥 reduced mobile padding → more width feel */
+                            p-6 md:p-10 lg:p-12 
                             min-h-[520px]
 
                             backdrop-blur-xl
@@ -521,6 +522,15 @@ export function Homepage() {
                             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                               <span className="bg-[#FF4D00] text-white text-xs px-3 py-1 rounded-full">
                                 Most Popular
+                              </span>
+                            </div>
+                          )}
+
+                          {/* MOST POPULAR TAG */}
+                          {isValuable && (
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                              <span className="bg-[#FF4D00] text-white text-xs px-3 py-1 rounded-full">
+                                Affordable
                               </span>
                             </div>
                           )}
