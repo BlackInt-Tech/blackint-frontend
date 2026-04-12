@@ -486,7 +486,7 @@ export function Homepage() {
                           min-h-[520px]
 
                           backdrop-blur-xl
-                          bg-black/90
+                          bg-black
                           border border-white/10
 
                           transition-all duration-500 ease-out
