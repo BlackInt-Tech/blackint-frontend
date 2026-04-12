@@ -75,6 +75,22 @@ useEffect(() => {
   loadServices();
 }, []);
 
+  const getNumericPrice = (price: string): number => {
+    if (!price) return 0;
+
+    const match = price.match(/\d[\d,]*/); // extract number
+    return match ? Number(match[0].replace(/,/g, "")) : 0;
+  };
+
+  const sortedPackages = [...packages].sort(
+    (a, b) => getNumericPrice(a.price) - getNumericPrice(b.price)
+  );
+
+  const sortedServices = [...services].sort(
+    (a, b) =>
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+
   return (
     <>
       <ScrollIndicator />
@@ -144,7 +160,7 @@ useEffect(() => {
                   lg:grid-cols-2
                 ">
 
-                  {packages.map((pkg, index) => {
+                  {sortedPackages.map((pkg, index) => {
                     const isPopular = pkg.title === "Growth";
 
                     return (
@@ -295,7 +311,7 @@ useEffect(() => {
               <p className="text-black/40">No services available.</p>
             )}
 
-            {services.map((service, index) => (
+            {sortedServices.map((service, index) => (
               <motion.div
                 key={service.publicId || index}
                 initial={{ opacity: 0, y: 60 }}
