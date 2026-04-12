@@ -512,7 +512,7 @@ export function Homepage() {
 
                           {/* ICON */}
                           <div className="mb-4 text-[#FF4D00]">
-                            {pkg.icon}
+                            {pkg.featuredImage || "★"}
                           </div>
 
                           {/* TITLE */}
@@ -521,7 +521,7 @@ export function Homepage() {
                           </h3>
 
                           <p className="text-white/70 text-sm mt-1 mb-5">
-                            {pkg.fullContent || ""}
+                            {pkg.fullContent || " "}
                           </p>
 
                           {/* PRICE */}

@@ -182,7 +182,7 @@ useEffect(() => {
 
                           {/* ICON */}
                           <div className="mb-4 text-[#FF4D00]">
-                            {pkg.icon || "★"}
+                            {pkg.featuredImage || "★"}
                           </div>
 
                           {/* TITLE */}
