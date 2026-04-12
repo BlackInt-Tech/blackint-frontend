@@ -4,7 +4,6 @@ import { Section } from "../components/layout/section";
 import { ScrollIndicator } from "../components/ui/scroll-indicator";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useHeaderTheme } from "../context/header-theme";
-import { Rocket, TrendingUp, Briefcase, Crown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useScroll } from "motion/react";
 import { Link } from "react-router-dom";
@@ -163,7 +162,7 @@ export function Homepage() {
       ========================================== */}
       <Section
         fullHeight
-        className="relative bg-black overflow-hidden px-6 sm:px-10 md:px-12 lg:px-0 flex items-center"
+        className="relative bg-black overflow-hidden flex items-center"
       >
         {/* Floating Particles */}
         <div className="absolute inset-0 z-[1] pointer-events-none">
@@ -207,7 +206,7 @@ export function Homepage() {
         </div>
 
         {/* Content */}
-        <Container className="relative z-10 w-full pt-24 sm:pt-28 md:pt-0">
+        <Container>
           <div className="max-w-5xl">
 
             {/* Top Label */}
@@ -247,7 +246,7 @@ export function Homepage() {
           FEATURED WORK
       ========================================== */}
       <Section
-        className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32 px-6 sm:px-10 md:px-12 lg:px-0 "
+        className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32"
       >
         <motion.div
           onViewportEnter={() => setTheme("inverse")}
@@ -445,7 +444,7 @@ export function Homepage() {
       {/* =========================================
             SERVICES SECTION
       ========================================== */}
-      <Section className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32 px-6 sm:px-10 md:px-12 lg:px-0">
+      <Section className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32">
         <Container>
           <div className="relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 text-[18vw] md:text-[20vw]
@@ -468,31 +467,28 @@ export function Homepage() {
               </p>
             </motion.div>
 
-            <Section className="py-24 md:py-16 px-2 md:px-0">
-              <Container className="px-0">
-                <div className="-mx-3 md:mx-0">
+            <div className="py-24 md:py-32">
 
-                  {/* HEADER */}
-                  <div className="text-center mb-16 md:mb-20">
-                    <h2 className="text-3xl md:text-5xl font-semibold text-[#FF4D00] tracking-tight">
-                      Scale Faster with the Right Plan
-                    </h2>
-                    <p className="text-black/80 mt-4 text-sm md:text-base max-w-xl mx-auto">
-                      Performance-driven packages for every stage.<br />From launch to dominance — we grow with you.
-                    </p>
-                  </div>
+            {/* HEADER */}
+            <div className="text-center mb-16 md:mb-20">
+              <h2 className="text-3xl md:text-5xl font-semibold text-[#FF4D00] tracking-tight">
+                Scale Faster with the Right Plan
+              </h2>
+              <p className="text-black/80 mt-4 text-sm md:text-base max-w-xl mx-auto">
+                Performance-driven packages for every stage.<br />
+                From launch to dominance — we grow with you.
+              </p>
+            </div>
 
-                  {/* GRID */}
-                  <div className="
-                    grid 
-                    gap-5 md:gap-10 lg:gap-12
-                    grid-cols-1
-                    md:grid-cols-2
+            {/* GRID */}
+            <div className="
+              grid 
+              gap-6 md:gap-10 lg:gap-12
+              grid-cols-1
+              md:grid-cols-2
+            ">
 
-                    px-3 md:px-0
-                  ">
-
-                    {sortedPackages.map((pkg, index) => {
+              {sortedPackages.map((pkg, index) => {
                       const isPopular = pkg.title === "Growth";
 
                       return (
@@ -622,11 +618,8 @@ export function Homepage() {
                         </div>
                       );
                     })}
-
                   </div>
                 </div>
-              </Container>
-            </Section>
             
             <motion.div
               className="mt-16 md:mt-20 text-center relative z-10"
@@ -742,7 +735,7 @@ export function Homepage() {
       {/* =========================================
           INSIGHTS SECTION
       ========================================== */}
-      <Section className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32 px-6 sm:px-10 md:px-12 lg:px-0">
+      <Section className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32">
         <Container>
           <motion.div
             className="mb-20"
@@ -865,7 +858,7 @@ export function Homepage() {
           FOOTER CTA
       ========================================== */}
       <Section
-        className="bg-black py-20 sm:py-24 md:py-32 px-6 sm:px-8 md:px-0"
+        className="bg-black py-20 sm:py-24 md:py-32"
       >
         <motion.div
         onViewportEnter={() => setTheme("primary")}

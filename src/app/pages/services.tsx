@@ -6,7 +6,6 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect, useState } from 'react';
 import { useScroll } from "motion/react";
-import { Rocket, TrendingUp, Briefcase, Crown } from "lucide-react";
 import { getHomepageData } from '../../services/homepageService';
 import { Offering } from "../../types/offering";
 import { getCachedData, setCachedData } from '../utils/cache';
@@ -108,7 +107,7 @@ useEffect(() => {
       
       {/* Hero Section */}
       <Section className="pt-32 md:pt-40 pb-20 bg-white text-black">
-        <Container className="px-2 md:px-24">
+        <Container>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -127,7 +126,6 @@ useEffect(() => {
               Through great UX, design, and development, we help brands create meaningful connections with their audiences.
             </p>
           </motion.div>
-
         </Container>
       </Section>
 
@@ -148,12 +146,10 @@ useEffect(() => {
             />
           </motion.div>
 
-          <Section className="py-24 md:py-16 px-2 md:px-0">
-            <Container className="px-0">
-              <div className="-mx-3 md:mx-0">
+          <div className="py-24 md:py-32">
 
-                  {/* HEADER */}
-                  <div className="text-center mb-16 md:mb-20">
+            {/* HEADER */}
+            <div className="text-center mb-16 md:mb-20">
                     <h2 className="text-3xl md:text-5xl font-semibold text-[#FF4D00] tracking-tight">
                       Scale Faster with the Right Plan
                     </h2>
@@ -168,8 +164,8 @@ useEffect(() => {
                     gap-5 md:gap-10 lg:gap-12
                     grid-cols-1
                     md:grid-cols-2
-
-                    px-3 md:px-0
+                    
+                    px-0
                   ">
 
                     {sortedPackages.map((pkg, index) => {
@@ -184,7 +180,7 @@ useEffect(() => {
                             group relative flex flex-col
                             rounded-2xl
 
-                            p-6 md:p-10 lg:p-12   /* 🔥 reduced mobile padding → more width feel */
+                            p-6 md:p-10 lg:p-12
                             min-h-[520px]
 
                             backdrop-blur-xl
@@ -303,12 +299,11 @@ useEffect(() => {
                         </div>
                       );
                     })}
-                  </div>
-                </div>
-              </Container>
-            </Section>
+                  </div>    
+          </div>
         </Container>
       </Section>
+        
 
       {/* Services List */}
       <Section className="bg-white text-black pb-32">
