@@ -2,7 +2,7 @@ import { motion, useScroll } from "motion/react";
 import { Container } from "../components/layout/container";
 import { Section } from "../components/layout/section";
 import { ScrollIndicator } from "../components/ui/scroll-indicator";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { ImageWithFallback } from "../components/blackint/ImageWithFallback";
 import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useHeaderTheme } from "../context/header-theme";

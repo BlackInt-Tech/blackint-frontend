@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Container } from "../components/layout/container";
 import { Section } from "../components/layout/section";
 import { ScrollIndicator } from "../components/ui/scroll-indicator";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { ImageWithFallback } from "../components/blackint/ImageWithFallback";
 import { useHeaderTheme } from "../context/header-theme";
 import { useEffect, useMemo, useState } from "react";
 import { useScroll } from "motion/react";

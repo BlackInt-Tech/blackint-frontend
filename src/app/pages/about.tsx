@@ -2,11 +2,10 @@ import { motion } from 'motion/react';
 import { Container } from '../components/layout/container';
 import { Section } from '../components/layout/section';
 import { ScrollIndicator } from '../components/ui/scroll-indicator';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/blackint/ImageWithFallback';
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect } from "react";
 import { useScroll } from "motion/react";
-import founder_profile from "../assets/founder_profile.jpeg";
 
 const values = [
   {
@@ -27,7 +26,7 @@ const values = [
   },
 ];
 
-const team = [
+const team: any[] = [
   // {
   //   name: 'Ritik Raj',
   //   role: 'FOUNDER & CEO',
