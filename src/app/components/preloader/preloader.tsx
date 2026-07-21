@@ -22,12 +22,12 @@ export function Preloader({ onComplete }: PreloaderProps) {
           setTimeout(() => {
             setAnimationStage('complete');
             setTimeout(onComplete, 1000);
-          }, 800);
+          }, 1200);
           return prev;
         }
         return prev + 1;
       });
-    }, 100);
+    }, 150);
 
     return () => clearInterval(letterInterval);
   }, [letters.length, onComplete]);
@@ -77,7 +77,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
               className="mt-12 text-l uppercase tracking-widest text-white/80"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
+              transition={{ delay: 1.8 }}
             >
               Build. Automate. Grow.
             </motion.div>

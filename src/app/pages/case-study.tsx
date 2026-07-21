@@ -8,8 +8,8 @@ import { ArrowRight } from 'lucide-react';
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect, useState } from "react";
 import { useScroll } from "motion/react";
-import { getProjectBySlug } from '../../services/projectService';
-import { Project } from '../../types/project';
+import { getProjectBySlug } from "../../service/project.service";
+import { ProjectInterface } from "../../interface/project";
 import { getCachedData, setCachedData } from '../utils/cache';
 
 export function CaseStudy() {
@@ -18,7 +18,7 @@ export function CaseStudy() {
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
 
-  const [project, setProject] = useState<Project | null>(null);
+  const [project, setProject] = useState<ProjectInterface | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export function CaseStudy() {
       const cacheKey = `project_slug_${slug}`;
 
       // Check cache first
-      const cached = getCachedData<Project>(cacheKey);
+      const cached = getCachedData<ProjectInterface>(cacheKey);
 
       if (cached) {
         setProject(cached);
@@ -63,32 +63,42 @@ export function CaseStudy() {
 }, [slug]);
 
   useEffect(() => {
-    setTheme("primary");
+    setTheme("inverse");
 
     const unsubscribe = scrollY.on("change", (y: number) => {
-      if (y < window.innerHeight * 1.33) {
-        setTheme("primary");
-      } else if (y < window.innerHeight * 2.02) {
+      if (y < window.innerHeight * 2.17) {
         setTheme("inverse");
       } else if (y < window.innerHeight * 3.5) {
         setTheme("primary");
-      } else if (y < window.innerHeight * 4.85) {
+      } else if (y < window.innerHeight * 5.18) {
         setTheme("inverse");
-      } else if (y < window.innerHeight * 5.6) {
+      } else if (y < window.innerHeight * 6) {
         setTheme("primary");
-      } else {
+      } else if (y < window.innerHeight * 6.65) {
         setTheme("inverse");
+      } else {
+        setTheme("primary");
       }
     });
 
     return () => unsubscribe();
   }, [scrollY, setTheme]);
 
-  if (loading || !project) {
+  if (loading) {
     return (
       <Section className="bg-black text-white py-32">
         <Container>
           <p className="text-xl">Loading project...</p>
+        </Container>
+      </Section>
+    );
+  }
+
+  if (!project) {
+    return (
+      <Section className="bg-black text-white py-32">
+        <Container>
+          <p className="text-xl">Project not found.</p>
         </Container>
       </Section>
     );
@@ -100,7 +110,7 @@ export function CaseStudy() {
 
       {/* HERO IMAGE */}
 
-      <div className="h-screen relative bg-black">
+      <div className="h-screen md:h-screen relative bg-white">
 
         <motion.div
           className="w-full h-full"
@@ -109,42 +119,34 @@ export function CaseStudy() {
           transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
         >
           <ImageWithFallback
-            src={project.featuredImage || project.galleryImages?.[0]}
+            src={project.featuredImage}
             alt={project.title}
-            className="w-full h-full object-cover opacity-70"
+            className="w-full h-full object-cover opacity-90"
           />
         </motion.div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-white/50" />
 
-        <div className="absolute bottom-0 left-0 right-0 pb-24">
-          <Container>
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-            >
-              <div className="text-xl uppercase tracking-[0.3em] text-[#FF4D00] mb-4">
-                CASE STUDY
-              </div>
+          <div className="absolute bottom-0 left-0 right-0 pb-24">
+            <Container>
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              >
+                <div className="text-xl font-extrabold uppercase tracking-[0.3em] text-[#FF4D00] mb-4">
+                  CASE STUDY
+                </div>
 
-              <h1 className="text-6xl md:text-8xl mb-4" style={{ fontWeight: 900 }}>
-                {project.title}
-              </h1>
+                <h1 className="text-4xl md:text-7xl mb-2" style={{ fontWeight: 700 }}>
+                  {project.title}
+                </h1>
 
-              <p className="text-xl md:text-2xl text-white/80">
-                {project.shortDescription}
-              </p>
-            </motion.div>
-          </Container>
-        </div>
-      </div>
-
-      {/* Project Details */}
-
-      <Section className="border-b border-white/10 bg-black">
-        <Container>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <p className="text-md md:text-xl text-lack mb-16">
+                  {project.shortDescription}
+                </p>
+              </motion.div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -152,10 +154,10 @@ export function CaseStudy() {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
             >
-              <div className="text-xs uppercase tracking-[0.3em] text-white/40 mb-3">
+              <div className="md:text-xs text-[12px] uppercase tracking-[0.3em] text-white/80 mb-1">
                 CLIENT
               </div>
-              <div className="text-2xl">
+              <div className="md:text-2xl text-[16px]">
                 {project.clientName}
               </div>
             </motion.div>
@@ -166,12 +168,23 @@ export function CaseStudy() {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <div className="text-xs uppercase tracking-[0.3em] text-white/40 mb-3">
+              <div className="text-xs uppercase tracking-[0.3em] text-white/80 mb-1">
                 PROJECT URL
               </div>
-              <div className="text-2xl break-all">
-                {project.projectUrl}
-              </div>
+              {project.projectUrl ? (
+                <a
+                  href={project.projectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-2xl break-all text-[#FF4D00] hover:underline"
+                >
+                  {project.projectUrl}
+                </a>
+              ) : (
+                <span className="text-2xl text-white/80">
+                  —
+                </span>
+              )}
             </motion.div>
 
             <motion.div
@@ -180,19 +193,22 @@ export function CaseStudy() {
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
             >
-              <div className="text-xs uppercase tracking-[0.3em] text-white/40 mb-3">
+              <div className="text-xs uppercase tracking-[0.3em] text-white/80 mb-1">
                 PUBLISHED
               </div>
-              <div className="text-2xl">
-                {new Date(project.publishedAt).toLocaleDateString()}
+              <div className="text-[24px]">
+                {project.publishedAt
+                  ? new Date(project.publishedAt).toLocaleDateString()
+                  : "Not Published"}
               </div>
             </motion.div>
 
           </div>
-        </Container>
-      </Section>
+            </Container>
+          </div>
+        </div>
 
-            {/* Challanges */}
+      {/* Challanges */}
 
       <Section className="bg-white text-black py-32">
         <Container>
@@ -205,10 +221,10 @@ export function CaseStudy() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
               >
-                <div className="text-xs uppercase tracking-[0.3em] text-black/40 mb-4">
+                <div className="text-3xl uppercase tracking-[0.3em] text-black/20 mb-4" style={{ fontWeight: 900 }}>
                   01
                 </div>
-                <h2 className="text-5xl mb-4" style={{ fontWeight: 700 }}>
+                <h2 className="text-5xl mb-4" style={{ fontWeight: 800 }}>
                   The Challenge
                 </h2>
               </motion.div>
@@ -220,15 +236,29 @@ export function CaseStudy() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <p className="text-2xl text-black/80 leading-relaxed mb-6">
+                <p className="text-2xl text-black/90 leading-relaxed mb-6">
                   {project.fullContent}
                 </p>
 
-                <p className="text-xl text-black/60 leading-relaxed">
+                <p className="text-xl text-black/50 leading-relaxed mb-6">
                   This project required strategic thinking, strong brand positioning,
                   and a performance-driven digital execution aligned with business goals.
                 </p>
               </motion.div>
+
+              <motion.div
+                className="aspect-video overflow-hidden rounded-2xl"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+              >
+                <ImageWithFallback
+                  src={project.galleryImages[0]}
+                  alt={project.title}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+
             </div>
 
           </div>
@@ -249,7 +279,7 @@ export function CaseStudy() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
               >
-                <div className="text-xs uppercase tracking-[0.3em] text-white/40 mb-4">
+                <div className="text-3xl uppercase tracking-[0.3em] text-white/40 mb-4" style={{ fontWeight: 900 }}>
                   02
                 </div>
                 <h2 className="text-5xl mb-4 text-white" style={{ fontWeight: 700 }}>
@@ -265,25 +295,25 @@ export function CaseStudy() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <p className="text-2xl text-white/80 leading-relaxed mb-6">
+                <p className="text-2xl text-white/90 leading-relaxed mb-6">
                   We crafted a powerful digital presence built on performance,
                   clarity, and conversion-focused architecture.
                 </p>
 
-                <p className="text-xl text-white/60 leading-relaxed">
+                <p className="text-xl text-white/50 leading-relaxed">
                   Every interaction, animation, and layout element was designed
                   to elevate the brand perception and maximize engagement.
                 </p>
               </motion.div>
 
               <motion.div
-                className="aspect-video overflow-hidden"
+                className="aspect-video overflow-hidden rounded-2xl"
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
               >
                 <ImageWithFallback
-                  src={project.galleryImages?.[0]}
+                  src={project.galleryImages[0]}
                   alt={project.title}
                   className="w-full h-full object-cover"
                 />
@@ -301,33 +331,65 @@ export function CaseStudy() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-            {project.galleryImages?.[1] && (
+            {project.galleryImages?.[2] && (
               <motion.div
-                className="aspect-[4/5] overflow-hidden rounded-xl"
+                className="aspect-[5/4] overflow-hidden rounded-2xl"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
                 <ImageWithFallback
-                  src={project.galleryImages[1]}
-                  alt={`${project.title} gallery 2`}
+                  src={project.galleryImages[2]}
+                  alt={`${project.title} gallery 1`}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
             )}
 
-            {project.galleryImages?.[2] && (
+            {project.galleryImages?.[3] && (
               <motion.div
-                className="aspect-[4/5] overflow-hidden rounded-xl"
+                className="aspect-[5/4] overflow-hidden rounded-2xl"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 }}
               >
                 <ImageWithFallback
-                  src={project.galleryImages[2]}
+                  src={project.galleryImages[3]}
+                  alt={`${project.title} gallery 2`}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
+
+            {project.galleryImages?.[4] && (
+              <motion.div
+                className="aspect-[5/4] overflow-hidden rounded-2xl"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                <ImageWithFallback
+                  src={project.galleryImages[4]}
                   alt={`${project.title} gallery 3`}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
+
+            {project.galleryImages?.[5] && (
+              <motion.div
+                className="aspect-[5/4] overflow-hidden rounded-2xl"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
+                <ImageWithFallback
+                  src={project.galleryImages[5]}
+                  alt={`${project.title} gallery 4`}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
@@ -345,10 +407,10 @@ export function CaseStudy() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="text-xs uppercase tracking-[0.3em] text-white/40 mb-4">
+            <div className="text-4xl uppercase tracking-[0.3em] text-white/40 mb-4"  style={{ fontWeight: 900 }}>
               03
             </div>
-            <h2 className="text-5xl md:text-7xl text-white" style={{ fontWeight: 700 }}>
+            <h2 className="text-5xl md:text-6xl text-white" style={{ fontWeight: 800 }}>
               The Results
             </h2>
           </motion.div>
@@ -364,7 +426,7 @@ export function CaseStudy() {
               <div className="text-7xl text-[#FF4D00] mb-4" style={{ fontWeight: 900 }}>
                 +240%
               </div>
-              <div className="text-xl text-white/60">
+              <div className="text-xl text-white/80">
                 Increase in qualified leads
               </div>
             </motion.div>
@@ -378,7 +440,7 @@ export function CaseStudy() {
               <div className="text-7xl text-[#FF4D00] mb-4" style={{ fontWeight: 900 }}>
                 3.2M
               </div>
-              <div className="text-xl text-white/60">
+              <div className="text-xl text-white/80">
                 Website visits in 6 months
               </div>
             </motion.div>
@@ -392,7 +454,7 @@ export function CaseStudy() {
               <div className="text-7xl text-[#FF4D00] mb-4" style={{ fontWeight: 900 }}>
                 92%
               </div>
-              <div className="text-xl text-white/60">
+              <div className="text-xl text-white/80">
                 Positive brand perception
               </div>
             </motion.div>

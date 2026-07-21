@@ -7,29 +7,31 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useHeaderTheme } from "../context/header-theme";
 import { useEffect, useState } from "react";
-import { getBlogBySlug } from "../../services/insightService";
-import { getHomepageData } from "../../services/homepageService";
-import { Insight } from "../../types/insight";
+import {
+  getBlogBySlug,
+  getRelatedInsights,
+} from "../../service/insight.service";
+
+import { InsightInterface } from "../../interface/insight";
 import { getCachedData, setCachedData } from "../utils/cache";
 
 export function BlogArticle() {
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
   const { slug } = useParams<{ slug: string }>();
-
-  const [blog, setBlog] = useState<Insight | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [relatedBlogs, setRelatedBlogs] = useState<Insight[]>([]);
+  const [blog, setBlog] = useState<InsightInterface | null>(null);
+  const [relatedBlogs, setRelatedBlogs] = useState<InsightInterface[]>([]);
 
   // Header theme scroll logic
   useEffect(() => {
     setTheme("primary");
 
     const unsubscribe = scrollY.on("change", (y: number) => {
-      if (y < window.innerHeight * 2.25) {
+      if (y < window.innerHeight * 1.6) {
         setTheme("primary");
-      } else if (y < window.innerHeight * 4.59) {
+      } else if (y < window.innerHeight * 2.5) {
         setTheme("inverse");
       } else {
         setTheme("primary");
@@ -51,7 +53,7 @@ export function BlogArticle() {
       setLoading(true);
 
       const cacheKey = `blog_slug_${slug}`;
-      const cached = getCachedData<Insight>(cacheKey);
+      const cached = getCachedData<InsightInterface>(cacheKey);
 
       let currentBlog = cached;
 
@@ -64,23 +66,24 @@ export function BlogArticle() {
 
       setBlog(currentBlog);
 
-      const homepageCacheKey = "homepage_data";
+      if (currentBlog) {
+        const relatedCacheKey = `related_blogs_${currentBlog.slug}`;
 
-      let homepageData = getCachedData<{
-        insights: Insight[];
-      }>(homepageCacheKey);
+        const cachedRelated =
+          getCachedData<InsightInterface[]>(relatedCacheKey);
 
-      if (!homepageData) {
-        homepageData = await getHomepageData();
-        setCachedData(homepageCacheKey, homepageData);
-      }
+        if (cachedRelated) {
+          setRelatedBlogs(cachedRelated);
+        } else {
+          const related = await getRelatedInsights(
+            currentBlog.slug,
+            2
+          );
 
-      if (homepageData?.insights && currentBlog) {
-        const filtered = homepageData.insights
-          .filter((item: Insight) => item.slug !== currentBlog.slug)
-          .slice(0, 2);
+          setRelatedBlogs(related);
 
-        setRelatedBlogs(filtered);
+          setCachedData(relatedCacheKey, related);
+        }
       }
 
     } catch (error) {
@@ -117,8 +120,8 @@ export function BlogArticle() {
     <>
       <ScrollIndicator />
 
-      {/* Back Button */}
-      <Section className="pt-32 bg-black">
+      {/* Article Header */}
+      <Section className="bg-black pt-24 pb-0">
         <Container>
           <Link
             to="/insights"
@@ -127,20 +130,14 @@ export function BlogArticle() {
             <ArrowLeft size={20} />
             Back to Insights
           </Link>
-        </Container>
-      </Section>
-
-      {/* Article Header */}
-      <Section className="bg-black pt-12">
-        <Container>
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
               <div className="text-xl uppercase tracking-[0.3em] text-[#FF4D00] mb-6">
-                {blog.category}
+                {blog.categoryId}
               </div>
 
               <h1
@@ -152,21 +149,17 @@ export function BlogArticle() {
 
               <div className="flex items-center gap-6 text-white/60 text-sm mb-12">
                 <span>
-                  {new Date(blog.publishedAt).toDateString()}
+                  {blog.publishedAt
+                    ? new Date(blog.publishedAt).toDateString()
+                    : ""}
                 </span>
                 <span>•</span>
                 <span>{blog.readTime} min read</span>
               </div>
             </motion.div>
           </div>
-        </Container>
-      </Section>
-
-      {/* Featured Image */}
-      <Section className="py-0 bg-black pb-12">
-        <Container>
           <motion.div
-            className="w-full max-h-[500px] flex items-center justify-center mb-12"
+            className="w-full lg:w-[100%] mx-auto overflow-hidden rounded-2xl aspect-[16/8] mt-4"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -174,16 +167,16 @@ export function BlogArticle() {
             <ImageWithFallback
               src={blog.featuredImage}
               alt={blog.title}
-              className="max-w-full max-h-[500px] object-contain"
+              className="w-full h-full object-cover"
             />
           </motion.div>
         </Container>
       </Section>
 
       {/* Article Content */}
-      <Section className="bg-white text-black py-32">
+      <Section className="bg-white text-black text-[20px] py-32">
         <Container>
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -191,7 +184,9 @@ export function BlogArticle() {
               className="space-y-8 text-black/80 leading-relaxed"
             >
               <div
-                dangerouslySetInnerHTML={{ __html: blog.content }}
+                dangerouslySetInnerHTML={{
+                  __html: blog.content
+                }}
               />
             </motion.div>
           </div>
@@ -225,7 +220,7 @@ export function BlogArticle() {
                   </div>
 
                   <div className="text-xs uppercase tracking-widest text-white/40 mb-2">
-                    {item.category}
+                    {item.categoryId}
                   </div>
 
                   <h4 className="text-2xl text-white group-hover:text-[#FF4D00] transition-colors font-semibold">

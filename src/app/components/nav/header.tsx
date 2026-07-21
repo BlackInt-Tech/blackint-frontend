@@ -61,7 +61,7 @@ export function Header() {
             {/* BLACKINT */}
             <div className="overflow-hidden">
               <motion.div
-                className="flex items-center text-lg sm:text-xl md:text-3xl lg:text-4xl"
+                className="flex items-center text-xl sm:text-xl md:text-3xl lg:text-4xl"
                 style={{
                   scale: useTransform(collapseProgress, [0, 1], [1, 0.75]),
                   opacity: useTransform(collapseProgress, [0, 1], [1, 0]),

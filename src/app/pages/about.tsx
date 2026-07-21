@@ -27,11 +27,11 @@ const values = [
 ];
 
 const team: any[] = [
-  // {
-  //   name: 'Ritik Raj',
-  //   role: 'FOUNDER & CEO',
-  //   image: founder_profile,
-  // },
+  {
+    name: 'Ritik Raj',
+    role: 'FOUNDER & CEO',
+    image: '',
+  },
   // {
   //   name: 'Ritik Raj',
   //   role: 'Lead Developer',
@@ -56,7 +56,7 @@ export function About() {
   setTheme("primary");
 
   const unsubscribe = scrollY.on("change", (y) => {
-    if (y < window.innerHeight * 1.1) {
+    if (y < window.innerHeight * 1) {
       setTheme("primary");
     } else if (y < window.innerHeight * 2.4) {
       setTheme("inverse");
@@ -64,10 +64,12 @@ export function About() {
       setTheme("primary");
     } else if (y < window.innerHeight * 5.33) {
       setTheme("inverse");
-    } else if (y < window.innerHeight * 5.8) {
+    } else if (y < window.innerHeight * 5.7) {
       setTheme("primary");
-    } else {
+    } else if (y < window.innerHeight * 6.4) {
       setTheme("inverse");
+    } else {
+      setTheme("primary");
     }
   });
 
@@ -240,7 +242,7 @@ export function About() {
 
           {/* GRID FIXED */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full">
-            {team.map((member, index) => (
+            {team?.map((member, index) => (
               <motion.div
                 key={member.name}
                 initial={{ opacity: 0, y: 40 }}
