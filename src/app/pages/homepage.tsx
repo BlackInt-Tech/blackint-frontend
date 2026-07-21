@@ -7,32 +7,33 @@ import { useHeaderTheme } from "../context/header-theme";
 import { useEffect, useMemo, useState } from "react";
 import { useScroll } from "motion/react";
 import { Link } from "react-router-dom";
-import { getHomepageData } from "../../services/homepageService";
-import { Project } from "../../types/project";
-import { Offering } from "../../types/offering";
-import { Insight } from "../../types/insight";
+import { getHomepageData } from "../../service/homepage.service";
+import { ProjectInterface } from "../../interface/project";
+import { OfferingIndividualInterface } from "../../interface/offeringIndividual";
+import { OfferingPackageInterface } from "../../interface/offeringPackage";
+import { InsightInterface } from "../../interface/insight";
 import { getCachedData, setCachedData } from "../utils/cache";
 import { useNavigate } from "react-router-dom";
+import { HomepageData } from "../../service/homepage.service";
 
 export function Homepage() {
 
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [services, setServices] = useState<Offering[]>([]);
-  const [packages, setPackages] = useState<Offering[]>([]);
-  const [insights, setInsights] = useState<Insight[]>([]);
+  const [projects, setProjects] = useState<ProjectInterface[]>([]);
+  const [services, setServices] = useState<OfferingIndividualInterface[]>([]);
+  const [packages, setPackages] = useState<OfferingPackageInterface[]>([]);
+  const [insights, setInsights] = useState<InsightInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const words = [
-                  "Design.",
-                  "Development.",
-                  "Marketing.",
-                  "Branding.",
-                  "Strategy.",
-                  "Growth."];
+                  "Design...",
+                  "Development...",
+                  "Marketing...",
+                  "Branding...",
+                  "Strategy...",
+                  "Growth..."];
 
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
-  const navigate = useNavigate();
-  const [activePlan, setActivePlan] = useState(1);
+  const navigate = useNavigate();;
 
   useEffect(() => {
     async function loadData() {
@@ -41,13 +42,7 @@ export function Homepage() {
 
         const cacheKey = "homepage_data";
 
-        // Check cache
-        const cached = getCachedData<{
-          projects: Project[];
-          services: Offering[];
-          packages: Offering[];
-          insights: Insight[];
-        }>(cacheKey);
+        const cached = getCachedData<HomepageData>(cacheKey);
 
         if (cached) {
           setProjects(cached.projects);
@@ -81,10 +76,12 @@ export function Homepage() {
     setTheme("primary");
 
     const unsubscribe = scrollY.on("change", (y) => {
-      if (y < window.innerHeight * 0.9) {
+      if (y < window.innerHeight * 1) {
         setTheme("primary");
-      } else {
+      } else if (y < window.innerHeight * 12.1) {
         setTheme("inverse");
+      } else {
+        setTheme("primary");
       }
     });
 
@@ -131,7 +128,7 @@ export function Homepage() {
     });
   }, []);
 
-  const getNumericPrice = (price: string): number | null => {
+  const getNumericPrice = (price?: string | null): number | null => {
     if (!price) return null;
 
     const match = price.match(/\d[\d,]*/);
@@ -210,34 +207,34 @@ export function Homepage() {
           <div className="max-w-5xl">
 
             {/* Top Label */}
-            <div className="text-xs sm:text-sm uppercase tracking-[0.3em] mb-6 sm:mb-8">
+            <div className="text-xs sm:text-sm uppercase tracking-[0.3em] mt-6 sm:mt-6 mb-2 sm:mb-2">
               WE ARE BLACK<span className="text-[#FF4D00]">INT</span>
             </div>
 
             {/* Heading */}
             <h1
-              className="text-3xl sm:text-5xl md:text-5xl lg:text-7xl leading-[1.05] mb-6 sm:mb-8"
+              className="text-3xl sm:text-5xl md:text-5xl lg:text-7xl leading-[1.4] md:leading-[1.05] mt-6 mb-6 sm:mb-8"
               style={{ fontWeight: 800}}
             >
               A Digital Agency <br />
-              Focused On{" "} <span className="inline-block min-w-[12ch] text-[#FF4D00]"> {displayText} </span>
+              Focused On{" "} <span className="inline-block min-w-[12ch] text-[#FF4D00] drop-shadow-[0_0_6px_rgba(255,77,0,0.4)]">{displayText}</span>
             </h1>
 
             {/* Description */}
-            <p className="text-base sm:text-s md:text-lg lg:text-xl text-white/80 max-w-3xl mb-8 sm:mb-10">
+            <p className="text-base sm:text-s md:text-lg lg:text-xl text-white/80 leading-[2] md:leading-[1.05] max-w-3xl mt-9 mb-8 sm:mb-10">
               Creating technology-driven ecosystems where businesses build faster, automate smarter, and grow stronger in an increasingly digital world.
             </p>
 
             {/* CTA */}
-            <a
-              href="/about"
-              className="inline-flex items-center gap-3 border border-white/20 px-6 sm:px-8 py-3 sm:py-4 hover:border-[#FF4D00] transition-all duration-300"
+            <Link
+              to="/about"
+              className="inline-flex items-center gap-3 border border-white/20 px-6 sm:px-8 py-2 mt-8 sm:py-4 hover:border-[#FF4D00] transition-all duration-300"
             >
               <span className="text-xs sm:text-sm uppercase tracking-widest">
                 GET TO KNOW US
               </span>
               <span className="text-lg sm:text-xl">+</span>
-            </a>
+            </Link>
           </div>
         </Container>
       </Section>
@@ -246,7 +243,7 @@ export function Homepage() {
           FEATURED WORK
       ========================================== */}
       <Section
-        className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32"
+        className="bg-white text-black py-8 sm:py-10 md:py-12 lg:py-16"
       >
         <motion.div
           onViewportEnter={() => setTheme("inverse")}
@@ -254,7 +251,7 @@ export function Homepage() {
         >
         <Container>
           <motion.div
-            className="mb-20"
+            className="mb-8"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
@@ -287,7 +284,7 @@ export function Homepage() {
                     >
                       <Link to={`/work/${project.slug}`} className="group block">
                         <div
-                          className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center ${
+                          className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-16 items-center ${
                             !isEven ? "md:grid-flow-dense" : ""
                           }`}
                         >
@@ -300,10 +297,8 @@ export function Homepage() {
                             initial={{ x: isEven ? -80 : 80, opacity: 0 }}
                             whileInView={{ x: 0, opacity: 1 }}
                             viewport={{ once: true }}
-                            transition={{
-                              duration: 0.9,
-                              ease: [0.22, 1, 0.36, 1],
-                            }}
+                            whileHover={{ scale: 1.03 }}
+                            transition={{ duration: 0.6 }}
                           >
                             <motion.div
                               className="w-full h-full"
@@ -317,7 +312,7 @@ export function Homepage() {
                               />
                             </motion.div>
 
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#FF4D00]/0 to-transparent group-hover:from-[#FF4D00]/20 transition-all duration-500" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#FF4D00]/0 to-transparent transition-all duration-500" />
                           </motion.div>
 
                           {/* Content */}
@@ -328,12 +323,10 @@ export function Homepage() {
                             initial={{ x: isEven ? 80 : -80, opacity: 0 }}
                             whileInView={{ x: 0, opacity: 1 }}
                             viewport={{ once: true }}
-                            transition={{
-                              duration: 0.9,
-                              ease: [0.22, 1, 0.36, 1],
-                            }}
+                            whileHover={{ scale: 1.03 }}
+                            transition={{ duration: 0.6 }}
                           >
-                            <div className="text-xs uppercase tracking-[0.3em] text-black/40 mb-4">
+                            <div className="text-xs uppercase tracking-[0.3em] text-black/60 mb-4">
                               {project.clientName}
                             </div>
 
@@ -363,21 +356,21 @@ export function Homepage() {
 
             {/* VIEW ALL PROJECTS CTA */}
             <motion.div
-              className="mt-20 text-center"
+              className="mt-18 text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <a
-                href="/work"
+              <Link
+                to="/work"
                 className="inline-flex items-center gap-3 border border-black/20 px-10 py-5 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300"
               >
                 <span className="text-sm uppercase tracking-widest">
                   VIEW ALL PROJECTS
                 </span>
                 <span className="text-xl">+</span>
-              </a>
+              </Link>
             </motion.div>
             </motion.div>
           </Container>
@@ -387,10 +380,10 @@ export function Homepage() {
       {/* =========================================
           FINAL CTA SECTION
       ========================================== */}
-      <Section className="relative py-32 overflow-hidden bg-black text-white">
+      <Section className="relative py-8 sm:py-10 md:py-12 lg:py-16 overflow-hidden bg-black text-white">
 
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-[#FF4D00] via-[#FF6A00] to-[#FF4D00]"
+          className="absolute inset-0 bg-gradient-to-r from-[#FF4D00] via-[#ffbd8e] to-[#FF4D00]"
           animate={{
             backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
           }}
@@ -430,7 +423,7 @@ export function Homepage() {
               href="/contact"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-4 bg-white text-black px-12 py-6 text-sm uppercase tracking-widest font-semibold rounded-full shadow-2xl hover:bg-black hover:text-white transition-all duration-500"
+              className="inline-flex items-center gap-4 bg-white text-black px-12 py-6 text-sm uppercase tracking-widest font-semibold rounded-full shadow-2xl hover:bg-white hover:text-[#FF4D00] transition-all duration-500"
             >
               START A PROJECT
               <span className="text-xl">→</span>
@@ -444,11 +437,11 @@ export function Homepage() {
       {/* =========================================
             SERVICES SECTION
       ========================================== */}
-      <Section className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32">
+      <Section className="bg-white text-FF4D00 py-8 sm:py-10 md:py-12 lg:py-16">
         <Container>
           <div className="relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 text-[18vw] md:text-[20vw]
-                font-bold text-black/[0.02] whitespace-nowrap pointer-events-none select-none">
+            <div className="absolute left-[-180px] top-[210px] -translate-y-1/2 text-[18vw] md:text-[24vw]
+                font-bold text-[#FF4D00]/2 whitespace-nowrap pointer-events-none select-none">
               Services
             </div>
 
@@ -459,22 +452,22 @@ export function Homepage() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="text-2xl uppercase tracking-[0.3em] text-[#FF4D00] mb-6 font-bold">
+              <div className="text-2xl uppercase tracking-[0.3em] text-[#FF4D00] mb-4 font-bold">
                 WHAT WE DO
               </div>
-              <p className="text-lg md:text-xl max-w-3xl leading-relaxed text-black/80">
+              <p className="text-lg md:text-xl max-w-3xl leading-relaxed text-black/50">
                 We design and build powerful digital experiences that elevate brands, engage audiences, and drive measurable business growth.
               </p>
             </motion.div>
 
-            <div className="py-24 md:py-32">
+            <div className="">
 
             {/* HEADER */}
-            <div className="text-center mb-16 md:mb-20">
+            <div className="text-center mb-6 md:mb-10">
               <h2 className="text-3xl md:text-5xl font-semibold text-[#FF4D00] tracking-tight">
-                Scale Faster with the Right Plan
+                Digital Presence with the Right Plan
               </h2>
-              <p className="text-black/80 mt-4 text-sm md:text-base max-w-xl mx-auto">
+              <p className="text-black/50 mt-4 mb-8 text-sm md:text-base max-w-xl mx-auto">
                 Performance-driven packages for every stage.<br />
                 From launch to dominance — we grow with you.
               </p>
@@ -486,7 +479,7 @@ export function Homepage() {
               gap-6 md:gap-10 lg:gap-12
               grid-cols-1
               md:grid-cols-2
-            ">
+              ">
 
               {sortedPackages.map((pkg, index) => {
                       const isPopular = pkg.title === sortedPackages[1].title;
@@ -505,15 +498,15 @@ export function Homepage() {
                             min-h-[520px]
 
                             backdrop-blur-xl
-                            bg-black
-                            border border-white/10
+                            bg-bwhite
+                            border border-black/50
+                            shadow-[0_6px_20px_rgba(0,0,0,0.25)]
 
                             transition-all duration-500 ease-out
 
-                            hover:scale-[1.03]
+                            hover:scale-[1.005]
                             hover:-translate-y-2
-                            hover:border-[#FF4D00]/40
-                            hover:shadow-[0_10px_40px_rgba(0,0,0,0.5)]
+                        
                           `}
                         >
 
@@ -540,15 +533,15 @@ export function Homepage() {
 
                             {/* ICON */}
                             <div className="mb-6">
-                              {pkg.featuredImage ? (
+                              {pkg.icon ? (
                                 <div className="
                                   w-16 h-16
                                   rounded-lg
-                                  bg-black
+                                  bg-white
                                   flex items-center justify-center
                                 ">
                                   <img
-                                    src={pkg.featuredImage}
+                                    src={pkg.icon}
                                     alt={pkg.title}
                                     className="w-full h-full object-cover rounded-md"
                                   />
@@ -567,12 +560,12 @@ export function Homepage() {
                             </div>
 
                             {/* TITLE */}
-                            <h3 className="text-xl md:text-2xl font-semibold text-white">
+                            <h3 className="text-2xl md:text-3xl font-bold text-black">
                               {pkg.title}
                             </h3>
 
-                            <p className="text-white/70 text-sm mt-1 mb-5">
-                              {pkg.fullContent || " "}
+                            <p className="text-black/60 text-sm mt-1 mb-5">
+                              {pkg.description}
                             </p>
 
                             {/* PRICE */}
@@ -580,15 +573,15 @@ export function Homepage() {
                               <span className="text-[#FF4D00] text-2xl font-semibold">
                                 {pkg.price}
                               </span>
-                              <p className="text-xs text-[#FF4D00]/80 mt-1">
+                              <span className="text-xs font-medium ml-2 text-[#cf3e00c7] mt-1">
                                 Offer Package
-                              </p>
+                              </span>
                             </div>
 
                             {/* FEATURES */}
-                            <ul className="space-y-2 text-sm text-white mb-6 flex-1">
-                              {pkg.shortDescription.map((f, i) => (
-                                <li key={i}>✓ {f}</li>
+                            <ul className="space-y-2 text-sm text-black mb-6 flex-1">
+                              {pkg.features.map((feature, index) => (
+                                <li key={index}>✓ {feature}</li>
                               ))}
                             </ul>
 
@@ -604,25 +597,20 @@ export function Homepage() {
                                 })
                               }
                               className="
-                                w-full py-3 px-4
-                                rounded-full
-                                font-medium text-sm
+                                py-4 px-2
+                                font-semibold text-m
 
                                 bg-white
-                                text-[#FF4D00]
-                                border border-white
+                                text-black
+                                border border-black
 
                                 transition-all duration-300 ease-out
 
                                 hover:border-[#FF4D00]
-                                hover:bg-[#FF4D00]
-                                hover:text-white
-                                hover:shadow-[0_8px_25px_rgba(255,77,0,0.35)]
-                                hover:scale-[1.02]
-
-                                active:scale-[0.98]
+                                hover:text-[#FF4D00]
+                                
                               ">
-                              Get Started
+                              Get Started 🞣
                             </button>
                           </div>
                         </div>
@@ -638,15 +626,15 @@ export function Homepage() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <a
-                href="/services"
-                className="inline-flex items-center gap-3 border border-black/20 px-10 py-5 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300"
+              <Link
+                to="/services"
+                className="inline-flex items-center gap-3 border border-black/40 text-black px-10 py-5 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300"
               >
                 <span className="text-sm uppercase tracking-widest">
                   VIEW ALL SERVICES
                 </span>
                 <span className="text-xl">+</span>
-              </a>
+              </Link>
             </motion.div>
           </div>
         </Container>
@@ -656,10 +644,10 @@ export function Homepage() {
       {/* =========================================
           FINAL CTA SECTION 
       ========================================== */}
-      <Section className="relative py-36 overflow-hidden bg-black text-white">
+      <Section className="relative py-9 md:py-18 overflow-hidden bg-black text-white">
 
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-[#0f0f0f] via-[#1a1a1a] to-[#0f0f0f]"
+          className="absolute inset-0 bg-gradient-to-r from-[#ff63205e] via-[#ad7a64] to-[#ff63205e]"
         />
 
         <motion.div
@@ -682,7 +670,7 @@ export function Homepage() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              BLACKINT DIGITAL STUDIO
+              YOUR TRUSTED PARTNER ON YOUR DIGITAL JOURNEY
             </motion.div>
 
             <motion.h2
@@ -693,7 +681,7 @@ export function Homepage() {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               We don’t just build websites.  
-              <span className="block text-[#FF4D00]">
+              <span className="block text-[#fc550e]">
                 We craft digital dominance.
               </span>
             </motion.h2>
@@ -705,7 +693,7 @@ export function Homepage() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.35 }}
             >
-              Strategy-driven design. Performance-focused development.  
+              Strategy-driven design. Performance-focused development.<br></br>
               We partner with ambitious brands and founders to create 
               digital experiences that scale, convert, and lead markets.
             </motion.p>
@@ -731,7 +719,7 @@ export function Homepage() {
                 href="/work"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-4 border border-white/20 px-12 py-6 text-sm uppercase tracking-widest font-semibold rounded-full hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-500"
+                className="inline-flex items-center gap-4 border border-white/40 px-12 py-6 text-sm uppercase tracking-widest font-semibold rounded-full hover:border-black/40 hover:text-black transition-all duration-500"
               >
                 View Our Work
               </motion.a>
@@ -739,16 +727,15 @@ export function Homepage() {
           </div>
         </Container>
 
-        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-[#FF4D00]/20 blur-[180px] rounded-full" />
       </Section>
 
       {/* =========================================
           INSIGHTS SECTION
       ========================================== */}
-      <Section className="bg-white text-black py-16 sm:py-20 md:py-24 lg:py-32">
+      <Section className="bg-white text-black py-8 sm:py-10 md:py-12 lg:py-16">
         <Container>
           <motion.div
-            className="mb-20"
+            className="mb-10"
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -800,9 +787,9 @@ export function Homepage() {
                       </motion.div>
 
                       {/* Category Badge */}
-                      {insight.category && (
+                      {insight.categoryId && (
                         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 text-xs uppercase tracking-widest text-black shadow-sm">
-                          {insight.category}
+                          {insight.categoryId}
                         </div>
                       )}
                     </div>
@@ -851,15 +838,15 @@ export function Homepage() {
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
           >
-            <a
-              href="/insights"
+            <Link
+              to="/insights"
               className="inline-flex items-center gap-3 border border-black/20 px-8 py-4 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300"
             >
               <span className="text-sm uppercase tracking-widest">
                 VIEW MORE INSIGHTS
               </span>
               <span className="text-xl">+</span>
-            </a>
+            </Link>
           </motion.div>
         </Container>
       </Section>

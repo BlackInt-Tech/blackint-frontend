@@ -4,16 +4,21 @@ import { Section } from "../components/layout/section";
 import { ScrollIndicator } from "../components/ui/scroll-indicator";
 import { useHeaderTheme } from "../context/header-theme";
 import { useEffect, useState } from "react";
-import { submitContact } from "../../services/contactService";
 import { getCachedData, setCachedData } from "../utils/cache";
-import { getHomepageData } from "../../services/homepageService";
-import { Offering } from "../../types/offering";
+import { submitContact } from "../../service/contact.service";
+import { getPublishedOfferings } from "../../service/offeringIndividaual.service";
+import { getPublishedPackages } from "../../service/offeringIPackage.service";
+import { OfferingIndividualInterface } from "../../interface/offeringIndividual";
+import { OfferingPackageInterface } from "../../interface/offeringPackage";
 import { useLocation } from "react-router-dom";
 
 export function Contact() {
 
-  const [services, setServices] = useState<Offering[]>([]);
-  const [packages, setPackages] = useState<Offering[]>([]);
+  const [services, setServices] =
+    useState<OfferingIndividualInterface[]>([]);
+
+  const [packages, setPackages] =
+    useState<OfferingPackageInterface[]>([]);
   const { setTheme } = useHeaderTheme();
   const location = useLocation();
 
@@ -51,10 +56,31 @@ export function Contact() {
   useEffect(() => {
     async function loadData() {
       try {
-        const data = await getHomepageData();
+        const servicesCacheKey = "services_data";
+        const packagesCacheKey = "packages_data";
 
-        setServices(data.services || []);
-        setPackages(data.packages || []);
+        const cachedServices =
+          getCachedData<OfferingIndividualInterface[]>(servicesCacheKey);
+
+        const cachedPackages =
+          getCachedData<OfferingPackageInterface[]>(packagesCacheKey);
+
+        if (cachedServices && cachedPackages) {
+          setServices(cachedServices);
+          setPackages(cachedPackages);
+          return;
+        }
+
+        const [servicesData, packagesData] = await Promise.all([
+          getPublishedOfferings(),
+          getPublishedPackages(),
+        ]);
+
+        setServices(servicesData);
+        setPackages(packagesData);
+
+        setCachedData(servicesCacheKey, servicesData);
+        setCachedData(packagesCacheKey, packagesData);
 
       } catch (error) {
         console.error("Failed to load offerings", error);
@@ -79,22 +105,26 @@ export function Contact() {
   };
 
   //SERVICE SELECT
-  const handleServiceSelect = (service: Offering) => {
+  const handleServiceSelect = (
+    service: OfferingIndividualInterface
+  ) => {
     setFormData((prev) => ({
       ...prev,
       offeringType: "SERVICE",
       offeringName: service.title,
-      offeringPrice: service.price
+      offeringPrice: service.price ?? "",
     }));
   };
 
   //PACKAGE SELECT
-  const handlePackageSelect = (pkg: Offering) => {
+  const handlePackageSelect = (
+    pkg: OfferingPackageInterface
+  ) => {
     setFormData((prev) => ({
       ...prev,
       offeringType: "PACKAGE",
       offeringName: pkg.title,
-      offeringPrice: pkg.price
+      offeringPrice: pkg.price ?? "",
     }));
   };
 
@@ -166,7 +196,7 @@ export function Contact() {
       <ScrollIndicator />
 
       {/* Hero Section */}
-      <Section className="pt-32 md:pt-40 pb-20 bg-black">
+      <Section className="pt-24 md:pt-30 pb-20 bg-black">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -180,13 +210,13 @@ export function Contact() {
             </div>
 
             <h1
-              className="text-5xl md:text-8xl mb-10 leading-[1.05]"
+              className="text-3xl md:text-7xl mb-6 leading-[1.05]"
               style={{ fontWeight: 700 }}
             >
-              Let's create something amazing.
+              Let's create <br />something amazing.
             </h1>
 
-            <p className="text-lg md:text-xl text-white/60 max-w-3xl leading-relaxed">
+            <p className="text-md md:text-xl text-white/50 max-w-4xl leading-relaxed">
               Whether you have a project in mind or just want to chat about the possibilities,
               we'd love to hear from you.
             </p>
@@ -197,7 +227,7 @@ export function Contact() {
 
 
       {/* Contact Form */}
-      <Section className="bg-black pb-24">
+      <Section className="pt-0 md:pt-0 bg-black pb-24">
         <Container>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
@@ -220,7 +250,7 @@ export function Contact() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                   <div>
-                    <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                    <label className="block text-xs uppercase tracking-widest text-white/70 mb-3">
                       First Name *
                     </label>
 
@@ -230,13 +260,13 @@ export function Contact() {
                       required
                       value={formData.firstName}
                       onChange={handleChange}
-                      className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
+                      className="w-full bg-transparent border-b border-white/50 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
                     />
                   </div>
 
 
                   <div>
-                    <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                    <label className="block text-xs uppercase tracking-widest text-white/70 mb-3">
                       Last Name *
                     </label>
 
@@ -246,7 +276,7 @@ export function Contact() {
                       required
                       value={formData.lastName}
                       onChange={handleChange}
-                      className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
+                      className="w-full bg-transparent border-b border-white/50 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
                     />
                   </div>
 
@@ -256,7 +286,7 @@ export function Contact() {
                 {/* Email */}
                 <div>
 
-                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                  <label className="block text-xs uppercase tracking-widest text-white/70 mb-3">
                     Email *
                   </label>
 
@@ -266,7 +296,7 @@ export function Contact() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
+                    className="w-full bg-transparent border-b border-white/50 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
                   />
 
                 </div>
@@ -275,7 +305,7 @@ export function Contact() {
                 {/* Phone */}
                 <div>
 
-                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                  <label className="block text-xs uppercase tracking-widest text-white/70 mb-3">
                     Phone *
                   </label>
 
@@ -284,7 +314,7 @@ export function Contact() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
+                    className="w-full bg-transparent border-b border-white/50 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
                   />
 
                 </div>
@@ -293,7 +323,7 @@ export function Contact() {
                 {/* Company */}
                 <div>
 
-                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                  <label className="block text-xs uppercase tracking-widest text-white/70 mb-3">
                     Company Name *
                   </label>
 
@@ -302,14 +332,14 @@ export function Contact() {
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
+                    className="w-full bg-transparent border-b border-white/50 py-3 text-white focus:outline-none focus:border-[#FF4D00]"
                   />
 
                 </div>
 
                 {/* SERVICE TYPE */}
                 <div className="mb-6">
-                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                  <label className="block text-xs uppercase tracking-widest text-white/70 mb-3">
                     Offering Type *
                   </label>
 
@@ -329,7 +359,7 @@ export function Contact() {
                         className={`px-4 py-2 rounded-full border ${
                           formData.offeringType === type
                             ? "bg-[#FF4D00] text-white border-[#FF4D00]"
-                            : "border-white/20 text-white/60"
+                            : "border-white/40 text-white/70"
                         }`}
                       >
                         {type === "PACKAGE" ? "Packages" : "Services"}
@@ -340,7 +370,7 @@ export function Contact() {
 
                 {/* SERVICES / PACKAGES */}
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                  <label className="block text-xs uppercase tracking-widest text-white/70 mb-3">
                     {formData.offeringType === "PACKAGE" ? "Packages *" : "Services *"}
                   </label>
 
@@ -356,7 +386,7 @@ export function Contact() {
                           className={`px-4 py-2 rounded-full text-sm border ${
                             formData.offeringName === service.title
                               ? "bg-[#FF4D00] text-white border-[#FF4D00]"
-                              : "border-white/20 text-white/60"
+                              : "border-white/50 text-white/70"
                           }`}
                         >
                           {service.title} • {service.price}
@@ -386,7 +416,7 @@ export function Contact() {
                 {/* Project Idea */}
                 <div>
 
-                  <label className="block text-xs uppercase tracking-widest text-white/40 mb-3">
+                  <label className="block text-xs uppercase tracking-widest text-white/70 mb-3">
                     Describe Your Project *
                   </label>
 
@@ -397,9 +427,9 @@ export function Contact() {
                     maxLength={500}
                     value={formData.projectIdea}
                     onChange={handleChange}
-                    className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-[#FF4D00] resize-none"
+                    className="w-full bg-transparent border-b border-white/50 py-3 text-white focus:outline-none focus:border-[#FF4D00] resize-none"
                   />
-                  <div className="flex justify-between text-xs text-white/40 mt-2">
+                  <div className="flex justify-between text-xs text-white/50 mt-2">
                     <span>Minimum 20 characters</span>
                     {formData.projectIdea.length}/500
                   </div>
@@ -419,7 +449,7 @@ export function Contact() {
                   {loading ? "Requesting..." : "Request Call Back"}
                 </motion.button>
 
-                <p className="text-xs text-white/40">
+                <p className="text-xs text-white/50">
                   Your information is confidential and secure.
                 </p>
 
@@ -460,7 +490,7 @@ export function Contact() {
 
 
       {/* Map Section */}
-      <Section className="relative bg-black py-32 overflow-visible">
+      <Section className="relative pt-0 md:pt-0 bg-black py-32 overflow-visible">
 
         <motion.div
           className="absolute inset-0 bg-black z-20"
@@ -569,7 +599,7 @@ export function Contact() {
       </Section>
 
       {/* FAQ Section */}
-      <Section className="bg-black py-32">
+      <Section className="pt-0 md:pt-0 bg-black py-32">
 
         <Container>
 

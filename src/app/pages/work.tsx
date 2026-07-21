@@ -7,21 +7,21 @@ import { Link } from 'react-router-dom';
 import { useScroll } from "motion/react";
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect, useState} from 'react';
-import { getHomepageData } from '../../services/homepageService';
-import { Project } from "../../types/project";
+import { getPublishedProjects } from "../../service/project.service";
+import { ProjectInterface } from "../../interface/project";
 import { getCachedData, setCachedData } from '../utils/cache';
 
 export function Work() {
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<ProjectInterface[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
   setTheme("inverse");
 
   const unsubscribe = scrollY.on("change", (y) => {
-    if (y < window.innerHeight * 5.3) {
+    if (y < window.innerHeight * 7.9) {
       setTheme("inverse");
     } else {
       setTheme("primary");
@@ -29,67 +29,64 @@ export function Work() {
   });
 
   return () => unsubscribe();
-}, [scrollY, setTheme]);
+    }, [scrollY, setTheme]);
 
   useEffect(() => {
-    async function loadProject() {
-      try {
-        setLoading(true);
+  async function loadProjects() {
+    try {
+      setLoading(true);
 
-        const cacheKey = "homepage_data";
+      const cacheKey = "projects_data";
 
-        const cached = getCachedData<{
-          projects: Project[];
-        }>(cacheKey);
+      const cached = getCachedData<ProjectInterface[]>(cacheKey);
 
-        if (cached) {
-          setProjects(cached.projects || []);
-          return;
-        }
-
-        const data = await getHomepageData();
-
-        setProjects(data.projects || []);
-
-        // shared cache
-        setCachedData(cacheKey, data);
-
-      } catch (error) {
-        console.error("Work Page Error:", error);
-      } finally {
-        setLoading(false);
+      if (cached) {
+        setProjects(cached);
+        return;
       }
-    }
 
-    loadProject();
-  }, []);
+      const data = await getPublishedProjects();
+
+      setProjects(data);
+
+      setCachedData(cacheKey, data);
+
+    } catch (error) {
+      console.error("Work Page Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  loadProjects();
+}, []);
   
   return (
     <>
       <ScrollIndicator />
       
       {/* Hero Section */}
-      <Section className="pt-32 md:pt-40 pb-20 bg-white text-black">
+      <Section className="pt-24 md:pt-30 bg-white text-black">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h1 className="text-6xl md:text-8xl mb-8 leading-[1.1]" style={{ fontWeight: 700 }}>
-              Featured Work
+            <h1 className="text-5xl md:text-7xl mb-4 leading-[1.1]" style={{ fontWeight: 700 }}>
+              Projects We Worked On
             </h1>
-            <p className="text-xl md:text-2xl text-black/60 max-w-3xl">
-              Explore some of our latest website projects.
+            <p className="text-lg md:text-xl mb-[-40px] text-black/50 max-w-5xl">
+              Explore our latest project related to website development, application development, UI/UX design, branding, lead generation, marketing, etc.
             </p>
           </motion.div>
         </Container>
       </Section>
 
       {/* Projects Grid */}
-      <Section className="bg-white text-black pb-32">
+      <Section className="pt-2 md:pt-2 bg-white text-black">
       <Container className="bg-white">
-        <div className="space-y-24 bg-white">
+        <div className="md:space-y-24 bg-white">
           {loading && projects.length === 0 && (
             <p className="text-black/40">Loading projects...</p>
           )}
@@ -113,7 +110,7 @@ export function Work() {
                 >
                   <Link to={`/work/${project.slug}`} className="group block bg-white">
                     <div
-                      className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center ${
+                      className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center py-[-50px] ${
                         !isEven ? "md:grid-flow-dense" : ""
                       }`}
                     >
@@ -126,6 +123,7 @@ export function Work() {
                         initial={{ x: isEven ? -80 : 80, opacity: 0 }}
                         whileInView={{ x: 0, opacity: 1 }}
                         viewport={{ once: true }}
+                        whileHover={{ scale: 1.03 }}
                         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
                       >
                         <motion.div
@@ -140,7 +138,7 @@ export function Work() {
                           />
                         </motion.div>
 
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#FF4D00]/0 to-transparent group-hover:from-[#FF4D00]/20 transition-all duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#FF4D00]/0 to-transparent transition-all duration-500" />
                       </motion.div>
 
                       {/* Content */}
@@ -151,9 +149,10 @@ export function Work() {
                         initial={{ x: isEven ? 80 : -80, opacity: 0 }}
                         whileInView={{ x: 0, opacity: 1 }}
                         viewport={{ once: true }}
+                        whileHover={{ scale: 1.03 }}
                         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
                       >
-                        <div className="text-xs uppercase tracking-[0.3em] text-black/40 mb-4">
+                        <div className="text-xs uppercase tracking-[0.3em] text-black/50 mb-4">
                           {project.clientName}
                         </div>
 
@@ -168,7 +167,7 @@ export function Work() {
                           {project.shortDescription}
                         </p>
 
-                        <div className="inline-flex items-center gap-3 text-sm uppercase tracking-widest group-hover:text-[#FF4D00] transition-colors">
+                        <div className="inline-flex items-center gap-3 mb-10 md:mb-0 text-sm uppercase tracking-widest group-hover:text-[#FF4D00] transition-colors">
                           VIEW PROJECT →
                         </div>
                       </motion.div>
@@ -183,7 +182,7 @@ export function Work() {
     </Section>
 
       {/* CTA Section */}
-      <Section className="bg-black py-32">
+      <Section className="bg-black">
         <Container>
           <motion.div
             className="text-center"

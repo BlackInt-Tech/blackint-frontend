@@ -7,27 +7,29 @@ import { Link } from 'react-router-dom';
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect, useState} from "react";
 import { useScroll } from "motion/react";
-import { getHomepageData } from '../../services/homepageService';
-import { Insight } from "../../types/insight";
+import { getAllPublishedInsights } from "../../service/insight.service";
+import { InsightInterface } from "../../interface/insight";
 import { getCachedData, setCachedData } from '../utils/cache';
 
 export function Insights() {
   const { setTheme } = useHeaderTheme();
   const { scrollY } = useScroll();
 
-  const [insights, setInsights] = useState<Insight[]>([]);
+  const [insights, setInsights] = useState<InsightInterface[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
   setTheme("inverse");
 
   const unsubscribe = scrollY.on("change", (y) => {
-    if (y < window.innerHeight * 3.62) {
+    if (y < window.innerHeight * 7.7) {
       setTheme("inverse");
-    }  else if(y < window.innerHeight * 4.4){
+    }  else if(y < window.innerHeight * 8.48){
       setTheme("primary");
-    } else {
+    } else if(y < window.innerHeight * 9.1){
       setTheme("inverse");
+    } else {
+      setTheme("primary");
     }
   });
 
@@ -39,20 +41,18 @@ useEffect(() => {
     try {
       setLoading(true);
 
-      const cacheKey = "homepage_data";
+      const cacheKey = "insights_data";
 
-      const cached = getCachedData<{
-        insights: Insight[];
-      }>(cacheKey);
+      const cached = getCachedData<InsightInterface[]>(cacheKey);
 
       if (cached) {
-        setInsights(cached.insights || []);
+        setInsights(cached);
         return;
       }
 
-      const data = await getHomepageData();
+      const data = await getAllPublishedInsights();
 
-      setInsights(data.insights || []);
+      setInsights(data);
 
       setCachedData(cacheKey, data);
 
@@ -71,36 +71,22 @@ useEffect(() => {
       <ScrollIndicator />
       
       {/* Hero Section */}
-      <Section className="pt-32 md:pt-40 pb-20 bg-white text-black">
+      <Section className="pt-22 md:pt-28 pb-0 bg-white text-black">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h1 className="text-6xl md:text-8xl mb-8 leading-[1.1]" style={{ fontWeight: 700 }}>
-              Latest Insights
+            <h1 className="text-3xl md:text-7xl mb-4 leading-[1.1]" style={{ fontWeight: 700 }}>
+              Latest News & Articles
             </h1>
-            <p className="text-xl md:text-2xl text-black/60 max-w-3xl">
-              Our thoughts and perspectives on digital.
+            <p className="text-md md:text-xl text-black/50 max-w-4xl mb-6">
+              Discover the latest ideas, innovations, and strategies shaping the future of digital business.
+              Read expert articles, technology updates, and actionable insights from the BlackInt team.
             </p>
           </motion.div>
-        </Container>
-      </Section>
-
-      {/* Insights Grid */}
-      <Section className="bg-white text-black pb-32">
-        <Container>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-            {loading && insights.length === 0 && (
-              <p className="text-black/40">Loading insights...</p>
-            )}
-
-            {!loading && insights.length === 0 && (
-              <p className="text-black/40">No insights available.</p>
-            )}
-
-            {insights.map((insight, index) => (
+          {insights.slice(0, 1).map((insight, index) => (
               <motion.div
                 key={insight.publicId || index}
                 initial={{ opacity: 0, y: 60 }}
@@ -125,16 +111,18 @@ useEffect(() => {
                       />
                     </motion.div>
 
-                    {insight.category && (
+                    {insight.categoryId && (
                       <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 text-xs uppercase tracking-widest text-black">
-                        {insight.category}
+                        {insight.categoryId}
                       </div>
                     )}
                   </div>
 
                   <div className="space-y-3">
                     <div className="text-xs uppercase tracking-widest text-black/40">
-                      {new Date(insight.publishedAt).toLocaleDateString()}
+                      {insight.publishedAt
+                        ? new Date(insight.publishedAt).toLocaleDateString()
+                        : ""}
                     </div>
 
                     <h2 className="text-2xl md:text-3xl group-hover:text-[#FF4D00] transition-colors duration-300" style={{ fontWeight: 700 }}>
@@ -142,7 +130,84 @@ useEffect(() => {
                     </h2>
 
                     <p className="text-black/60">
-                      {insight.excerpt}
+                      {insight.excerpt && (
+                        <p className="text-black/60">
+                          {insight.excerpt}
+                        </p>
+                      )}
+                    </p>
+
+                    <div className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-black/60 group-hover:text-[#FF4D00] transition-colors">
+                      READ MORE →
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+        </Container>
+      </Section>
+
+      {/* Insights Grid */}
+      <Section className="pt-12 md:pt-0 bg-white text-black pb-13">
+        <Container>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
+            {loading && insights.length === 0 && (
+              <p className="text-black/40">Loading insights...</p>
+            )}
+
+            {!loading && insights.length === 0 && (
+              <p className="text-black/40">No insights available.</p>
+            )}
+
+            {insights.slice(1).map((insight, index) => (
+              <motion.div
+                key={insight.publicId || index}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, delay: (index % 2) * 0.1 }}
+              >
+                <Link
+                  to={`/insights/${insight.slug}`}
+                  className="group block"
+                >
+                  <div className="relative overflow-hidden aspect-[16/10] mb-6">
+                    <motion.div
+                      className="w-full h-full"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.6 }}
+                    >
+                      <ImageWithFallback
+                        src={insight.featuredImage}
+                        alt={insight.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </motion.div>
+
+                    {insight.categoryId && (
+                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 text-xs uppercase tracking-widest text-black">
+                        {insight.categoryId}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="text-xs uppercase tracking-widest text-black/40">
+                      {insight.publishedAt
+                        ? new Date(insight.publishedAt).toLocaleDateString()
+                        : ""}
+                    </div>
+
+                    <h2 className="text-2xl md:text-3xl group-hover:text-[#FF4D00] transition-colors duration-300" style={{ fontWeight: 700 }}>
+                      {insight.title}
+                    </h2>
+
+                    <p className="text-black/60">
+                      {insight.excerpt && (
+                        <p className="text-black/60">
+                          {insight.excerpt}
+                        </p>
+                      )}
                     </p>
 
                     <div className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-black/60 group-hover:text-[#FF4D00] transition-colors">
@@ -166,7 +231,7 @@ useEffect(() => {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="text-xs uppercase tracking-[0.3em] text-white/40 mb-8">
+            <div className="text-xs uppercase tracking-[0.3em] text-white/70 mb-8">
               STAY UPDATED
             </div>
             <h2 className="text-4xl md:text-6xl mb-8 leading-tight" style={{ fontWeight: 700 }}>
