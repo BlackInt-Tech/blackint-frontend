@@ -12,7 +12,7 @@ export const getPublishedOfferings = async (): Promise<OfferingIndividualInterfa
         !item.isDeleted
     )
     .sort(
-      (a, b) =>
+      (b, a) =>
         new Date(b.publishedAt ?? 0).getTime() -
         new Date(a.publishedAt ?? 0).getTime()
     );

@@ -5,7 +5,7 @@ export interface ProjectInterface {
   slug: string;
   shortDescription: string;
   fullContent: string;
-  featuredImage: string;
+  featuredVideo: string;
   galleryImages: string[];
   clientName: string;
   projectUrl: string | null;

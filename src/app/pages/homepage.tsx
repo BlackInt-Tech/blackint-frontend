@@ -280,7 +280,7 @@ export function Homepage() {
                       initial={{ opacity: 0, y: 80 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: "-100px" }}
-                      transition={{ duration: 0.8, delay: index * 0.1 }}
+                      transition={{ duration: 0.8 }}
                     >
                       <Link to={`/work/${project.slug}`} className="group block">
                         <div
@@ -291,7 +291,7 @@ export function Homepage() {
 
                           {/* Image */}
                           <motion.div
-                            className={`relative overflow-hidden aspect-[4/3] ${
+                            className={`relative overflow-hidden aspect-[6/3] ${
                               !isEven ? "md:col-start-2" : ""
                             }`}
                             initial={{ x: isEven ? -80 : 80, opacity: 0 }}
@@ -305,9 +305,13 @@ export function Homepage() {
                               whileHover={{ scale: 1.05 }}
                               transition={{ duration: 0.6 }}
                             >
-                              <ImageWithFallback
-                                src={project.featuredImage}
-                                alt={project.title}
+                              <video
+                                src={project.featuredVideo}
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                controls={false}
                                 className="w-full h-full object-cover"
                               />
                             </motion.div>
@@ -331,7 +335,7 @@ export function Homepage() {
                             </div>
 
                             <h2
-                              className="text-3xl md:text-5xl mb-4 group-hover:text-[#FF4D00] transition-colors duration-300"
+                              className="text-3xl md:text-4xl mb-4 group-hover:text-[#FF4D00] transition-colors duration-300"
                               style={{ fontWeight: 700 }}
                             >
                               {project.title}
@@ -610,7 +614,7 @@ export function Homepage() {
                                 hover:text-[#FF4D00]
                                 
                               ">
-                              Get Started 🞣
+                              Get Started +
                             </button>
                           </div>
                         </div>

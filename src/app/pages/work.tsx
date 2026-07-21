@@ -106,7 +106,7 @@ export function Work() {
                   initial={{ opacity: 0, y: 80 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  transition={{ duration: 0.5 }}
                 >
                   <Link to={`/work/${project.slug}`} className="group block bg-white">
                     <div
@@ -115,9 +115,9 @@ export function Work() {
                       }`}
                     >
 
-                      {/* Image */}
+                      {/* video */}
                       <motion.div
-                        className={`relative overflow-hidden aspect-[4/3] bg-white ${
+                        className={`relative overflow-hidden aspect-[6/3] bg-white ${
                           !isEven ? "md:col-start-2" : ""
                         }`}
                         initial={{ x: isEven ? -80 : 80, opacity: 0 }}
@@ -131,9 +131,13 @@ export function Work() {
                           whileHover={{ scale: 1.05 }}
                           transition={{ duration: 0.6 }}
                         >
-                          <ImageWithFallback
-                            src={project.featuredImage}
-                            alt={project.title}
+                          <video
+                            src={project.featuredVideo}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            controls={false}
                             className="w-full h-full object-cover"
                           />
                         </motion.div>
@@ -157,13 +161,13 @@ export function Work() {
                         </div>
 
                         <h2
-                          className="text-3xl md:text-5xl mb-4 group-hover:text-[#FF4D00] transition-colors duration-300"
+                          className="text-3xl md:text-4xl mb-3 group-hover:text-[#FF4D00] transition-colors duration-300"
                           style={{ fontWeight: 700 }}
                         >
                           {project.title}
                         </h2>
 
-                        <p className="text-lg text-black/60 mb-6 leading-relaxed">
+                        <p className="text-md text-black/60 mb-3 leading-relaxed">
                           {project.shortDescription}
                         </p>
 

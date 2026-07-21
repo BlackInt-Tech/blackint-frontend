@@ -66,15 +66,15 @@ export function CaseStudy() {
     setTheme("inverse");
 
     const unsubscribe = scrollY.on("change", (y: number) => {
-      if (y < window.innerHeight * 2.17) {
+      if (y < window.innerHeight * 2) {
         setTheme("inverse");
-      } else if (y < window.innerHeight * 3.5) {
+      } else if (y < window.innerHeight * 3.55) {
         setTheme("primary");
-      } else if (y < window.innerHeight * 5.18) {
+      } else if (y < window.innerHeight * 4.74) {
         setTheme("inverse");
-      } else if (y < window.innerHeight * 6) {
+      } else if (y < window.innerHeight * 5.6) {
         setTheme("primary");
-      } else if (y < window.innerHeight * 6.65) {
+      } else if (y < window.innerHeight * 6.22) {
         setTheme("inverse");
       } else {
         setTheme("primary");
@@ -118,14 +118,14 @@ export function CaseStudy() {
           animate={{ scale: 1 }}
           transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
         >
-          <ImageWithFallback
-            src={project.featuredImage}
+          {/* <ImageWithFallback
+            src={project.galleryImages[0]}
             alt={project.title}
-            className="w-full h-full object-cover opacity-90"
-          />
+            className="w-full h-full object-cover"
+          /> */}
         </motion.div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-white/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black to-white/50" />
 
           <div className="absolute bottom-0 left-0 right-0 pb-24">
             <Container>
@@ -236,18 +236,13 @@ export function CaseStudy() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <p className="text-2xl text-black/90 leading-relaxed mb-6">
-                  {project.fullContent}
-                </p>
-
-                <p className="text-xl text-black/50 leading-relaxed mb-6">
-                  This project required strategic thinking, strong brand positioning,
-                  and a performance-driven digital execution aligned with business goals.
+                <p className="text-xl text-black/70 leading-relaxed mb-6">
+                   {project.shortDescription}
                 </p>
               </motion.div>
 
               <motion.div
-                className="aspect-video overflow-hidden rounded-2xl"
+                className="aspect-[6/3] overflow-hidden rounded-2xl"
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -295,26 +290,25 @@ export function CaseStudy() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <p className="text-2xl text-white/90 leading-relaxed mb-6">
-                  We crafted a powerful digital presence built on performance,
-                  clarity, and conversion-focused architecture.
+                <p className="text-md text-white/70 leading-relaxed mb-6">
+                  {project.fullContent}
                 </p>
 
-                <p className="text-xl text-white/50 leading-relaxed">
-                  Every interaction, animation, and layout element was designed
-                  to elevate the brand perception and maximize engagement.
-                </p>
               </motion.div>
 
               <motion.div
-                className="aspect-video overflow-hidden rounded-2xl"
+                className="aspect-[6/3] overflow-hidden rounded-2xl"
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
               >
-                <ImageWithFallback
-                  src={project.galleryImages[0]}
-                  alt={project.title}
+                <video
+                  src={project.featuredVideo}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls={false}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
@@ -331,17 +325,33 @@ export function CaseStudy() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-            {project.galleryImages?.[2] && (
+            {project.galleryImages?.[1] && (
               <motion.div
-                className="aspect-[5/4] overflow-hidden rounded-2xl"
+                className="aspect-[6/3] overflow-hidden rounded-2xl"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
                 <ImageWithFallback
+                  src={project.galleryImages[1]}
+                  alt={`${project.title} gallery 2`}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            )}
+
+            {project.galleryImages?.[2] && (
+              <motion.div
+                className="aspect-[6/3] overflow-hidden rounded-2xl"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
+                <ImageWithFallback
                   src={project.galleryImages[2]}
-                  alt={`${project.title} gallery 1`}
+                  alt={`${project.title} gallery 3`}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
@@ -349,15 +359,15 @@ export function CaseStudy() {
 
             {project.galleryImages?.[3] && (
               <motion.div
-                className="aspect-[5/4] overflow-hidden rounded-2xl"
+                className="aspect[6/3] overflow-hidden rounded-2xl"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.2 }}
               >
                 <ImageWithFallback
                   src={project.galleryImages[3]}
-                  alt={`${project.title} gallery 2`}
+                  alt={`${project.title} gallery 4`}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
@@ -365,15 +375,15 @@ export function CaseStudy() {
 
             {project.galleryImages?.[4] && (
               <motion.div
-                className="aspect-[5/4] overflow-hidden rounded-2xl"
+                className="aspect-[6/3] overflow-hidden rounded-2xl"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.3 }}
               >
                 <ImageWithFallback
                   src={project.galleryImages[4]}
-                  alt={`${project.title} gallery 3`}
+                  alt={`${project.title} gallery 5`}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
@@ -381,7 +391,7 @@ export function CaseStudy() {
 
             {project.galleryImages?.[5] && (
               <motion.div
-                className="aspect-[5/4] overflow-hidden rounded-2xl"
+                className="aspect-[6/3] overflow-hidden rounded-2xl"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -389,11 +399,12 @@ export function CaseStudy() {
               >
                 <ImageWithFallback
                   src={project.galleryImages[5]}
-                  alt={`${project.title} gallery 4`}
+                  alt={`${project.title} gallery 6`}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
             )}
+
           </div>
         </Container>
       </Section>

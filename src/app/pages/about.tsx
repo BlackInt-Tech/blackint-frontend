@@ -6,6 +6,7 @@ import { ImageWithFallback } from '../components/blackint/ImageWithFallback';
 import { useHeaderTheme } from '../context/header-theme';
 import { useEffect } from "react";
 import { useScroll } from "motion/react";
+import FounderProfile from '../assets/founderProfile.png'
 
 const values = [
   {
@@ -30,7 +31,7 @@ const team: any[] = [
   {
     name: 'Ritik Raj',
     role: 'FOUNDER & CEO',
-    image: '',
+    image: FounderProfile,
   },
   // {
   //   name: 'Ritik Raj',
@@ -81,7 +82,7 @@ export function About() {
       <ScrollIndicator />
       
       {/* Hero Section */}
-      <Section className="pt-32 md:pt-40 pb-20 bg-black text-white">
+      <Section className="pt-24 md:pt-40 pb-20 bg-black text-white">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -89,20 +90,20 @@ export function About() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="max-w-5xl"
           >
-            <div className="text-xs sm:text-sm uppercase tracking-[0.3em] mb-6 sm:mb-8">
+            <div className="text-xs sm:text-sm uppercase tracking-[0.3em] mb-4 sm:mb-8">
               WE ARE BLACK<span className="text-[#FF4D00]">INT</span>
             </div>
-            <h1 className="text-5xl md:text-7xl mb-12 leading-[1.1] text-white/80" style={{ fontWeight: 700 }}>
+            <h1 className="text-3xl md:text-7xl mb-4 leading-[1.1] text-white/80" style={{ fontWeight: 700 }}>
               A Digital Agency<br/>Focused on Design, Development & Marketing.
             </h1>
-            <p className="text-xl md:text-2xl text-[#FF4D00]/75 max-w-3xl leading-relaxed">
+            <p className="text-md md:text-2xl text-white/50 max-w-3xl leading-relaxed">
               Creating technology-driven ecosystems where businesses build faster, automate smarter, and grow stronger in an increasingly digital world.            </p>
           </motion.div>
         </Container>
       </Section>
 
       {/* Story Section */}
-      <Section className="bg-white text-black py-32">
+      <Section className="bg-white text-black pt-12 pb-0">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             
@@ -116,7 +117,7 @@ export function About() {
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              <div className="text-xl uppercase tracking-[0.3em] text-[#FF4D00] mb-6">
+              <div className="text-2xl uppercase tracking-[0.3em] text-[#FF4D00] mb-4">
                 OUR STORY
               </div>
 
@@ -127,17 +128,17 @@ export function About() {
                 Building Scalable Digital Products
               </h2>
 
-              <div className="space-y-4 text-lg text-black/60 leading-relaxed">
+              <div className="text-lg text-black/60 leading-relaxed">
                 <p>
                   BlackInt is a technology and digital solutions company helping startups,
                   businesses, and growing brands build powerful digital platforms.
                 </p>
                 <p>
-                  From websites and SaaS applications to automation systems and AI-powered tools,
+                  <br />From websites and SaaS applications to automation systems and AI-powered tools,
                   we create solutions that streamline operations and accelerate growth.
                 </p>
                 <p>
-                  By combining strategy, design, and scalable technology,
+                  <br />By combining strategy, design, and scalable technology,
                   we build digital products that perform, convert, and scale with your business.
                 </p>
               </div>
@@ -153,19 +154,20 @@ export function About() {
                 ease: [0.22, 1, 0.36, 1],
                 delay: 0.15,
               }}
-              className="relative aspect-[4/5] overflow-hidden"
+              className="relative aspect-[4/3] overflow-hidden"
             >
               <motion.div
                 whileHover={{ scale: 1.04 }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="mt-35">
+                <div className="mt-2">
                 <ImageWithFallback
                   src="https://images.unsplash.com/photo-1632835256917-9932799fee58?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDZ8fHxlbnwwfHx8fHw%3D"
                   alt="Our team"
                   className="w-full h-full object-cover"
                 />
                 </div>
+                
               </motion.div>
             </motion.div>
 
@@ -175,7 +177,7 @@ export function About() {
 
 
       {/* Values Section */}
-      <Section className="bg-black text-white py-32">
+      <Section className="bg-black text-white pt-12">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -187,12 +189,12 @@ export function About() {
             <div className="text-xl uppercase tracking-[0.3em] text-[#FF4D00] mb-6">
               OUR VALUES
             </div>
-            <h2 className="text-5xl md:text-7xl" style={{ fontWeight: 700 }}>
+            <h2 className="text-4xl md:text-7xl" style={{ fontWeight: 700 }}>
               What drives us.
             </h2>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12">
             {values.map((value, index) => (
               <motion.div
                 key={value.title}
@@ -200,14 +202,14 @@ export function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="border border-white/10 p-8 hover:border-[#FF4D00] transition-colors duration-300"
+                className="pb-8 transition-colors duration-300"
               >
-                <div className="text-6xl text-[#FF4D00] mb-6" style={{ fontWeight: 900 }}>
+                <div className="text-6xl text-[#FF4D00] mb-4" style={{ fontWeight: 900 }}>
                   0{index + 1}
+                  <h3 className="text-3xl mb-2 text-white" style={{ fontWeight: 700 }}>
+                    {value.title}
+                  </h3>
                 </div>
-                <h3 className="text-3xl mb-4" style={{ fontWeight: 700 }}>
-                  {value.title}
-                </h3>
                 <p className="text-white/60 text-lg leading-relaxed">
                   {value.description}
                 </p>
@@ -218,7 +220,7 @@ export function About() {
       </Section>
 
       {/* Team Section */}
-      <Section className="bg-white text-black py-24 sm:py-28 md:py-32 overflow-hidden">
+      <Section className="bg-white text-black py-8 md:py-32 overflow-hidden">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -227,11 +229,11 @@ export function About() {
             transition={{ duration: 0.8 }}
             className="mb-12 md:mb-16"
           >
-            <div className="text-sm uppercase tracking-[0.3em] text-[#FF4D00] mb-6">
+            <div className="text-lg uppercase fornt-extrabold tracking-[0.3em] text-[#FF4D00] mb-4">
               OUR TEAM
             </div>
 
-            <h2 className="text-3xl sm:text-4xl md:text-7xl mb-6 font-bold">
+            <h2 className="text-3xl md:text-7xl mb-4 font-bold">
               Meet the people behind BlackInt.
             </h2>
 
@@ -265,11 +267,11 @@ export function About() {
                   </motion.div>
                 </div>
 
-                <h3 className="text-lg sm:text-xl mt-4 font-semibold">
+                <h3 className="text-4xl text-center mt-4 font-semibold">
                   {member.name}
                 </h3>
 
-                <p className="text-black/60 text-sm">
+                <p className="text-black/60 text-md text-center">
                   {member.role}
                 </p>
               </motion.div>
@@ -280,15 +282,14 @@ export function About() {
 
 
       {/* Stats Section */}
-      <Section className="bg-black text-white py-32">
+      <Section className="bg-black text-white py-24">
         <Container>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-9">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-9">
             {[
               { number: "Web", label: "Modern Web Platforms" },
               { number: "SaaS", label: "SaaS Platforms" },
               { number: "AI", label: "AI-Powered Systems" },
-              { number: "API", label: "API Integrations" },
-              { number: "Cloud", label: "Scalable Infrastructure" },
+              { number: "Cloud", label: "API Integrations" },
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -311,7 +312,7 @@ export function About() {
       </Section>
 
       {/* CTA Section */}
-      <Section className="bg-white text-black py-32">
+      <Section className="bg-white text-black py-20">
         <Container>
           <motion.div
             className="text-center"

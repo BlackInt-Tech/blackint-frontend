@@ -44,11 +44,11 @@ export function Services() {
   setTheme("inverse");
 
   const unsubscribe = scrollY.on("change", (y) => {
-    if (y < window.innerHeight * 12.6) {
+    if (y < window.innerHeight * 17.2) {
       setTheme("inverse");
-    } else if (y < window.innerHeight * 13.45){
+    } else if (y < window.innerHeight * 18.15){
       setTheme("primary");
-    } else if (y < window.innerHeight * 14.3){
+    } else if (y < window.innerHeight * 18.95){
       setTheme("inverse");
     } else {
       setTheme("primary");
@@ -315,7 +315,7 @@ useEffect(() => {
                                 hover:border-[#FF4D00]
                                 hover:text-[#FF4D00]
                               ">
-                              Get Started
+                              Get Started +
                             </button>
                           </div>
                         </div>
@@ -350,7 +350,7 @@ useEffect(() => {
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
+                transition={{ duration: 0.5 }}
                 className="grid md:grid-cols-2 gap-10 md:gap-16 border-t border-black/10 pt-8"
               >
 
@@ -362,19 +362,19 @@ useEffect(() => {
                     {String(index + 1).padStart(2, "0")}
                   </div>
                     {/* IMAGE */}
-                    <div className="overflow-hidden rounded-xl">
-                      
+                    <motion.div
+                      className="aspect-[6/3] overflow-hidden rounded-2xl"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                    >
                       <ImageWithFallback
                         src={service.featuredImage}
                         alt={service.title}
-                        className="
-                          w-full h-[350px] object-cover
-                          transition-transform duration-500 ease-out
-                          hover:scale-108
-                        "
+                        className="w-full h-full object-cover"
                       />
-                    </div>
-                  
+                    </motion.div>
+                          
                 </div>
 
                 {/* RIGHT → CONTENT */}
@@ -389,7 +389,7 @@ useEffect(() => {
                   <p className="text-base text-black/70 leading-relaxed md:pt-0">
                     {/* {service.shortDescription}  */}
                     <p className="text-black/40 text-sm">
-                      {service.fullContent}
+                      {service.shortDescription}
                     </p>
                   </p>
 
@@ -422,7 +422,7 @@ useEffect(() => {
                       hover:shadow-[0_0_30px_rgba(255,77,0,0.1)]
                     "
                   >
-                    Get Service 🞤
+                    Get Service +
                   </button>
 
                 </div>
