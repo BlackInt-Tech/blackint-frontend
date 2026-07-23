@@ -127,7 +127,7 @@ export function CaseStudy() {
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black to-white/50" />
 
-          <div className="absolute bottom-0 left-0 right-0 pb-24">
+          <div className="absolute bottom-0 left-0 right-0 top-0 pb-24 mt-20">
             <Container>
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -138,7 +138,7 @@ export function CaseStudy() {
                   CASE STUDY
                 </div>
 
-                <h1 className="text-4xl md:text-7xl mb-2" style={{ fontWeight: 700 }}>
+                <h1 className="text-2xl md:text-6xl mb-2 text-[#fff]" style={{ fontWeight: 800 }}>
                   {project.title}
                 </h1>
 
