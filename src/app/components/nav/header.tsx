@@ -46,11 +46,11 @@ export function Header() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
         {/* ✅ Reduced mobile padding only */}
-        <div className="flex items-center justify-between px-4 sm:px-6 md:px-12 py-4 sm:py-6 md:py-8">
+        <div className="flex items-center justify-between px-2 sm:px-6 md:px-12 py-4 sm:py-6 md:py-8">
           
           {/* Logo */}
-          <Link to="/" className="relative z-50 flex items-center gap-3 md:gap-4">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full overflow-hidden">
+          <Link to="/" className="relative z-50 flex items-center gap-0 md:gap-4">
+            <div className="w-10 h-10 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full overflow-hidden">
               <img
                 src={logoSrc}
                 alt="BlackInt Logo"
@@ -61,7 +61,7 @@ export function Header() {
             {/* BLACKINT */}
             <div className="overflow-hidden">
               <motion.div
-                className="flex items-center text-xl sm:text-xl md:text-3xl lg:text-4xl"
+                className="flex items-center text-2xl sm:text-xl md:text-3xl lg:text-4xl"
                 style={{
                   scale: useTransform(collapseProgress, [0, 1], [1, 0.75]),
                   opacity: useTransform(collapseProgress, [0, 1], [1, 0]),
@@ -72,7 +72,7 @@ export function Header() {
                   return (
                     <motion.span
                       key={index}
-                      className={`font-black tracking-[0.12em] md:tracking-[0.15em] ${
+                      className={`font-black tracking-[0.08em] md:tracking-[0.15em] ${
                         isOrange ? 'text-[#FF4D00]' : textColor
                       }`}
                     >
