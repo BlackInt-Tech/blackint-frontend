@@ -127,7 +127,7 @@ export function CaseStudy() {
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black to-white/50" />
 
-          <div className="absolute bottom-0 left-0 right-0 top-0 pb-24 mt-20">
+          <div className="absolute bottom-0 left-0 right-0 top-0 pb-0 mt-35 md:pb-0 md:mt-60">
             <Container>
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
